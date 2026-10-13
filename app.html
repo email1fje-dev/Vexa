@@ -67,9 +67,81 @@ html,body{margin:0;min-width:0;width:100%;max-width:100%;overflow-x:clip}
 .main,.content,.sidebar,.post,.welcome,.composer{min-width:0;max-width:100%}
 @media(max-width:900px){.app{width:100%;grid-template-columns:58px minmax(0,1fr)}}
 @media(max-width:560px){.app{grid-template-columns:46px minmax(0,1fr)}.main{width:100%;max-width:100%;overflow:hidden}.content{padding:10px}.topbar{min-width:0}.post-actions>*{max-width:100%}}
+
+/* Vexa app visual refresh */
+:root{color-scheme:dark;--bg:#080d0a;--panel:#101812;--panel2:#17231a;--line:#26382b;--text:#edf7ef;--muted:#9cae9f;--purple:#22c55e;--lav:#86efac;--blue:#2997ff}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;width:100%;max-width:100%;min-width:0;overflow-x:clip}
+body{font-family:Tahoma,"Segoe UI",sans-serif;line-height:1.75;direction:rtl;background:radial-gradient(ellipse at 80% -15%,#15351f 0,transparent 43%),var(--bg);color:var(--text)}
+.app{direction:rtl;grid-template-columns:72px 244px minmax(0,1fr);min-height:100vh;min-height:100dvh}
+.rail{border-right:0;border-left:1px solid var(--line);background:#080e09;padding:18px 10px;gap:12px}
+.sidebar{border-right:0;border-left:1px solid var(--line);background:#0c130e;padding:22px 15px;gap:19px}
+.wordmark{letter-spacing:0}.search{background:#111c14;border-color:#2a3e2e;border-radius:12px;text-align:right}
+.search:focus{border-color:#22c55e;box-shadow:0 0 0 3px #22c55e1c}
+.section-label{letter-spacing:0;text-align:right;margin-inline:5px}
+.nav-item{direction:rtl;text-align:right;color:#b9c9bc;border-radius:11px;padding:11px 12px}
+.nav-item:hover,.nav-item.active{background:#173320;color:#d7ffe0}.nav-item.active{box-shadow:inset -3px 0 #22c55e}
+.profile-mini{direction:rtl}.avatar{background:linear-gradient(135deg,#166534,#4ade80);color:#f0fdf4;flex-shrink:0}
+.main{grid-column:3;min-width:0;width:100%}
+.topbar{height:70px;position:sticky;top:0;gap:12px;direction:rtl;padding:0 clamp(14px,2.5vw,30px);background:#080d0aeb;border-bottom-color:#25372a;z-index:10}
+.topbar-tools{display:flex;align-items:center;gap:10px;min-width:0}
+.online-pill{color:#a7f3b7;background:#102819;border-color:#285d37;white-space:nowrap}
+.theme-toggle{position:static!important;z-index:auto!important;border-color:#2c4532;background:#142219;border-radius:11px;min-width:40px;min-height:40px;padding:7px 10px;display:grid;place-items:center}
+.content{width:100%;max-width:1040px;padding:clamp(16px,3vw,32px);margin-inline:auto}
+.welcome{border-color:#285438;background:radial-gradient(circle at 90% 0%,#1b4b2a 0,transparent 42%),linear-gradient(130deg,#11291a,#0e1711 72%);border-radius:22px;padding:clamp(20px,3vw,32px)}
+.welcome:after{right:auto;left:-55px;top:-65px;border-color:#4ade8033;box-shadow:0 0 0 25px #4ade800a,0 0 0 55px #4ade8008;pointer-events:none}
+.welcome h1{letter-spacing:0;line-height:1.4;overflow-wrap:anywhere}.welcome p{line-height:1.95;color:#bdd0c0}
+.primary{background:linear-gradient(110deg,#15803d,#22a34a)!important;box-shadow:0 7px 22px #16a34a25;border-radius:11px}
+.primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.outline{background:#111d14;border-color:#34513b;border-radius:11px}
+.heading{line-height:1.6;margin-top:30px}.grid{gap:14px}
+.card{background:linear-gradient(145deg,#111b14,#0d140f);border-color:#263b2b;border-radius:17px;padding:18px;transition:transform .18s,border-color .18s}
+.card:hover{transform:translateY(-2px);border-color:#397348}.card-mark{background:#183522;flex-shrink:0}.card-mark svg{stroke:#86efac}
+.feed{gap:14px}.post,.composer{background:#0f1711;border-color:#26392a;border-radius:16px}
+.post{direction:rtl;align-items:flex-start}.post-body{min-width:0;flex:1;direction:rtl;text-align:right}
+.post p{line-height:1.95;color:#cbd9cd;overflow-wrap:anywhere}.post-actions{flex-wrap:wrap;gap:16px}
+.post-actions button{min-height:30px}.post-actions button:hover{color:#86efac}
+.badge-note{color:#a7f3b7;background:#12291a;border-color:#2c5c38}
+.composer{align-items:center}.composer input{direction:rtl;text-align:right;color:var(--text)}
+.composer input::placeholder,.search::placeholder{color:#809482}
+.notice{background:#101d13;border-color:#294932;color:#b8d8be;line-height:1.9}
+.toast{direction:rtl;max-width:calc(100vw - 32px);text-align:center}.empty{line-height:1.8}
+html[data-theme="light"] body{background:#f4faf5;color:#17251a}
+html[data-theme="light"] .topbar{background:#f4faf5ed;border-color:#d8e7da}
+html[data-theme="light"] .rail,html[data-theme="light"] .sidebar{background:#edf6ef!important}
+html[data-theme="light"] .welcome{background:radial-gradient(circle at 90% 0%,#dcfce7 0,transparent 45%),linear-gradient(130deg,#fff,#f0f9f1);border-color:#c7e4ce}
+html[data-theme="light"] .welcome p,html[data-theme="light"] .post p{color:#4e6252}
+html[data-theme="light"] .card,html[data-theme="light"] .post,html[data-theme="light"] .composer{background:#fff!important;border-color:#d8e7da!important}
+html[data-theme="light"] .search,html[data-theme="light"] .outline,html[data-theme="light"] .theme-toggle{background:#fff;color:#17251a;border-color:#d0e3d3}
+html[data-theme="light"] .nav-item{color:#47614b}
+html[data-theme="light"] .nav-item:hover,html[data-theme="light"] .nav-item.active{background:#dcfce7;color:#166534}
+html[data-theme="light"] .online-pill{background:#dcfce7;color:#166534;border-color:#bbf7d0}
+html[data-theme="light"] .notice{background:#effaf0;border-color:#cbe7ce;color:#426447}
+@media(max-width:1000px){.app{grid-template-columns:62px minmax(0,1fr)}.sidebar{display:none}.main{grid-column:2}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.content{max-width:850px;padding:22px}.topbar{padding-inline:16px}}
+@media(max-width:600px){
+.app{grid-template-columns:48px minmax(0,1fr);width:100%;max-width:100%}
+.rail{padding:12px 4px;gap:10px}.brand-icon{width:36px;height:36px}.server-icon{width:37px;height:37px;border-radius:12px}
+.topbar{height:60px;padding-inline:10px;gap:8px}.topbar-title{font-size:14px;min-width:0}.topbar-tools{gap:6px}.online-pill{display:none}
+.theme-toggle{min-width:36px;min-height:36px;padding:5px}
+.content{padding:12px 10px 28px}.welcome{padding:18px 15px;border-radius:17px}
+.welcome h1{font-size:clamp(23px,7vw,31px);line-height:1.45;margin:10px 0}.welcome p{font-size:13px;line-height:1.95;margin-bottom:15px}
+.row{gap:8px}.row button{flex:1 1 130px;min-height:42px;padding:10px}
+.heading{font-size:16px;margin:23px 0 12px}.grid{grid-template-columns:minmax(0,1fr);gap:10px}
+.card{display:grid;grid-template-columns:42px minmax(0,1fr);column-gap:11px;align-items:start;padding:13px}
+.card-mark{grid-row:1/span 2;width:40px;height:40px;margin:0}.card-mark svg{width:23px;height:23px}
+.card h3{align-self:end;margin:0 0 3px;font-size:14px}.card p{font-size:12px;line-height:1.8}
+.composer{display:flex;flex-wrap:wrap;gap:9px;padding:11px;margin-bottom:12px}.composer .avatar{width:34px;height:34px}
+.composer input{flex:1 1 calc(100% - 50px);width:calc(100% - 50px);min-width:0;font-size:13px}
+.composer .primary{margin-inline-start:auto;min-height:40px}
+.post{gap:9px;padding:12px}.post>.avatar{width:34px;height:34px;border-radius:11px}
+.post-head{font-size:13px;gap:5px}.post p{font-size:13px;margin:7px 0 10px;line-height:1.9}.post-actions{gap:9px 14px;font-size:11px}
+.post-actions button{min-height:32px}.notice{font-size:11px;padding:10px 11px}
+}
+@media(max-width:360px){.app{grid-template-columns:43px minmax(0,1fr)}.rail{padding-inline:3px}.server-icon{width:34px;height:34px}.content{padding-inline:8px}.welcome{padding:15px 12px}.post{padding:9px;gap:7px}.post-actions{gap:8px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
 </head>
-<body><button class="theme-toggle" id="theme-toggle" style="position:fixed;top:12px;left:12px;z-index:20" aria-label="تغییر تم">☀️</button>
+<body>
 <div class="app">
 <aside class="rail" aria-label="کامیونیتی‌ها">
 <div class="brand-icon" title="Vexa"><svg viewBox="0 0 48 48" role="img" aria-label="Vexa logo"><defs><linearGradient id="vg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7c3aed"/><stop offset="1" stop-color="#c4b5fd"/></linearGradient></defs><path d="M5 9h11l8 17 8-17h11L29 37c-2 4-8 4-10 0L5 9Z" fill="url(#vg)"/></svg></div>
@@ -96,7 +168,7 @@ html,body{margin:0;min-width:0;width:100%;max-width:100%;overflow-x:clip}
 <div class="sidebar-bottom"><div class="profile-mini"><div class="avatar">P</div><div><div style="font-weight:700">Parsa</div><div class="small muted">@parsa · پیش‌نمایش</div></div></div></div>
 </aside>
 <main class="main">
-<header class="topbar"><div class="topbar-title">فید خانه</div><div class="online-pill">پیش‌نمایش وکسا · نسخه ۰.۱</div></header>
+<header class="topbar"><div class="topbar-title">فید خانه</div><div class="topbar-tools"><div class="online-pill">پیش‌نمایش وکسا · نسخه ۰.۱</div><button class="theme-toggle" id="theme-toggle" aria-label="تغییر تم" title="تغییر تم">☀️</button></div></header>
 <div class="content">
 <section class="welcome"><div class="wordmark" style="font-size:15px;color:#c4b5fd;letter-spacing:0"><svg viewBox="0 0 48 48" width="24" height="24" aria-label="Vexa logo"><path d="M5 9h11l8 17 8-17h11L29 37c-2 4-8 4-10 0L5 9Z" fill="#a78bfa"/></svg>به وکسا خوش آمدی</div><h1>آدم‌های تو. جای خودت.</h1><p>فضایی تازه برای پیدا کردن کامیونیتی‌ها، به‌اشتراک‌گذاشتن ایده‌ها و در ارتباط ماندن. این نخستین نسخه‌ی آزمایشی وکساست.</p><div class="row"><button class="primary" onclick="showToast('امکان ساخت کامیونیتی به‌زودی اضافه می‌شود')">کشف کامیونیتی‌ها</button><button class="outline" onclick="showToast('ثبت‌نام در مرحله‌ی بعد اضافه می‌شود')">ساخت حساب کاربری</button></div></section>
 <h2 class="heading">کامیونیتی‌ها را کشف کن</h2>
@@ -119,8 +191,8 @@ html,body{margin:0;min-width:0;width:100%;max-width:100%;overflow-x:clip}
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
-const themeBtn=document.getElementById('theme-toggle');themeBtn.addEventListener('click',()=>{const t=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=t;themeBtn.textContent=t==='light'?'🌙':'☀️'});function showToast(message){const t=document.getElementById('toast');t.textContent=message;t.style.display='block';clearTimeout(window.vexaToastTimer);window.vexaToastTimer=setTimeout(()=>t.style.display='none',2400)}
-function likeانتشار(button){const liked=button.dataset.liked==='yes';button.dataset.liked=liked?'no':'yes';button.textContent=liked?'♡ پسندیدن':'♥ پسندیدنd';button.style.color=liked?'':'#c4b5fd'}
+const themeBtn=document.getElementById('theme-toggle');themeBtn.addEventListener('click',()=>{const t=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=t;themeBtn.textContent=t==='light'?'🌙':'☀️';themeBtn.setAttribute('aria-label',t==='light'?'فعال کردن تم تیره':'فعال کردن تم روشن')});function showToast(message){const t=document.getElementById('toast');t.textContent=message;t.style.display='block';clearTimeout(window.vexaToastTimer);window.vexaToastTimer=setTimeout(()=>t.style.display='none',2400)}
+function likeانتشار(button){const liked=button.dataset.liked==='yes';button.dataset.liked=liked?'no':'yes';button.textContent=liked?'♡ پسندیدن':'♥ پسندیدن';button.style.color=liked?'':'#22c55e'}
 function addانتشار(){const input=document.getElementById('newانتشار');const text=input.value.trim();if(!text){showToast('اول یه پیام بنویس');return}const post=document.createElement('article');post.className='post';post.dataset.category='mine';const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent='P';const body=document.createElement('div');body.className='post-body';const head=document.createElement('div');head.className='post-head';head.textContent='Parsa';const meta=document.createElement('div');meta.className='small muted';meta.textContent='@parsa · همین الان';const p=document.createElement('p');p.textContent=text;const actions=document.createElement('div');actions.className='post-actions';const like=document.createElement('button');like.textContent='♡ پسندیدن';like.onclick=()=>likeانتشار(like);const reply=document.createElement('button');reply.textContent='پاسخ';reply.onclick=()=>showToast('قابلیت پاسخ به‌زودی اضافه می‌شه');actions.append(like,reply);body.append(head,meta,p,actions);post.append(avatar,body);document.getElementById('feed').prepend(post);input.value='';applyجستجو();showToast('انتشار به این پیش‌نمایش اضافه شد')}
 function filterانتشارs(category,button){document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));if(button)button.classList.add('active');document.querySelectorAll('#feed .post').forEach(p=>p.style.display=(category==='all'||p.dataset.category===category||category==='mine'&&p.dataset.category==='mine')?'flex':'none');applyجستجو()}
 function applyجستجو(){const q=document.getElementById('search').value.toLowerCase().trim();let shown=0;document.querySelectorAll('#feed .post').forEach(p=>{const nav=document.querySelector('.nav-item.active');const category=nav?.dataset.filter||'all';const categoryMatch=category==='all'||p.dataset.category===category;const searchMatch=p.textContent.toLowerCase().includes(q);p.style.display=categoryMatch&&searchMatch?'flex':'none';if(p.style.display!=='none')shown++});document.getElementById('empty').style.display=shown?'none':'block'}
