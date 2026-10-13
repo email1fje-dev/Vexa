@@ -162,6 +162,14 @@ html[data-theme="light"] .server-channel-symbol{background:#dcfce7;color:#15803d
 @media(max-width:850px){.server-home-grid{gap:5px}.server-home{margin:0 auto;padding:15px 12px 30px}.server-home-banner{gap:13px;padding:21px 17px;border-radius:15px;min-height:125px;margin-bottom:22px}.server-home-icon{width:50px;height:50px;border-radius:14px;font-size:27px}.server-home-banner h1{font-size:24px}.server-home-banner p{font-size:12px}.server-home-heading h2{font-size:16px}.server-channel-card{min-height:64px;padding:10px}.channel-close{display:grid!important}}
 @media(max-width:560px){.server-home{padding:12px 8px 28px}.server-home-banner{padding:18px 14px;gap:11px}.server-home-icon{width:44px;height:44px;font-size:24px}.server-home-kicker{font-size:9px}.server-home-banner h1{font-size:22px}.server-home-banner p{font-size:11px}.server-home-heading{margin-bottom:10px}.server-channel-card{gap:10px;min-height:61px;padding:9px}.server-channel-symbol{width:36px;height:36px;border-radius:10px;font-size:19px}.server-channel-copy b{font-size:12px}.server-channel-copy small{font-size:10px}.server-home-tip{font-size:10px;padding:10px}}
 
+
+/* Make the beautiful channel browser the actual server landing page */
+body:not(.channel-mode) .server-home{display:block!important}
+body:not(.channel-mode) .hero,body:not(.channel-mode) .home-only,body:not(.channel-mode) .composer,body:not(.channel-mode) .feed,body:not(.channel-mode) #empty{display:none!important}
+body:not(.channel-mode) .channel-close{display:none!important}
+body:not(.channel-mode) #chat-title{font-size:0}
+body:not(.channel-mode) #chat-title:after{content:"Vexa";font-size:15px}
+
 </style></head>
 <body><div class="app">
 <aside class="rail" aria-label="کامیونیتی‌ها">
