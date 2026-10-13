@@ -50,6 +50,34 @@ html[data-theme="light"] .address{background:#f4faf5;border-color:#d7e6da;color:
 .features{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media(min-width:1500px){.wrap{width:calc(100% - 100px);max-width:1600px}.preview-shell{width:min(1250px,100%)}.hero h1{max-width:1100px}}
 @media(max-width:760px){.wrap{width:calc(100% - 28px)}.hero{padding-inline:0}.features{grid-template-columns:1fr}}
+
+/* Vexa layout polish: use the available desktop width */
+.wrap{width:calc(100% - 64px);max-width:none;margin-inline:auto}
+.nav{width:calc(100% - 64px);max-width:none;margin-inline:auto}
+.hero{padding-top:76px}
+.hero h1{max-width:1100px}
+.hero p{max-width:850px}
+.preview-shell{width:100%;max-width:none}
+.preview{min-height:360px}
+.features{grid-template-columns:repeat(3,minmax(0,1fr))}
+.feature{min-height:200px}
+.split{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(28px,5vw,80px)}
+.choose{width:calc(100% - 64px);max-width:none;margin-inline:auto;margin-bottom:70px}
+.footer-inner{width:calc(100% - 64px);max-width:none;margin-inline:auto}
+html[data-theme="light"] .hero h1{color:#152319}
+@media(max-width:760px){
+ .wrap,.nav,.choose,.footer-inner{width:calc(100% - 30px)}
+ .hero{padding-top:54px}
+ .preview{min-height:275px}
+ .features{grid-template-columns:1fr}
+ .split{grid-template-columns:1fr;gap:28px}
+}
+@media(min-width:1500px){
+ .hero h1{font-size:clamp(76px,5vw,104px)}
+ .preview{min-height:420px}
+ .feature{padding:30px}
+}
+
 </style>
 </head>
 <body>
