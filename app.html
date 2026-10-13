@@ -130,6 +130,38 @@ body:not(.channel-mode) .channel-close{display:none}
 .channel-close{display:grid}
 @media(max-width:850px){.server-home-grid{grid-template-columns:1fr}.server-home{margin-top:4px;padding:8px}.server-home-banner{gap:13px;padding:20px;border-radius:16px}.server-home-icon{width:54px;height:54px;border-radius:17px;font-size:29px}.channel-close{display:grid!important}}
 @media(min-width:851px){.channel-close{display:grid!important}}
+
+/* Server home redesigned to match the channel list interaction */
+.server-home{max-width:1120px;margin:0 auto;padding:24px clamp(12px,2.4vw,30px) 36px;width:100%}
+.server-home-banner{position:relative;overflow:hidden;min-height:150px;display:flex;align-items:center;gap:18px;padding:clamp(22px,4vw,36px);border:1px solid #285b3a;border-radius:18px;background:radial-gradient(ellipse at 8% 0,#22c55e24,transparent 52%),linear-gradient(135deg,#151e18,#11131a 72%);margin-bottom:28px}
+.server-home-banner:after{content:"V";position:absolute;left:22px;top:-48px;font-size:180px;line-height:1;color:#86efac0a;font-weight:900;pointer-events:none}
+.server-home-icon{width:62px;height:62px;display:grid;place-items:center;flex-shrink:0;border-radius:18px;background:linear-gradient(145deg,#22c55e,#15803d);color:white;font-size:32px;font-weight:900;box-shadow:0 8px 26px #16a34a2b}
+.server-home-kicker{font-size:10px;letter-spacing:1.7px;color:#86efac;font-weight:800}
+.server-home-banner h1{font-size:clamp(25px,3.5vw,34px);margin:3px 0 6px;line-height:1.3}
+.server-home-banner p{color:#b5c4b7;margin:0;font-size:13px}
+.server-home-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 14px}
+.server-home-heading h2{font-size:17px;margin:0 0 3px}
+.server-home-heading p{font-size:12px;color:var(--muted);margin:0}
+.server-home-count{border:1px solid var(--line);border-radius:9px;padding:6px 10px;font-size:11px;color:var(--muted);background:var(--side)}
+.server-home-grid{display:flex;flex-direction:column;gap:5px}
+.server-channel-card{display:flex;align-items:center;gap:12px;text-align:right;min-width:0;min-height:68px;padding:11px 13px;border:1px solid transparent;border-radius:11px;background:var(--side);transition:background .18s,border-color .18s,transform .18s;width:100%}
+.server-channel-card:hover{background:var(--panel2);border-color:#285b3a;transform:translateX(-2px)}
+.server-channel-symbol{display:grid;place-items:center;width:40px;height:40px;flex-shrink:0;border-radius:11px;background:#173822;color:#86efac;font-weight:850;font-size:21px}
+.server-channel-copy{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.server-channel-copy b{font-size:13px;color:var(--text);font-weight:800}
+.server-channel-copy small{font-size:11px;color:var(--muted);line-height:1.6}
+.server-channel-card>svg{width:17px;height:17px;color:var(--muted)}
+.server-home-tip{display:flex;align-items:center;gap:9px;margin-top:18px;padding:12px 14px;border:1px solid var(--line);border-radius:11px;background:transparent;color:var(--muted);font-size:11px}
+.server-home-tip span{color:var(--lav)}
+html[data-theme="light"] .server-home-banner{background:radial-gradient(ellipse at 8% 0,#bbf7d0,transparent 52%),linear-gradient(135deg,#fff,#f0faf1);border-color:#c8e8ce}
+html[data-theme="light"] .server-home-banner p{color:#526b57}
+html[data-theme="light"] .server-home-count{background:#fff}
+html[data-theme="light"] .server-channel-card{background:var(--side)}
+html[data-theme="light"] .server-channel-card:hover{background:#e1f3e5}
+html[data-theme="light"] .server-channel-symbol{background:#dcfce7;color:#15803d}
+@media(max-width:850px){.server-home-grid{gap:5px}.server-home{margin:0 auto;padding:15px 12px 30px}.server-home-banner{gap:13px;padding:21px 17px;border-radius:15px;min-height:125px;margin-bottom:22px}.server-home-icon{width:50px;height:50px;border-radius:14px;font-size:27px}.server-home-banner h1{font-size:24px}.server-home-banner p{font-size:12px}.server-home-heading h2{font-size:16px}.server-channel-card{min-height:64px;padding:10px}.channel-close{display:grid!important}}
+@media(max-width:560px){.server-home{padding:12px 8px 28px}.server-home-banner{padding:18px 14px;gap:11px}.server-home-icon{width:44px;height:44px;font-size:24px}.server-home-kicker{font-size:9px}.server-home-banner h1{font-size:22px}.server-home-banner p{font-size:11px}.server-home-heading{margin-bottom:10px}.server-channel-card{gap:10px;min-height:61px;padding:9px}.server-channel-symbol{width:36px;height:36px;border-radius:10px;font-size:19px}.server-channel-copy b{font-size:12px}.server-channel-copy small{font-size:10px}.server-home-tip{font-size:10px;padding:10px}}
+
 </style></head>
 <body><div class="app">
 <aside class="rail" aria-label="کامیونیتی‌ها">
