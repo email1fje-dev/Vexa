@@ -135,6 +135,69 @@ img,svg,video,canvas{max-width:100%;height:auto}
   .footer-inner{display:flex;flex-wrap:wrap;gap:20px}
   .footer-inner>*{min-width:0;max-width:100%}
 }
+
+/* Vexa responsive layout refresh — inspired by open-source community/chat projects.
+   Keep the implementation native to this single-file prototype. */
+:root{--bg:#080d09;--panel:#101812;--line:#26372b;--text:#f1f8f2;--muted:#a5b3a8;--purple:#22c55e;--lav:#86efac}
+.wrap{width:min(1480px,calc(100% - clamp(28px,5.6vw,104px)));max-width:1480px;margin-inline:auto}
+.nav{height:76px}
+.hero{padding:clamp(58px,7vw,100px) 0 clamp(54px,6vw,86px)}
+.hero:before{width:min(1000px,90vw);background:radial-gradient(ellipse,#14532d2b 0%,#14532d10 42%,transparent 72%)}
+.hero h1{max-width:1000px;font-size:clamp(38px,6.1vw,76px);letter-spacing:-1.5px}
+.hero p{max-width:760px}
+.preview-shell{width:min(1120px,100%);margin-top:clamp(34px,4.5vw,62px);transform:none;border-color:#294432;background:linear-gradient(140deg,#142019,#0b100c 60%);box-shadow:0 24px 70px #0006,0 0 65px #16a34a0c}
+.preview{grid-template-columns:62px minmax(0,1fr);min-height:360px;background:#0d130f;border-color:#26372b}
+.preview-rail{background:#090e0a;border-color:#26372b}
+.preview-main{padding:clamp(16px,2.5vw,28px)}
+.post{background:#121a14;border-color:#293a2d}
+.mini-logo{background:#173d25;border-color:#285338}
+.mini-server{background:#16261a;color:#a7f3c0}
+.pill{color:#bbf7d0;border-color:#285338}
+.features{gap:18px}
+.feature{background:linear-gradient(145deg,#121b14,#0c110d);border-color:#26372b}
+.feature:hover{border-color:#278449}
+.feature-icon,.security-symbol,.choice-icon{background:#142d1c;color:#a7f3c0;border-color:#285338}
+.split{border-color:#26372b}
+.security-card{border-color:#294432;background:radial-gradient(ellipse at 80% 0%,#16653420,transparent 60%),#101711}
+.security-line{border-color:#26372b}
+.choose{border-color:#294432;background:radial-gradient(ellipse at 50% 0%,#16653424,transparent 66%),linear-gradient(145deg,#111a13,#0b100c)}
+.choice{background:#0e150f;border-color:#293a2d}
+.choice.featured{border-color:#32804a;background:linear-gradient(150deg,#14291a,#101711)}
+.btn.primary{background:linear-gradient(135deg,#22c55e,#15803d);border-color:transparent;color:#fff;box-shadow:0 8px 26px #16a34a22}
+.btn.primary:hover{background:linear-gradient(135deg,#4ade80,#16803d)}
+.btn{border-color:#2d4032;background:#121a14}
+.btn:hover{border-color:#39814e}
+.eyebrow{border-color:#285338;background:#102117;color:#a7f3c0}
+.dot{background:#4ade80}
+.gradient{background:linear-gradient(100deg,#f0fdf4 12%,#bbf7d0 50%,#4ade80 90%);-webkit-background-clip:text;background-clip:text}
+.section-tag{color:#86efac}
+.check{background:#183722;color:#bbf7d0}
+.footer{border-color:#26372b}
+html[data-theme="light"]{--bg:#f3faf4;--panel:#fff;--line:#d4e4d6;--text:#14251a;--muted:#617466;--purple:#15803d;--lav:#166534;color-scheme:light}
+html[data-theme="light"] body{background:var(--bg);color:var(--text)}
+html[data-theme="light"] .preview-shell{background:linear-gradient(140deg,#edf7ef,#fff);box-shadow:0 22px 60px #1a382016;border-color:#d4e4d6}
+html[data-theme="light"] .preview,html[data-theme="light"] .preview-main{background:#fff;border-color:#d4e4d6}
+html[data-theme="light"] .preview-rail{background:#edf7ef;border-color:#d4e4d6}
+html[data-theme="light"] .post,html[data-theme="light"] .feature,html[data-theme="light"] .security-card,html[data-theme="light"] .choice{background:#fff;border-color:#d4e4d6;color:#14251a}
+html[data-theme="light"] .post p,html[data-theme="light"] .feature p,html[data-theme="light"] .split p,html[data-theme="light"] .choice p{color:#53685a}
+html[data-theme="light"] .btn{background:#fff;border-color:#cbdccf;color:#183722}
+html[data-theme="light"] .btn.primary{background:linear-gradient(135deg,#22c55e,#15803d);color:#fff}
+html[data-theme="light"] .choose{background:radial-gradient(ellipse at 50% 0%,#bbf7d0 0%,transparent 66%),#edf7ef;border-color:#c9dfce}
+html[data-theme="light"] .footer{border-color:#d4e4d6}
+@media(max-width:760px){
+ .wrap{width:calc(100% - 28px);max-width:100%}
+ .nav{height:68px}
+ .hero{padding:48px 0 44px}
+ .hero h1{font-size:clamp(34px,9vw,54px);letter-spacing:-.8px}
+ .preview-shell{margin-top:28px;padding:6px}
+ .preview{grid-template-columns:42px minmax(0,1fr);min-height:265px}
+ .preview-rail{padding:12px 5px}
+ .preview-main{padding:10px}
+ .features{grid-template-columns:1fr}
+ .split{grid-template-columns:1fr;gap:24px}
+ .choice-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
