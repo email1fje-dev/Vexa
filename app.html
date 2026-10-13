@@ -62,18 +62,19 @@ html[data-theme="light"] .main{background:radial-gradient(ellipse at 50% -35%,#d
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
 
-/* Cinematic light/dark theme transition */
-html{transition:background-color .65s cubic-bezier(.2,.75,.25,1),color .65s cubic-bezier(.2,.75,.25,1)}
-html.theme-morph *,html.theme-morph *::before,html.theme-morph *::after{transition-property:background-color,color,border-color,box-shadow,fill,stroke!important;transition-duration:.58s!important;transition-timing-function:cubic-bezier(.2,.75,.25,1)!important}
-.theme-wipe{position:fixed;z-index:9999;inset:0;pointer-events:none;clip-path:circle(0 at var(--wipe-x,50%) var(--wipe-y,50%));background:var(--wipe-color,#090910);will-change:clip-path}
-.theme-wipe.run{animation:vxThemeWipe .78s cubic-bezier(.76,0,.18,1) forwards}
-@keyframes vxThemeWipe{0%{clip-path:circle(0 at var(--wipe-x,50%) var(--wipe-y,50%));opacity:.96}68%{opacity:1}100%{clip-path:circle(var(--wipe-radius,150vmax) at var(--wipe-x,50%) var(--wipe-y,50%));opacity:1}}
+/* Vexa theme motion — soft crossfade, ambient glow, no harsh screen wipe */
+:root{--theme-ease:cubic-bezier(.22,1,.36,1)}
+html,body,.app,.rail,.channels,.main,.memberside,.topbar,.workspace,.bottom-user,.hero,.community,.composer,.post,.search,.channel,.server,.icon,.pill,.btn,.memberrow{transition:background-color .42s var(--theme-ease),color .32s var(--theme-ease),border-color .42s var(--theme-ease),box-shadow .42s var(--theme-ease)}
+html.theme-morph .main{animation:vxThemeSettle .62s var(--theme-ease) both}
+@keyframes vxThemeSettle{0%{opacity:.84;transform:translateY(4px) scale(.996);filter:saturate(.82)}100%{opacity:1;transform:translateY(0) scale(1);filter:saturate(1)}}
 #theme-toggle{position:relative;overflow:hidden;isolation:isolate}
-#theme-toggle svg{transition:transform .6s cubic-bezier(.34,1.56,.64,1),opacity .25s}
-#theme-toggle.theme-spin svg{transform:rotate(180deg) scale(.72)}
-.theme-spark{position:fixed;z-index:10000;pointer-events:none;width:6px;height:6px;border-radius:50%;background:var(--spark-color,#22c55e);box-shadow:0 0 10px var(--spark-color,#22c55e);animation:vxSparkFly .68s ease-out forwards}
-@keyframes vxSparkFly{0%{opacity:0;transform:translate(0,0) scale(.3)}15%{opacity:1}100%{opacity:0;transform:translate(var(--spark-x),var(--spark-y)) scale(0)}}
-@media(prefers-reduced-motion:reduce){.theme-wipe.run{animation-duration:.01ms!important}.theme-spark{display:none!important}html.theme-morph *{transition-duration:.01ms!important}}
+#theme-toggle:before{content:"";position:absolute;inset:4px;border-radius:9px;background:radial-gradient(circle,#22c55e32,transparent 72%);opacity:0;transform:scale(.4);transition:transform .45s var(--theme-ease),opacity .25s;pointer-events:none}
+#theme-toggle.theme-spin:before{opacity:1;transform:scale(1.8)}
+#theme-toggle svg{transition:transform .58s var(--theme-ease),opacity .2s}
+#theme-toggle.theme-spin svg{transform:rotate(35deg) scale(.82)}
+.theme-spark{position:fixed;z-index:10000;pointer-events:none;width:4px;height:4px;border-radius:50%;background:var(--spark-color,#22c55e);box-shadow:0 0 8px var(--spark-color,#22c55e);animation:vxSparkFly .58s var(--theme-ease) forwards}
+@keyframes vxSparkFly{0%{opacity:0;transform:translate(0,0) scale(.4)}18%{opacity:.9}100%{opacity:0;transform:translate(var(--spark-x),var(--spark-y)) scale(0)}}
+@media(prefers-reduced-motion:reduce){html.theme-morph .main{animation:none!important}.theme-spark{display:none!important}}
 
 </style></head>
 <body><div class="app">
@@ -122,7 +123,7 @@ function toggleLike(b){const liked=b.dataset.liked==='yes';b.dataset.liked=liked
 function sharePost(){showToast('قابلیت اشتراک‌گذاری به‌زودی اضافه می‌شود')}
 $('#composer').addEventListener('submit',e=>{e.preventDefault();const input=$('#new-post'),value=input.value.trim();if(!value){showToast('اول چیزی بنویس 🙂');input.focus();return}const p=document.createElement('article');p.className='post';p.dataset.category=activeFilter==='all'?'mine':activeFilter;const av=document.createElement('div');av.className='avatar';av.textContent='P';const body=document.createElement('div');body.className='postbody';const head=document.createElement('div');head.className='posthead';const name=document.createElement('span');name.className='postname';name.textContent='Parsa';const meta=document.createElement('span');meta.className='meta';meta.textContent='· @parsa · همین حالا';head.append(name,meta);const text=document.createElement('p');text.textContent=value;const acts=document.createElement('div');acts.className='postactions';const like=document.createElement('button');like.type='button';like.textContent='♡ پسندیدن';like.addEventListener('click',()=>toggleLike(like));const reply=document.createElement('button');reply.type='button';reply.textContent='پاسخ';reply.onclick=()=>showToast('پاسخ‌دادن در نسخه بعدی اضافه می‌شود');acts.append(like,reply);body.append(head,text,acts);p.append(av,body);$('#feed').prepend(p);input.value='';setFilter(activeFilter);showToast('پستت به پیش‌نمایش اضافه شد 💜')});
 $('#search').addEventListener('input',applyFilters);
-/* Radial reveal theme switch with a subtle particle burst */
+/* Soft theme morph: coordinated palette, icon rotation and tiny green glints */
 const themeButton=document.getElementById('theme-toggle');
 themeButton.addEventListener('click',()=>{
  const root=document.documentElement;
@@ -130,25 +131,15 @@ themeButton.addEventListener('click',()=>{
  const rect=themeButton.getBoundingClientRect();
  const x=rect.left+rect.width/2,y=rect.top+rect.height/2;
  const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- const wipe=document.createElement('div');
- wipe.className='theme-wipe';
- wipe.style.setProperty('--wipe-x',x+'px');
- wipe.style.setProperty('--wipe-y',y+'px');
- wipe.style.setProperty('--wipe-color',next==='light'?'#f4fbf5':'#090910');
- wipe.style.setProperty('--wipe-radius',Math.ceil(Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y)))+'px');
- document.body.appendChild(wipe);
  themeButton.classList.add('theme-spin');
  root.classList.add('theme-morph');
- // Reveal the destination palette from the theme button, then sync the real UI underneath.
- if(!reduce) wipe.classList.add('run');
  root.dataset.theme=next;
- document.querySelector('meta[name="theme-color"]').content=next==='light'?'#f4fbf5':'#090910';
+ const meta=document.querySelector('meta[name="theme-color"]');
+ if(meta)meta.content=next==='light'?'#f4fbf5':'#090910';
  const svg=themeButton.querySelector('svg');
- if(svg){svg.innerHTML=next==='light'?'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>':'<path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/>'}
- if(!reduce){
-  for(let i=0;i<12;i++){const a=(Math.PI*2*i)/12;const spark=document.createElement('i');spark.className='theme-spark';spark.style.left=x+'px';spark.style.top=y+'px';spark.style.setProperty('--spark-x',Math.cos(a)* (42+(i%3)*12)+'px');spark.style.setProperty('--spark-y',Math.sin(a)* (42+(i%3)*12)+'px');spark.style.setProperty('--spark-color',next==='light'?'#16a34a':'#86efac');document.body.appendChild(spark);spark.addEventListener('animationend',()=>spark.remove(),{once:true})}
- }
- setTimeout(()=>{wipe.remove();root.classList.remove('theme-morph');themeButton.classList.remove('theme-spin')},reduce?40:850);
+ if(svg)svg.innerHTML=next==='light'?'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>':'<path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/>';
+ if(!reduce)for(let i=0;i<7;i++){const a=(Math.PI*2*i)/7;const spark=document.createElement('i');spark.className='theme-spark';spark.style.left=x+'px';spark.style.top=y+'px';spark.style.setProperty('--spark-x',Math.cos(a)*(24+(i%2)*9)+'px');spark.style.setProperty('--spark-y',Math.sin(a)*(24+(i%2)*9)+'px');spark.style.setProperty('--spark-color',next==='light'?'#16a34a':'#86efac');document.body.appendChild(spark);spark.addEventListener('animationend',()=>spark.remove(),{once:true})}
+ setTimeout(()=>{root.classList.remove('theme-morph');themeButton.classList.remove('theme-spin')},reduce?30:650);
  showToast(next==='light'?'تم روشن فعال شد ☀️':'تم تیره فعال شد 🌙');
 });
 function toggleMobileChannels(){if(innerWidth>850)return;$('#channels').classList.toggle('mobile-open')}
