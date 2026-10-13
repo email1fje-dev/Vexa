@@ -157,7 +157,8 @@ themeButton.addEventListener('click',()=>{
  setTimeout(()=>{root.classList.remove('theme-morph');themeButton.classList.remove('theme-spin')},reduce?30:650);
  showToast(next==='light'?'تم روشن فعال شد ☀️':'تم تیره فعال شد 🌙');
 });
-function toggleMobileChannels(){if(innerWidth>850)return;$('#memberside').classList.remove('mobile-open');$('#channels').classList.toggle('mobile-open')}\nfunction toggleMembers(){if(innerWidth>1150){return}if(innerWidth<=850)$('#channels').classList.remove('mobile-open');$('#memberside').classList.toggle('mobile-open')}
+function toggleMobileChannels(){if(innerWidth>850)return;$('#memberside').classList.remove('mobile-open');$('#channels').classList.toggle('mobile-open')}
+function toggleMembers(){if(innerWidth>1150){return}if(innerWidth<=850)$('#channels').classList.remove('mobile-open');$('#memberside').classList.toggle('mobile-open')}
 window.addEventListener('keydown',e=>{if(e.key==='Escape'){ $('#channels').classList.remove('mobile-open');$('#memberside').classList.remove('mobile-open')}});
 /* 500 animation presets: 10 motion families × 10 intensities × 5 timings */
 (function initVexaMotionStudio(){
