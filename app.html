@@ -33,6 +33,34 @@ html[data-theme="light"] .main{background:radial-gradient(ellipse at 50% -35%,#d
 @media(max-width:560px){.app{grid-template-columns:49px minmax(0,1fr)}.rail{padding:10px 4px;gap:9px}.brand,.server{width:37px;height:37px;border-radius:13px}.topbar{height:57px;padding:0 10px;gap:8px}.title{font-size:13px}.subtitle{font-size:10px}.tools{gap:0}.tools .icon{width:31px;height:33px}.pill{display:none}.scroll{padding:12px 9px 18px}.hero{padding:17px 14px;border-radius:14px;margin-bottom:20px}.hero h1{font-size:23px}.hero p{font-size:12px}.actions .btn{flex:1 1 120px}.communities{grid-template-columns:minmax(0,1fr);gap:8px;margin-bottom:20px}.community{padding:12px}.ctop{margin-bottom:7px}.community p{min-height:0;margin-bottom:8px}.composer{padding:10px;gap:8px}.composer .avatar{width:32px;height:32px}.composer textarea{font-size:12px}.hint{display:none}.post{padding:11px;gap:9px}.post .avatar{width:33px;height:33px}.post p{font-size:12px}.postactions{gap:5px 12px}.postactions button{font-size:10px}.toast{bottom:calc(15px + env(safe-area-inset-bottom))}}
 @media(max-width:360px){.app{grid-template-columns:44px minmax(0,1fr)}.rail{padding-inline:3px}.brand,.server{width:34px;height:34px}.scroll{padding-inline:7px}.hero{padding:14px 11px}.hero h1{font-size:21px}.community{padding:10px}.post{padding:9px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* Vexa Motion Studio: polished green animations */
+@keyframes vxGlow{0%,100%{box-shadow:0 0 0 #22c55e00}50%{box-shadow:0 0 26px #22c55e2b}}
+@keyframes vxFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes vxShimmer{0%{background-position:180% 0}100%{background-position:-180% 0}}
+@keyframes vxReveal{from{opacity:0;transform:translateY(14px) scale(.985);filter:blur(2px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes vxPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes vxSlide{from{transform:translateX(12px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes vxTilt{0%,100%{transform:perspective(700px) rotateY(0)}50%{transform:perspective(700px) rotateY(-2deg)}}
+@keyframes vxRipple{0%{box-shadow:0 0 0 0 #22c55e55}100%{box-shadow:0 0 0 13px #22c55e00}}
+@keyframes vxSpinIn{from{transform:rotate(-7deg) scale(.9);opacity:0}to{transform:rotate(0) scale(1);opacity:1}}
+@keyframes vxBreathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.12)}}
+.vx-animated{animation-name:var(--vx-motion,vxReveal);animation-duration:var(--vx-duration,520ms);animation-delay:var(--vx-delay,0ms);animation-timing-function:var(--vx-ease,cubic-bezier(.2,.75,.25,1));animation-fill-mode:both}
+.hero{animation:vxReveal .7s cubic-bezier(.2,.75,.25,1) both}.hero:after{animation:vxFloat 7s ease-in-out infinite}
+.community,.post,.composer{transition:transform .24s cubic-bezier(.2,.75,.25,1),border-color .24s,box-shadow .24s,background-color .24s}
+.community:hover,.post:hover{box-shadow:0 12px 35px #22c55e12}
+.btn{position:relative;overflow:hidden;isolation:isolate;transition:transform .18s,box-shadow .2s,filter .2s}
+.btn:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(110deg,transparent 20%,#ffffff2e 48%,transparent 72%);background-size:220% 100%;background-position:180% 0;transition:background-position .55s}
+.btn:hover:after{background-position:-180% 0}.btn:active{transform:scale(.97)}.primary:hover{box-shadow:0 7px 24px #22c55e38;transform:translateY(-2px)}
+.server,.channel,.icon,.avatar,.cicon{transition:transform .2s cubic-bezier(.2,.75,.25,1),background .2s,color .2s,border-radius .2s}
+.server:hover,.icon:hover{transform:translateY(-2px) scale(1.04)}.channel:hover{transform:translateX(-3px)}
+.post:hover>.avatar{transform:rotate(-4deg) scale(1.04);filter:drop-shadow(0 4px 8px #22c55e29)}
+.community:hover .cicon{transform:rotate(-7deg) scale(1.08);background:#22c55e24}
+.search{transition:border-color .2s,box-shadow .2s,background .2s}.search:focus{box-shadow:0 0 0 3px #22c55e1f}
+.composer:focus-within{border-color:#22c55e8c;box-shadow:0 0 0 3px #22c55e0f}
+.postactions button{transition:color .18s,transform .18s}.postactions button:active{transform:scale(.95)}
+.dot{box-shadow:0 0 0 0 #22c55e55;animation:vxRipple 2.2s infinite}.mini-logo{animation:vxGlow 4s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
 </style></head>
 <body><div class="app">
 <aside class="rail" aria-label="کامیونیتی‌ها">
@@ -83,4 +111,22 @@ $('#search').addEventListener('input',applyFilters);
 $('#theme-toggle').addEventListener('click',()=>{const next=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=next;document.querySelector('meta[name="theme-color"]').content=next==='light'?'#f4fbf5':'#090910';showToast(next==='light'?'تم روشن فعال شد':'تم تیره فعال شد')});
 function toggleMobileChannels(){if(innerWidth>850)return;$('#channels').classList.toggle('mobile-open')}
 window.addEventListener('keydown',e=>{if(e.key==='Escape')$('#channels').classList.remove('mobile-open')});
+/* 500 animation presets: 10 motion families × 10 intensities × 5 timings */
+(function initVexaMotionStudio(){
+ if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const families=['vxReveal','vxFloat','vxPulse','vxSlide','vxTilt','vxSpinIn','vxGlow','vxShimmer','vxRipple','vxBreathe'];
+ const strengths=[.65,.75,.85,.95,1,1.05,1.15,1.25,1.35,1.45],timings=[380,440,500,560,640];
+ const easings=['cubic-bezier(.2,.75,.25,1)','cubic-bezier(.16,1,.3,1)','cubic-bezier(.22,1,.36,1)','cubic-bezier(.34,1.2,.64,1)','ease-out'];
+ const presets=[];
+ families.forEach((family,fi)=>strengths.forEach((strength,si)=>timings.forEach((duration,ti)=>presets.push({name:family,strength,duration,ease:easings[(fi+si+ti)%easings.length],id:presets.length+1}))));
+ document.documentElement.dataset.motionPresets=String(presets.length);
+ const nodes=[...document.querySelectorAll('.community,.post,.composer,.section,.feedhead,.membergroup')];
+ nodes.forEach((node,index)=>{
+  const p=presets[(index*37+11)%presets.length];node.classList.add('vx-animated');
+  node.style.setProperty('--vx-motion',p.name);node.style.setProperty('--vx-duration',p.duration+'ms');
+  node.style.setProperty('--vx-ease',p.ease);node.style.setProperty('--vx-delay',Math.min(index*42,300)+'ms');
+ });
+ if('IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('vx-in-view');observer.unobserve(entry.target)}}),{threshold:.08});nodes.forEach(node=>observer.observe(node))}
+ document.querySelectorAll('.community,.post').forEach((node,index)=>node.addEventListener('pointerenter',()=>{const p=presets[(index*53+Math.floor(performance.now()/1000))%presets.length];node.style.setProperty('--vx-hover-duration',p.duration+'ms')},{passive:true}));
+})();
 </script></body></html>
