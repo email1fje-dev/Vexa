@@ -1,0 +1,1 @@
+Vexa incorporates source code from https://github.com/miladr0/discord-clone, licensed under the MIT License. See https://github.com/email1fje-dev/discord-clone/blob/main/LICENSE for the original license text. The source project remains credited to its original author.
