@@ -44,4 +44,64 @@ svg [fill="#5865f2"],svg [fill="#5865F2"],svg [fill="#5865f2" i]{fill:#22c55e!im
  var queued=false;function schedule(){if(!queued){queued=true;requestAnimationFrame(function(){queued=false;run();});}}
  document.addEventListener('DOMContentLoaded',schedule);new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true,characterData:true});schedule();
 })();
+</script><style id="vexa-global-theme">
+:root{color-scheme:dark;--vx-bg:#080d09;--vx-panel:#101812;--vx-green:#22c55e;--vx-border:#294432;--vx-text:#f1f8f2}
+*{box-sizing:border-box}html,body,#root{min-height:100%;width:100%;margin:0}html[dir=rtl],body{direction:rtl}
+body{background:var(--vx-bg)!important;color:var(--vx-text)!important;font-family:Tahoma,"Segoe UI",sans-serif!important}
+a{color:#4ade80}button[type=submit],[type=submit]{background:#16a34a!important;color:#fff!important;border-color:#22c55e!important}
+button[type=submit]:hover,[type=submit]:hover{background:#15803d!important}
+input,textarea,select{direction:rtl;accent-color:#22c55e}
+input:focus,textarea:focus,select:focus,button:focus{outline-color:#22c55e!important;--tw-ring-color:#22c55e!important;border-color:#22c55e!important}
+[class*=text-blue],[class*=text-discord-textLink]{color:#4ade80!important}
+[class*=bg-blue],[class*=bg-discord-experiment500],[class*=bg-discord-experiment560]{background-color:#16a34a!important}
+[class*=ring-blue]{--tw-ring-color:#22c55e!important;box-shadow:0 0 0 2px #22c55e55!important}
+[class*=bg-discord-semi600],[class*=bg-discord-secondPrimary],[class*=bg-discord-primary],[class*=bg-discord-dark]{background-color:#101812!important}
+[class*=border-discord]{border-color:#294432!important}
+svg [fill="#5865f2"],svg [fill="#5865F2"],svg [fill="#5865f2" i]{fill:#22c55e!important}
+#root a.z-10.text-white svg{display:none!important}
+#root a.z-10.text-white:has(svg)::after{content:"Vexa";font-size:30px;font-weight:900;letter-spacing:-1px;color:#22c55e}
+</style>
+<script>
+(function(){
+ document.documentElement.lang='fa';document.documentElement.dir='rtl';document.title='Vexa | فضای گفت‌وگوی تو';
+ var exact={
+ 'Welcome back!':'خوش برگشتی!','We\'re so excited to see you again!':'خوشحالیم که دوباره می‌بینیمت.',
+ 'EMAIL':'ایمیل','PASSWORD':'گذرواژه','USERNAME':'نام کاربری','Forgot your password?':'گذرواژه را فراموش کرده‌ای؟',
+ 'Login':'ورود','Register':'ثبت‌نام','Need an account?':'حساب کاربری نداری؟','Create an account':'ساخت حساب کاربری',
+ 'Continue':'ساخت حساب','Already have an account?':'از قبل حساب کاربری داری؟','Log in with QR Code':'ورود با کد QR',
+ 'Scan this with the':'این کد را با برنامهٔ Vexa اسکن کن تا وارد شوی.','Discord mobile app':'برنامهٔ Vexa',
+ 'DIRECT MESSAGES':'پیام‌های خصوصی','Text channels':'کانال‌های متنی','Delete Message':'حذف پیام',
+ 'Are you sure you want to delete this message?':'از حذف این پیام مطمئنی؟','This is the beginning of your direct message history with':'اینجا شروع تاریخچهٔ پیام خصوصی با این کاربر است',
+ 'No servers in common':'سرور مشترکی ندارید','Remove friend':'حذف دوست','Server Owner':'مالک سرور',
+ 'Add Friend':'افزودن دوست','No one\'s around to play with Wumpus.':'فعلاً کسی برای بازی نیست.',
+ 'You can add a friend with their Discord Tag. It\'s cAsE sEnSitIvE!':'می‌توانی دوستت را با شناسهٔ Vexa اضافه کنی؛ حروف کوچک و بزرگ مهم‌اند.',
+ 'Success! Your friend request to':'درخواست دوستی برای این کاربر ارسال شد.',
+ 'ADD FRIEND':'افزودن دوست','Enter a Username#0000':'نام کاربری را وارد کن','Send Friend Request':'ارسال درخواست دوستی',
+ 'Friend request failed':'ارسال درخواست دوستی ناموفق بود','Incoming Friend Request':'درخواست دوستی دریافتی',
+ 'Outgoing Friend Request':'درخواست دوستی ارسالی','Cancel request':'لغو درخواست','Mutual Servers':'سرورهای مشترک',
+ 'Mutual Friends':'دوستان مشترک','There are no pending friend requests. Here\'s Wumpus for now.':'درخواست دوستی در انتظاری وجود ندارد.',
+ 'PENDING — ':'در انتظار — ','ALL FRIENDS — ':'همهٔ دوستان — ','Active Now':'اکنون فعال',
+ 'It\'s quiet for now...':'فعلاً خبری نیست...','USER SETTINGS':'تنظیمات کاربر','My Account':'حساب من',
+ 'User Profile':'نمایهٔ کاربر','Privacy & Safety':'حریم خصوصی و امنیت','Authorized Apps':'برنامه‌های مجاز',
+ 'BILLING SETTINGS':'تنظیمات پرداخت','Discord Nitro':'Vexa Plus','Server Boost':'تقویت سرور',
+ 'Gift Inventory':'هدایا','APP SETTINGS':'تنظیمات برنامه','Voice & Video':'صدا و تصویر',
+ 'Text & Images':'متن و تصویر','Streamer Mode':'حالت استریم','ACTIVITY SETTINGS':'تنظیمات فعالیت',
+ 'Activity Status':'وضعیت فعالیت','Change Log':'گزارش تغییرات','Log Out':'خروج از حساب',
+ 'Change your username':'تغییر نام کاربری','Enter a new username and your existing password.':'نام کاربری جدید و گذرواژهٔ فعلی را وارد کن.',
+ 'Enter an email address':'نشانی ایمیل را وارد کن','Enter a new email address and your existing password.':'ایمیل جدید و گذرواژهٔ فعلی را وارد کن.',
+ 'Edit Profile':'ویرایش نمایه','PHONE NUMBER':'شماره تلفن','You haven\'t added a phone number yet.':'هنوز شماره تلفنی اضافه نکرده‌ای.',
+ 'Welcome to Discord':'به Vexa خوش آمدی','Discord':'Vexa','discord':'Vexa',
+ 'Something went wrong!':'مشکلی پیش آمد. دوباره تلاش کن.','something wrong!':'مشکلی پیش آمد. دوباره تلاش کن.',
+ 'Incorrect email or password':'ایمیل یا گذرواژه نادرست است','Email already taken':'این ایمیل قبلاً ثبت شده است',
+ 'Email is required':'وارد کردن ایمیل الزامی است','Password is required':'وارد کردن گذرواژه الزامی است',
+ 'Password must be at least 6 characters':'گذرواژه باید حداقل ۶ نویسه داشته باشد',
+ 'Not a well formed email address':'لطفاً ایمیل معتبر وارد کن','Username is required':'وارد کردن نام کاربری الزامی است',
+ 'Network Error':'سرور ورود در دسترس نیست؛ تنظیمات اتصال API باید تکمیل شود.'
+ };
+ function translateNode(n){if(!n||!n.nodeValue)return;var s=n.nodeValue,t=s.trim();if(!t)return;var v=exact[t];if(!v){v=s.replace(/Discord/gi,'Vexa');v=v.replace('Scan this with the Vexa mobile app to log in instantly.','این کد را با برنامهٔ Vexa اسکن کن تا وارد شوی.');}if(v!==s)n.nodeValue=v;}
+ function translateAttrs(el){if(!el||el.nodeType!==1)return;['placeholder','aria-label','title','alt'].forEach(function(k){var v=el.getAttribute(k);if(v&&exact[v])el.setAttribute(k,exact[v]);else if(v&&/discord/i.test(v))el.setAttribute(k,v.replace(/discord/gi,'Vexa'));});}
+ function run(){if(!document.body)return;var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),a=[];while(w.nextNode())a.push(w.currentNode);a.forEach(translateNode);translateAttrs(document.body);document.body.querySelectorAll('*').forEach(translateAttrs);}
+ var queued=false;function schedule(){if(!queued){queued=true;requestAnimationFrame(function(){queued=false;run();});}}
+ document.addEventListener('DOMContentLoaded',schedule);new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true,characterData:true});schedule();
+})();
 </script></head><body><div id="root"></div><script src="./js/runtime.2cf7acf6d00a6f8e9d2a.bundle.js"></script><script src="./js/main.3a239e7ad8d28fca7bf9.bundle.js"></script></body></html>
