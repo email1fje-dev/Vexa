@@ -113,6 +113,84 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
  #app-view .app-topbar{padding:0 12px}
 }
 
+
+/* Vexa layout polish: prevent text overflow on desktop and mobile */
+#app-view,#app-view *{box-sizing:border-box;min-width:0}
+#app-view{font-family:Inter,Tahoma,"Segoe UI",sans-serif;background:#101510;color:#f3f7f3}
+#app-view .app-shell{display:grid;grid-template-columns:260px minmax(0,1fr);direction:ltr;background:#101510}
+#app-view .app-sidebar{width:auto;min-width:0;background:#151b16;border-right:1px solid #263329;overflow:hidden}
+#app-view .app-main{min-width:0;overflow:hidden;background:#101510}
+#app-view .app-topbar,#app-view .vx-main-head{flex-shrink:0;background:#151b16;border-color:#263329;box-shadow:none}
+#app-view .vx-main-head{direction:rtl}
+#app-view .vx-main-head h2{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#app-view .app-content{min-width:0;overflow:auto;overscroll-behavior:contain}
+#app-view .vx-logo{background:transparent;overflow:hidden;border-radius:10px}
+#app-view .vx-search{width:calc(100% - 20px);max-width:100%;background:#0e130f;border:1px solid #27362a;border-radius:9px;text-align:right;direction:rtl}
+#app-view .vx-nav button,#app-view .vx-section-head,#app-view .vx-dm{direction:rtl;text-align:right;min-width:0}
+#app-view .vx-nav .vx-nav-icon{width:25px;min-width:25px;display:grid;place-items:center}
+#app-view .vx-section-head{gap:8px}
+#app-view .vx-section-head button{margin-right:auto;margin-left:0}
+#app-view .vx-dm-copy{min-width:0;flex:1;overflow:hidden}
+#app-view .vx-dm-copy strong,#app-view .vx-dm-copy small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#app-view .vx-mebar{direction:rtl;border-top:1px solid #263329;background:#101510}
+#app-view .vx-mebar button{margin-right:auto}
+#app-view .vx-pane{max-width:900px;padding:clamp(18px,3vw,34px);direction:rtl;overflow-wrap:anywhere}
+#app-view .vx-pane h1{font-size:clamp(22px,3vw,30px);line-height:1.45;overflow-wrap:anywhere}
+#app-view .vx-pane p{overflow-wrap:anywhere}
+#app-view .vx-friend-tabs{gap:clamp(10px,2vw,22px);flex-wrap:wrap}
+#app-view .vx-friend-tabs button{white-space:normal;text-align:right}
+#app-view .vx-add-row{min-width:0;max-width:100%;flex-wrap:wrap;direction:rtl;background:#0e130f;border-color:#27362a}
+#app-view .vx-add-row input{flex:1 1 180px;width:100%;max-width:100%;text-align:left}
+#app-view .vx-green-btn{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+#app-view .vx-person-row{min-width:0;direction:rtl;gap:10px}
+#app-view .vx-person-row .vx-person-actions{margin-right:auto;margin-left:0;flex-shrink:0}
+#app-view .vx-person-row .vx-dm-copy{overflow-wrap:anywhere}
+#app-view .vx-avatar{overflow:hidden;background:#1c3423;border:1px solid #33563c;color:transparent;font-size:0}
+#app-view .vx-avatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+#app-view .vx-avatar .vx-online{font-size:0;color:transparent}
+#app-view .vx-chat{min-width:0}
+#app-view .vx-chat-body{min-width:0;overflow-wrap:anywhere}
+#app-view .vx-message{min-width:0;direction:rtl}
+#app-view .vx-message-copy{min-width:0;flex:1;text-align:right;overflow-wrap:anywhere}
+#app-view .vx-message-meta{flex-wrap:wrap;gap:6px 10px}
+#app-view .vx-message-text{overflow-wrap:anywhere;word-break:normal}
+#app-view .vx-composer-wrap{min-width:0;padding:0 clamp(10px,2vw,22px) 16px}
+#app-view .vx-composer{min-width:0;direction:rtl;border:1px solid #303d32;background:#1a211b}
+#app-view .vx-composer textarea{min-width:0;width:100%;text-align:right;overflow-wrap:anywhere}
+#app-view .vx-composer button{flex:0 0 36px}
+#app-view .vx-chat-intro,#app-view .vx-empty-chat,#app-view .vx-muted-note{overflow-wrap:anywhere}
+#app-view .vx-head-tools{margin-right:auto;margin-left:0}
+#app-view .vx-toast{max-width:calc(100vw - 28px);text-align:right;overflow-wrap:anywhere}
+#app-view .vx-nav .vx-nav-icon svg,#app-view .vx-head-symbol svg,#app-view .vx-head-tools svg,#app-view .vx-section-head button svg,#app-view .vx-composer button svg,#app-view .vx-person-actions button svg{width:20px;height:20px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:760px){
+ #app-view .app-shell{grid-template-columns:76px minmax(0,1fr)}
+ #app-view .app-sidebar{width:76px}
+ #app-view .vx-brand{justify-content:center;padding:0}
+ #app-view .vx-brand-name,#app-view .vx-search,#app-view .vx-nav .vx-nav-label,#app-view .vx-section-head span,#app-view .vx-section-head button,#app-view .vx-dm-copy,#app-view .vx-mebar .vx-dm-copy,#app-view .vx-mebar button{display:none}
+ #app-view .vx-nav{padding:0 9px}
+ #app-view .vx-nav button{justify-content:center;padding:12px 0}
+ #app-view .vx-nav .vx-nav-icon{font-size:0;width:100%;min-width:0}
+ #app-view .vx-section-head{justify-content:center;padding:10px 0}
+ #app-view .vx-dm-list{padding:0 9px}
+ #app-view .vx-dm{justify-content:center;padding:7px 0}
+ #app-view .vx-mebar{justify-content:center;padding:9px 0}
+ #app-view .vx-pane{padding:18px 13px}
+ #app-view .vx-chat-body{padding:16px 12px 10px}
+ #app-view .vx-main-head{padding:0 13px}
+ #app-view .vx-composer-wrap{padding-bottom:10px}
+}
+@media(max-width:420px){
+ #app-view .app-shell{grid-template-columns:60px minmax(0,1fr)}
+ #app-view .app-sidebar{width:60px}
+ #app-view .vx-nav{padding:0 5px}
+ #app-view .vx-dm-list{padding:0 5px}
+ #app-view .vx-chat-body{padding:12px 9px}
+ #app-view .vx-message{gap:8px}
+ #app-view .vx-message .vx-avatar{width:30px;height:30px}
+ #app-view .vx-composer{gap:6px;padding:7px}
+ #app-view .vx-green-btn{padding:9px 11px}
+}
+
 </style>
 </head>
 <body>
@@ -174,6 +252,26 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
     return data;
   };
   const vx = { friends:[], requests:[], rooms:[], activeFriend:null, activeRoom:null, messages:[], view:'friends', friendTab:'all', busy:false };
+
+  function avatarPhoto(name){
+    const key=String(name||'vexa').trim().toLowerCase();let hash=0;
+    for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))>>>0;
+    return 'https://i.pravatar.cc/120?img='+(hash%70+1);
+  }
+  function paintAvatars(root=document){
+    root.querySelectorAll('#app-view .vx-avatar').forEach(el=>{
+      if(el.querySelector('img'))return;
+      const name=el.closest('.vx-message')?.querySelector('.vx-message-meta strong')?.textContent
+        ||el.closest('.vx-person-row')?.querySelector('.vx-dm-copy strong')?.textContent
+        ||el.closest('.vx-dm')?.querySelector('.vx-dm-copy strong')?.textContent
+        ||el.closest('.vx-mebar')?.querySelector('.vx-dm-copy strong')?.textContent
+        ||el.textContent.trim()||'vexa';
+      const img=document.createElement('img');img.alt='تصویر نمایه';img.loading='lazy';img.src=avatarPhoto(name);
+      img.onerror=()=>{img.remove();el.style.color='#fff';el.style.fontSize='14px';};
+      el.insertBefore(img,el.firstChild);
+    });
+  }
+
   function initials(name){return String(name||'?').trim().slice(0,1).toUpperCase();}
   function fullTag(u){return (u?.username||'کاربر')+(u?.shortId?'#'+u.shortId:'');}
   function toast(message){const old=document.querySelector('.vx-toast');if(old)old.remove();const el=document.createElement('div');el.className='vx-toast';el.textContent=message;document.body.appendChild(el);setTimeout(()=>el.remove(),3000);}
@@ -197,7 +295,7 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
     $('auth-view').classList.add('hidden');$('app-view').classList.remove('hidden');
     const user=state.user||currentUser()||{username:'کاربر وکسا',email:''};state.user=user;
     $('app-view').innerHTML='<div class="app-shell"><aside class="app-sidebar"><div class="vx-brand"><span class="vx-logo">V</span><span class="vx-brand-name">vexa</span></div><input class="vx-search" id="vx-search" placeholder="جست‌وجو یا شروع گفتگو" aria-label="جست‌وجو"><nav class="vx-nav"><button id="vx-friends" class="active"><span class="vx-nav-icon">👥</span><span class="vx-nav-label">دوستان</span></button><button id="vx-pending"><span class="vx-nav-icon">✉️</span><span class="vx-nav-label">درخواست‌ها <span id="vx-pending-count"></span></span></button></nav><div class="vx-section-head"><span>پیام‌های مستقیم</span><button id="vx-add-friend" title="افزودن دوست">＋</button></div><div class="vx-dm-list" id="vx-dm-list"></div><div class="vx-mebar"><div class="vx-avatar small" id="vx-my-avatar"></div><div class="vx-dm-copy"><strong id="vx-my-name"></strong><small>آنلاین</small></div><button id="vx-logout" title="خروج">↪</button></div></aside><section class="app-main"><header class="vx-main-head"><span class="vx-head-symbol" id="vx-head-symbol">👥</span><h2 id="vx-head-title">دوستان</h2><div class="vx-head-tools"><span title="کمک">ⓘ</span></div></header><div class="app-content" id="vx-content"></div></section></div>';
-    $('vx-my-avatar').textContent=initials(user.username);$('vx-my-name').textContent=user.username||'کاربر وکسا';
+    $('vx-my-avatar').textContent=initials(user.username);$('vx-my-avatar').setAttribute('aria-label',user.username||'کاربر وکسا');$('vx-my-name').textContent=user.username||'کاربر وکسا';paintAvatars($('app-view'));
     $('vx-friends').onclick=()=>{vx.view='friends';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();};
     $('vx-pending').onclick=()=>{vx.view='pending';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();};
     $('vx-add-friend').onclick=()=>{vx.view='friends';vx.friendTab='add';vx.activeFriend=null;renderWorkspace();setTimeout(()=>$('vx-friend-tag')?.focus(),30);};
@@ -209,7 +307,7 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
     const root=$('vx-dm-list');if(!root)return;const q=($('vx-search')?.value||'').toLowerCase();
     const visible=vx.friends.filter(x=>fullTag(x.user).toLowerCase().includes(q));
     root.innerHTML=visible.map(x=>'<button class="vx-dm '+(vx.activeFriend&&String(friendId(vx.activeFriend))===String(friendId(x.user))?'active':'')+'" data-dm="'+safe(friendId(x.user))+'"><span class="vx-avatar">'+safe(initials(x.user.username))+'<i class="vx-online"></i></span><span class="vx-dm-copy"><strong>'+safe(x.user.username)+'</strong><small>'+safe(x.user.shortId?'#'+x.user.shortId:'پیام مستقیم')+'</small></span></button>').join('')||'<div class="vx-muted-note" style="padding:10px">هنوز دوستی اضافه نکردی.</div>';
-    root.querySelectorAll('[data-dm]').forEach(b=>b.onclick=()=>{const item=vx.friends.find(x=>String(friendId(x.user))===b.dataset.dm);if(item)openDm(item.user);});
+    paintAvatars(root.parentElement||document);root.querySelectorAll('[data-dm]').forEach(b=>b.onclick=()=>{const item=vx.friends.find(x=>String(friendId(x.user))===b.dataset.dm);if(item)openDm(item.user);});
     const count=$('vx-pending-count');if(count)count.textContent=vx.requests.length?'('+vx.requests.length+')':'';
   }
   function renderWorkspace(){
@@ -218,7 +316,7 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
     if(vx.view==='pending'){
       $('vx-head-symbol').textContent='✉️';$('vx-head-title').textContent='درخواست‌های دوستی';
       content.innerHTML='<div class="vx-pane"><h1>درخواست‌های دوستی</h1><p>آدم‌هایی که می‌خوان باهات ارتباط بگیرن اینجان.</p>'+ (vx.requests.length?vx.requests.map(r=>{const u=r.from||{};return '<div class="vx-person-row"><div class="vx-avatar">'+safe(initials(u.username))+'</div><div class="vx-dm-copy"><strong>'+safe(fullTag(u))+'</strong><small>درخواست دوستی</small></div><div class="vx-person-actions"><button data-accept="'+safe(r.id||r._id)+'" title="قبول">✓</button></div></div>';}).join(''):'<div class="vx-empty-chat"><div class="big">📭</div><h2>فعلاً خبری نیست</h2><p>وقتی درخواست جدیدی بیاد اینجا نمایش داده می‌شه.</p></div>')+'</div>';
-      content.querySelectorAll('[data-accept]').forEach(b=>b.onclick=async()=>{try{await apiCall('/friends/accept-pending-request',{method:'PATCH',body:JSON.stringify({id:b.dataset.accept})});toast('درخواست دوستی قبول شد 💚');await loadWorkspace();}catch(e){toast(e.message);}});
+      paintAvatars(content);content.querySelectorAll('[data-accept]').forEach(b=>b.onclick=async()=>{try{await apiCall('/friends/accept-pending-request',{method:'PATCH',body:JSON.stringify({id:b.dataset.accept})});toast('درخواست دوستی قبول شد 💚');await loadWorkspace();}catch(e){toast(e.message);}});
       return;
     }
     $('vx-head-symbol').textContent='👥';$('vx-head-title').textContent='دوستان';
@@ -227,7 +325,7 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
     $('vx-tab-all').onclick=()=>{vx.friendTab='all';renderWorkspace();};$('vx-tab-add').onclick=()=>{vx.friendTab='add';renderWorkspace();};
     const first=$('vx-first-add');if(first)first.onclick=()=>{vx.friendTab='add';renderWorkspace();};
     const form=$('vx-add-form');if(form)form.onsubmit=async e=>{e.preventDefault();const tag=$('vx-friend-tag').value.trim();const match=tag.match(/^(.+)#(\d{4})$/);if(!match){toast('فرمت درست: username#1234');return;}const btn=form.querySelector('button');btn.disabled=true;try{await apiCall('/friends/add-friend-request',{method:'POST',body:JSON.stringify({username:match[1].trim(),shortId:match[2]})});toast('درخواست دوستی ارسال شد!');vx.friendTab='all';await loadWorkspace();}catch(err){toast(err.message);}finally{btn.disabled=false;}};
-    content.querySelectorAll('[data-message]').forEach(b=>b.onclick=()=>{const item=vx.friends.find(x=>String(friendId(x.user))===b.dataset.message);if(item)openDm(item.user);});
+    paintAvatars(content);content.querySelectorAll('[data-message]').forEach(b=>b.onclick=()=>{const item=vx.friends.find(x=>String(friendId(x.user))===b.dataset.message);if(item)openDm(item.user);});
   }
   async function openDm(friend,keepScroll=false){
     vx.activeFriend=friend;vx.view='chat';renderDmList();$('vx-head-title').textContent=fullTag(friend);$('vx-head-symbol').textContent='＠';
@@ -245,7 +343,7 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
     const content=$('vx-content'),friend=vx.activeFriend;if(!content||!friend||!vx.activeRoom)return;
     const messages=vx.messages.map(m=>{const mine=isMyId(m.senderId?.id||m.senderId?._id||m.senderId);const who=mine?(state.user?.username||'من'):(friend.username||'دوست');const date=m.createdAt?new Date(m.createdAt):null;return '<div class="vx-message"><div class="vx-avatar">'+safe(initials(who))+'</div><div class="vx-message-copy"><div class="vx-message-meta"><strong>'+safe(who)+'</strong><time>'+(date&&!Number.isNaN(date.getTime())?date.toLocaleString('fa-IR',{hour:'2-digit',minute:'2-digit',month:'short',day:'numeric'}):'')+'</time></div><div class="vx-message-text">'+safe(m.message||m.text||'')+'</div></div></div>';}).join('');
     content.innerHTML='<div class="vx-chat"><div class="vx-chat-body" id="vx-chat-body">'+(!messages?'<div class="vx-chat-intro"><div class="vx-avatar">'+safe(initials(friend.username))+'</div><h1>'+safe(friend.username)+'</h1><p dir="ltr">'+safe(fullTag(friend))+'</p><p style="margin-top:12px">این ابتدای گفتگوی شماست. یه سلام بفرست 👋</p></div>':'')+messages+'</div><div class="vx-composer-wrap"><form class="vx-composer" id="vx-composer"><textarea id="vx-message-input" rows="1" placeholder="پیام به '+safe(friend.username)+'" aria-label="پیام"></textarea><button type="submit" aria-label="ارسال پیام">➤</button></form><div class="vx-muted-note" style="padding:7px 3px 0">گفت‌وگوی مستقیم · Enter برای ارسال، Shift+Enter برای خط جدید</div></div></div>';
-    const body=$('vx-chat-body');if(body)body.scrollTop=body.scrollHeight;
+    paintAvatars(content);const body=$('vx-chat-body');if(body)body.scrollTop=body.scrollHeight;
     const form=$('vx-composer'),input=$('vx-message-input');if(!form||!input)return;
     input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
     input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,150)+'px';});
