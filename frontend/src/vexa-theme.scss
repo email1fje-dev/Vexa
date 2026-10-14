@@ -1,0 +1,21 @@
+:root {
+  --vexa-green: #22c55e;
+  --vexa-green-strong: #16a34a;
+  --vexa-green-soft: #86efac;
+  --vexa-black: #090d0b;
+  --vexa-panel: #111915;
+  --vexa-panel-raised: #18231c;
+  --vexa-border: #26382c;
+  --vexa-text: #ecfdf3;
+  --vexa-muted: #9fb5a5;
+}
+body { background: var(--vexa-black); }
+.channels--scrollbar::-webkit-scrollbar-track,
+.main--chat--scrollbar::-webkit-scrollbar-track,
+.sidebar--users--scrollbar::-webkit-scrollbar-track,
+.channels--scrollbar::-webkit-scrollbar,
+.main--chat--scrollbar::-webkit-scrollbar,
+.sidebar--users--scrollbar::-webkit-scrollbar { background-color: var(--vexa-panel); }
+.channels--scrollbar::-webkit-scrollbar-thumb,
+.main--chat--scrollbar::-webkit-scrollbar-thumb,
+.sidebar--users--scrollbar::-webkit-scrollbar-thumb { background-color: var(--vexa-border); }
