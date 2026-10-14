@@ -72,3 +72,8 @@ REDIS_HOST=redis://localhost:6379
 ```
 
 ## production deploy
+
+
+## Vexa deployment
+
+The backend serves the Persian web app from `public/index.html` and exposes the REST API under `/api/v1`. Railway health checks use `GET /health`. Configure `MONGODB_URL`, `JWT_SECRET`, and `REDIS_HOST` in the service environment; email verification is not required by the registration endpoint.
