@@ -8,14 +8,27 @@
   --vexa-border: #26382c;
   --vexa-text: #ecfdf3;
   --vexa-muted: #9fb5a5;
+  color-scheme: dark;
 }
-body { background: var(--vexa-black); }
+html, body, #root { min-height: 100%; background: #090d0b !important; color: #ecfdf3; }
+body { margin: 0; font-family: Tahoma, Arial, sans-serif; }
+.bg-discord-semi600, .bg-discord-600, .bg-discord-heroBackground, .bg-discord-notQuiteDark {
+  background-color: #090d0b !important;
+}
+.bg-discord-openGray, .bg-discord-transparentBlack2 { background-color: #111915 !important; }
+.bg-discord-indigo, .bg-discord-experiment500 { background-color: #16a34a !important; }
+.hover\\:bg-discord-indigo:hover, .hover\\:bg-discord-experiment500Hover:hover { background-color: #15803d !important; }
+.text-discord-experiment500, .text-discord-indigo, .text-discord-textLink { color: #4ade80 !important; }
+.text-discord-500, .text-discord-mainText, .text-discord-notQuiteDark { color: #b7c9bb !important; }
+.border-discord-experiment500 { border-color: #22c55e !important; }
+input, textarea, select { background-color: #0d130f !important; color: #ecfdf3 !important; border-color: #2b4231 !important; }
+button:focus, input:focus, textarea:focus { outline-color: #22c55e !important; }
 .channels--scrollbar::-webkit-scrollbar-track,
 .main--chat--scrollbar::-webkit-scrollbar-track,
 .sidebar--users--scrollbar::-webkit-scrollbar-track,
 .channels--scrollbar::-webkit-scrollbar,
 .main--chat--scrollbar::-webkit-scrollbar,
-.sidebar--users--scrollbar::-webkit-scrollbar { background-color: var(--vexa-panel); }
+.sidebar--users--scrollbar::-webkit-scrollbar { background-color: #111915; }
 .channels--scrollbar::-webkit-scrollbar-thumb,
 .main--chat--scrollbar::-webkit-scrollbar-thumb,
-.sidebar--users--scrollbar::-webkit-scrollbar-thumb { background-color: var(--vexa-border); }
+.sidebar--users--scrollbar::-webkit-scrollbar-thumb { background-color: #26382c; }
