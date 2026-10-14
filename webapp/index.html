@@ -104,4 +104,36 @@ svg [fill="#5865f2"],svg [fill="#5865F2"],svg [fill="#5865f2" i]{fill:#22c55e!im
  var queued=false;function schedule(){if(!queued){queued=true;requestAnimationFrame(function(){queued=false;run();});}}
  document.addEventListener('DOMContentLoaded',schedule);new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true,characterData:true});schedule();
 })();
-</script></head><body><div id="root"></div><script src="./js/runtime.2cf7acf6d00a6f8e9d2a.bundle.js"></script><script src="./js/main.3a239e7ad8d28fca7bf9.bundle.js"></script></body></html>
+</script>
+<script id="vexa-auth-bridge">
+(function () {
+  var supabaseUrl = "https://txnisvhvacftvndzsnwa.supabase.co";
+  var publicKey = "sb_publishable_UX6cddk5gQa1gpPIZ2xFDg_Ox9JlNhf";
+  var originalOpen = XMLHttpRequest.prototype.open;
+  var originalSend = XMLHttpRequest.prototype.send;
+  var originalSetHeader = XMLHttpRequest.prototype.setRequestHeader;
+  XMLHttpRequest.prototype.open = function (method, url) {
+    var target = String(url || "");
+    if (/\/api\/v1\/auth\/(login|register|refresh-tokens|logout)(\?|$)/i.test(target)) {
+      var parsed = new URL(target, window.location.origin);
+      this.__vexaAuthBridge = true;
+      target = supabaseUrl + "/functions/v1/vexa-auth" + parsed.pathname + parsed.search;
+    }
+    return originalOpen.apply(this, [method, target].concat(Array.prototype.slice.call(arguments, 2)));
+  };
+  XMLHttpRequest.prototype.setRequestHeader = function (name, value) {
+    if (this.__vexaAuthBridge && String(name).toLowerCase() === "authorization") {
+      return originalSetHeader.call(this, name, "Bearer " + publicKey);
+    }
+    return originalSetHeader.call(this, name, value);
+  };
+  XMLHttpRequest.prototype.send = function (body) {
+    if (this.__vexaAuthBridge) {
+      try { originalSetHeader.call(this, "apikey", publicKey); } catch (_) {}
+    }
+    return originalSend.call(this, body);
+  };
+})();
+</script>
+
+</head><body><div id="root"></div><script src="./js/runtime.2cf7acf6d00a6f8e9d2a.bundle.js"></script><script src="./js/main.3a239e7ad8d28fca7bf9.bundle.js"></script></body></html>
