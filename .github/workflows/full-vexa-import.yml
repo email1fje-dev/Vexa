@@ -4,6 +4,10 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/full-vexa-import.yml"
+      - "frontend/src/pages/Login/**"
+      - "frontend/src/pages/Register/**"
+      - "frontend/src/vexa-theme.scss"
+      - "frontend/src/App.js"
   workflow_dispatch:
 permissions:
   contents: write
@@ -38,6 +42,8 @@ jobs:
           rsync -a --delete --exclude='.env' --exclude='.env.*' $SOURCE_ROOT/backend/ backend/
           # The app is hosted inside /webapp/, so hash routing avoids a blank screen from a path mismatch.
           sed -i "s/{ BrowserRouter as Router }/{ HashRouter as Router }/" frontend/src/AppProviders.js
+          # Always open the app on the login page, not the marketing landing page.
+          sed -i "s|<Route exact path='/' component={Landing} />|<Route exact path='/' component={Login} />|" frontend/src/App.js
           printf 'API_URL=http://localhost:4000\n' > frontend/.env.example
           printf 'API_URL=http://localhost:4000\n' > frontend/.env.production
           cat > backend/.env.example <<'EOF'
