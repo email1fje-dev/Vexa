@@ -45,6 +45,16 @@ jobs:
               echo
               echo "## فایل‌های راهنمای پروژه"
               find /tmp/vexa-zip-inspect -maxdepth 4 -type f \( -iname 'README*' -o -iname 'vite.config.*' -o -iname 'next.config.*' -o -iname 'webpack.config.*' -o -iname 'Dockerfile' \) -printf '%P\n' | sort
+              for rel in frontend/.env.production frontend/config/paths.js frontend/config/webpack.prod.js frontend/src/api/client.js frontend/src/api/auth/index.js frontend/public/index.html; do
+                f="/tmp/vexa-zip-inspect/discord-clone-main/$rel"
+                if [ -f "$f" ]; then
+                  echo
+                  echo "## SOURCE: $rel"
+                  printf '\x60\x60\x60\n'
+                  sed -n '1,220p' "$f"
+                  printf '\n\x60\x60\x60\n'
+                fi
+              done
             } > ZIP-INSPECTION.md
           fi
       - name: Save inspection report to the repository
