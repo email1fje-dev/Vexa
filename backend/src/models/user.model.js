@@ -47,6 +47,9 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    bio: { type: String, trim: true, maxlength: 160, default: '' },
+    avatar: { type: String, default: '' },
+    presenceStatus: { type: String, enum: ['online', 'idle', 'dnd'], default: 'online' },
   },
   {
     timestamps: true,
