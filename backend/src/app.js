@@ -40,7 +40,7 @@ passport.use('jwt', jwtStrategy);
 app.use('/api/v1', routes);
 
 // Serve the Persian web app from the same Railway service
-app.use(express.static(path.join(__dirname, '../../webapp'), { index: 'index.html' }));
+app.use(express.static(path.join(__dirname, '../public'), { index: 'index.html' }));
 
 // send back a 404 error for unknown routes
 app.use((req, res, next) => {
