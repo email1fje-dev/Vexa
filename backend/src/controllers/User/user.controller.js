@@ -4,6 +4,23 @@ const ApiError = require('../../utils/ApiError');
 const catchAsync = require('../../utils/catchAsync');
 const { userService } = require('../../services');
 
+const updateMyProfile = catchAsync(async (req, res) => {
+  const allowed = {};
+  if (typeof req.body.username === 'string') allowed.username = req.body.username.trim().slice(0, 32);
+  if (typeof req.body.bio === 'string') allowed.bio = req.body.bio.trim().slice(0, 160);
+  if (typeof req.body.avatar === 'string') {
+    const avatar = req.body.avatar;
+    if (avatar && (!/^data:image\/(png|jpeg|webp);base64,/.test(avatar) || avatar.length > 400000)) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Profile image must be a small PNG, JPG, or WebP image');
+    }
+    allowed.avatar = avatar;
+  }
+  if (['online', 'idle', 'dnd'].includes(req.body.presenceStatus)) allowed.presenceStatus = req.body.presenceStatus;
+  if (!Object.keys(allowed).length) throw new ApiError(httpStatus.BAD_REQUEST, 'No profile changes provided');
+  const user = await userService.updateUserById(req.user.id, allowed);
+  res.send(user);
+});
+
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
   res.status(httpStatus.CREATED).send(user);
@@ -36,6 +53,7 @@ const deleteUser = catchAsync(async (req, res) => {
 
 module.exports = {
   createUser,
+  updateMyProfile,
   getUsers,
   getUser,
   updateUser,
