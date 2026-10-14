@@ -37,7 +37,7 @@ export default function Index() {
   }
   //
   return (
-    <div className='flex flex-col   relative bg-discord-semi600 h-screen w-full'>
+    <div dir='rtl' style={{direction:'rtl',fontFamily:'Tahoma, Segoe UI, sans-serif',background:'radial-gradient(ellipse at top, #12351f 0%, #080d09 58%)',color:'#f1f8f2',minHeight:'100vh',height:'auto',paddingBottom:'32px'}} className='flex flex-col relative h-screen w-full'>
       <LoginBg className='z-0 hidden object-cover object-center sm:block absolute top-0 bottom-0 w-full h-screen' />
       {/* <img
         src={loginBg}
@@ -46,7 +46,7 @@ export default function Index() {
 
       <Link
         to='/'
-        className='z-10 text-white mt-16 sm:self-start mx-auto sm:ml-8 sm:mt-8'
+        className='z-10 text-white mt-8 sm:self-start mx-auto sm:ml-8 sm:mt-8'
       >
         <svg className='fill-current w-14 h-8' viewBox='0 0 124 34'>
           <g fill='currentColor'>
@@ -63,11 +63,11 @@ export default function Index() {
         </svg>
       </Link>
 
-      <div className='z-10 bg-discord-semi600 w-full sm:w-4/6 md:w-4/6 lg:w-4/6 xl:w-2/5 rounded-md p-5 m-12 flex flex-row mx-auto mt-16'>
+      <div className='z-10 w-full sm:w-4/6 md:w-4/6 lg:w-4/6 xl:w-2/5 rounded-2xl p-6 sm:p-8 mx-auto mt-8 sm:mt-12 flex flex-row border' style={{background:'#101812',borderColor:'#294432',boxShadow:'0 24px 70px #0006',maxWidth:'560px'}}>
         <div className='flex flex-col w-full lg:w-2/4'>
-          <h4 className='text-xl text-white font-semibold'>Welcome back!</h4>
+          <h4 className='text-xl text-white font-semibold'>خوش برگشتی!</h4>
           <p className='text-sm text-discord-mainText'>
-            We're so excited to see you again!
+            خیلی خوشحالیم که دوباره می‌بینیمت.
           </p>
 
           <Formik
@@ -81,9 +81,9 @@ export default function Index() {
                   fieldClass='mb-4 mt-4'
                   labelClass='block text-discord-500 font-semibold text-xs mb-2'
                   inputClass='focus:outline-none border-discord-transparentBlack1 border-1
-                   focus:ring-2 focus:ring-blue-400 bg-discord-transparentBlack2 text-white
+                   focus:ring-2 focus:ring-green-400 bg-discord-transparentBlack2 text-white
                     w-full rounded py-1 px-2'
-                  label='EMAIL'
+                  label='ایمیل'
                   name='email'
                   type='email'
                 />
@@ -91,9 +91,9 @@ export default function Index() {
                   fieldClass='mb-4 mt-4'
                   labelClass='block text-discord-500 font-semibold text-xs mb-2'
                   inputClass='focus:outline-none border-discord-transparentBlack1 border-1
-                   focus:ring-2 focus:ring-blue-400 bg-discord-transparentBlack2 text-white
+                   focus:ring-2 focus:ring-green-400 bg-discord-transparentBlack2 text-white
                     w-full rounded py-1 px-2'
-                  label='PASSWORD'
+                  label='گذرواژه'
                   name='password'
                   type='password'
                 />
@@ -101,17 +101,17 @@ export default function Index() {
                   href='#'
                   className='text-xs text-discord-textLink hover:underline'
                 >
-                  Forgot your password?
+                  گذرواژه‌ات را فراموش کرده‌ای؟
                 </a>
 
                 <button
                   type='submit'
-                  className='transition-colors duration-300 focus:outline-none w-full rounded p-2 mt-8 block bg-discord-experiment500 hover:bg-discord-experiment500Disabled text-white font-semibold'
+                  className='transition-colors duration-300 focus:outline-none w-full rounded p-2 mt-8 block bg-green-700 hover:bg-green-600 text-white font-semibold'
                 >
                   {isSubmitting ? (
                     <LoadingCircle className='animate-spin h-5 w-5 text-white mx-auto' />
                   ) : (
-                    'Login'
+                    'ورود به حساب'
                   )}
                 </button>
               </Form>
@@ -120,13 +120,13 @@ export default function Index() {
 
           <div className='mt-2'>
             <span className='text-xs text-discord-popOutHeader mr-2'>
-              Need an account?
+              حساب کاربری نداری؟
             </span>
             <Link
               to='/register'
               className='text-xs text-discord-textLink hover:underline'
             >
-              Register
+              ثبت‌نام
             </Link>
           </div>
         </div>
@@ -134,14 +134,14 @@ export default function Index() {
           <img
             src={QrCode}
             className='w-40 h-40 mt-10 mx-auto rounded-md border-white border-8'
-            alt='QR code to login'
+            alt='کد QR برای ورود'
           />
           <h3 className='text-white text-2xl bold mt-4 text-center'>
-            Log in with QR Code
+            ورود با کد QR
           </h3>
           <p className='text-discord-mainText mt-4 w-64 text-center mt-'>
-            Scan this with the <strong>Discord mobile app</strong>
-            to log in instantly.
+            این کد را با <strong>اپلیکیشن موبایل وکسا</strong> اسکن کن
+            تا فوراً وارد حسابت شوی.
           </p>
         </div>
       </div>
