@@ -34,8 +34,6 @@ jobs:
         id: build-webapp
         continue-on-error: true
         working-directory: frontend
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
         run: |
           set -euo pipefail
           exec > >(tee /tmp/vexa-build.log) 2>&1
