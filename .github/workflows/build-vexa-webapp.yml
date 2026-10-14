@@ -1,0 +1,78 @@
+name: Build Vexa web app from uploaded ZIP
+
+on:
+  push:
+    paths:
+      - ".github/workflows/build-vexa-webapp.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-webapp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Vexa
+        uses: actions/checkout@v4
+      - name: Set up Node and Yarn
+        uses: actions/setup-node@v4
+        with:
+          node-version: "16.20.2"
+      - name: Install Yarn Classic
+        run: npm install --global yarn@1.22.22
+      - name: Build the frontend from the uploaded ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="discord-clone-main (1).zip"
+          test -f "$ZIP"
+          mkdir -p /tmp/vexa-zip-source
+          unzip -q "$ZIP" -d /tmp/vexa-zip-source
+          FRONTEND="/tmp/vexa-zip-source/discord-clone-main/frontend"
+          test -f "$FRONTEND/package.json"
+          printf 'API_URL=\n' > "$FRONTEND/.env.production"
+          sed -i "s|publicPath: '/'|publicPath: './'|g" "$FRONTEND/config/webpack.prod.js" "$FRONTEND/config/webpack.common.js"
+          cd "$FRONTEND"
+          yarn install --frozen-lockfile --network-timeout 120000
+          yarn build
+          test -f "$FRONTEND/build/index.html"
+          cd "$GITHUB_WORKSPACE"
+          cp webapp/index.html /tmp/vexa-original-index.html
+          cp -a "$FRONTEND/build/." webapp/
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          original = Path('/tmp/vexa-original-index.html').read_text(encoding='utf-8')
+          built = Path('webapp/index.html').read_text(encoding='utf-8')
+          styles = re.findall(r'<link\b(?=[^>]*\brel=[\"\']stylesheet[\"\'])[^>]*>', built, re.I)
+          scripts = re.findall(r'<script\b(?=[^>]*\bsrc=)[^>]*>\s*</script>', built, re.I)
+          def relative(tag):
+              return re.sub(r'((?:href|src)=[\"\'])/(?!/)', r'\1./', tag)
+          styles = [relative(tag) for tag in styles]
+          scripts = [relative(tag) for tag in scripts]
+          if not scripts:
+              raise SystemExit('Build output contains no external JavaScript bundles')
+          original = re.sub(r'<link\b(?=[^>]*\brel=[\"\']stylesheet[\"\'])[^>]*>', '', original, flags=re.I)
+          css = ''.join(styles) + '<link href="./vexa-overrides.css" rel="stylesheet">'
+          marker = '<style id="vexa-global-theme">'
+          if marker in original:
+              original = original.replace(marker, css + marker, 1)
+          else:
+              original = original.replace('</head>', css + '</head>', 1)
+          original = re.sub(r'<script\b(?=[^>]*\bsrc=)[^>]*>\s*</script>', '', original, flags=re.I)
+          original = original.replace('</body>', ''.join(scripts) + '</body>')
+          Path('webapp/index.html').write_text(original, encoding='utf-8')
+          PY
+          echo "Build completed; existing Vexa translations, auth bridge, theme toggle, and backend files were preserved."
+      - name: Commit only web app output
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add webapp/
+          if git diff --cached --quiet; then
+            echo "No web app changes to commit."
+          else
+            git commit -m "Build Vexa web app from uploaded Discord clone ZIP"
+            git push
+          fi
