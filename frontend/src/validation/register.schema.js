@@ -14,6 +14,6 @@ export default yup.object().shape({
     .string()
     .min(6, 'Password must be at least 6 characters')
     .max(100)
-    .required('Password is required')
+    .required('وارد کردن گذرواژه الزامی است')
     .defined(),
 })
