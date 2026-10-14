@@ -22,9 +22,12 @@ jobs:
       - name: Install Yarn Classic
         run: npm install --global yarn@1.22.22
       - name: Build the frontend from the uploaded ZIP
+        id: build-webapp
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
+          exec > >(tee /tmp/vexa-build.log) 2>&1
           ZIP="discord-clone-main (1).zip"
           test -f "$ZIP"
           mkdir -p /tmp/vexa-zip-source
@@ -66,6 +69,7 @@ jobs:
           PY
           echo "Build completed from ZIP; only webapp output is committed, while backend source and settings stay untouched."
       - name: Commit only web app output
+        if: steps.build-webapp.outcome == 'success'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -76,3 +80,29 @@ jobs:
             git commit -m "Build Vexa web app from uploaded Discord clone ZIP"
             git push
           fi
+
+      - name: Save build diagnostic report
+        if: always()
+        run: |
+          {
+            echo "# Vexa web app build status"
+            echo
+            echo "Build step outcome: ${{ steps.build-webapp.outcome }}"
+            echo
+            echo "Only the webapp directory is targeted by the build workflow; backend files are not changed."
+            echo
+            echo "## Recent build output"
+            echo '```text'
+            if [ -f /tmp/vexa-build.log ]; then tail -n 120 /tmp/vexa-build.log; else echo 'No build log was produced.'; fi
+            echo '```'
+          } > BUILD-STATUS.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add BUILD-STATUS.md
+          if ! git diff --cached --quiet; then
+            git commit -m "Record Vexa web app build status"
+            git push
+          fi
+      - name: Fail workflow if the build failed
+        if: steps.build-webapp.outcome == 'failure'
+        run: exit 1
