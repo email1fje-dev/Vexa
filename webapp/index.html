@@ -156,4 +156,45 @@ svg [fill="#5865f2"],svg [fill="#5865F2"],svg [fill="#5865f2" i]{fill:#22c55e!im
   }
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",mount); else mount();
 })();
-</script><script src="./js/runtime.2cf7acf6d00a6f8e9d2a.bundle.js"></script><script src="./js/main.22d3ebd1da9110dd51a1.bundle.js"></script></body></html>
+</script><script src="./js/runtime.2cf7acf6d00a6f8e9d2a.bundle.js"></script><script src="./js/main.22d3ebd1da9110dd51a1.bundle.js"></script>
+<script id="vexa-blank-screen-guard">
+(function(){
+  var shown=false, timer;
+  function showFallback(reason){
+    if(shown) return;
+    var root=document.getElementById("root");
+    if(root && (root.children.length>0 || (root.textContent||"").trim().length>0)) return;
+    shown=true;
+    var panel=document.createElement("main");
+    panel.id="vexa-load-error";
+    panel.setAttribute("dir","rtl");
+    panel.style.cssText="position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:24px;background:var(--vexa-bg,#080b09);color:var(--vexa-text,#f2f7f3);font-family:Tahoma,Arial,sans-serif;text-align:center";
+    panel.innerHTML='<section style="width:min(100%,460px);padding:30px 24px;border:1px solid var(--vexa-line,#28382d);border-radius:22px;background:var(--vexa-surface,#101612);box-shadow:0 20px 70px #0006"><div style="font-size:38px;font-weight:900;color:var(--vexa-green,#21c875);letter-spacing:-1px">Vexa</div><div style="width:54px;height:4px;border-radius:8px;background:var(--vexa-green,#21c875);margin:18px auto"></div><h1 style="font-size:22px;margin:0 0 12px">وب‌اپ بارگذاری نشد</h1><p style="line-height:2;color:var(--vexa-muted,#a1afa5);margin:0 0 20px">صفحه خالی نماند؛ فایل اصلی برنامه اجرا نشد یا خطای جاوااسکریپت رخ داد. اتصال و فایل‌های برنامه باید بررسی شوند.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button id="vexa-retry" style="border:0;border-radius:12px;padding:12px 20px;background:var(--vexa-green,#21c875);color:#06130a;font-weight:800;cursor:pointer">تلاش دوباره</button><button id="vexa-login-retry" style="border:1px solid var(--vexa-line,#28382d);border-radius:12px;padding:12px 20px;background:transparent;color:inherit;cursor:pointer">رفتن به ورود</button></div><p id="vexa-error-detail" style="font-size:12px;opacity:.7;direction:ltr;overflow-wrap:anywhere;margin:18px 0 0"></p></section>';
+    document.body.appendChild(panel);
+    document.getElementById("vexa-retry").onclick=function(){location.reload();};
+    document.getElementById("vexa-login-retry").onclick=function(){location.href=location.pathname+"?screen=login";};
+    var detail=document.getElementById("vexa-error-detail");
+    if(detail && reason) detail.textContent=String(reason).slice(0,180);
+  }
+  window.addEventListener("error",function(e){
+    if(e && (e.target instanceof HTMLScriptElement || e.target instanceof HTMLLinkElement)){
+      setTimeout(function(){showFallback("بارگذاری فایل ناموفق: "+(e.target.src||e.target.href||"resource"));},250);
+    } else if(e && e.message) {
+      setTimeout(function(){showFallback("JavaScript: "+e.message);},500);
+    }
+  },true);
+  window.addEventListener("unhandledrejection",function(e){
+    setTimeout(function(){showFallback("خطای برنامه: "+(e.reason && e.reason.message || e.reason || "Promise rejected"));},500);
+  });
+  function check(){
+    var root=document.getElementById("root");
+    if(root && (root.children.length>0 || (root.textContent||"").trim().length>0)) return;
+    showFallback("React app did not render into #root");
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",function(){timer=setTimeout(check,3500);});
+  else timer=setTimeout(check,3500);
+  setTimeout(function(){var p=document.getElementById("vexa-load-error"),r=document.getElementById("root");if(p&&r&&(r.children.length>0||(r.textContent||"").trim()))p.remove();},9000);
+})();
+</script>
+
+</body></html>
