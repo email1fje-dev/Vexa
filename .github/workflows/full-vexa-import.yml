@@ -1,0 +1,106 @@
+name: Full Vexa fork import and web build
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/full-vexa-import.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Vexa
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Import full React app and backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/email1fje-dev/discord-clone.git /tmp/vexa-source
+          mkdir -p frontend backend
+          rsync -a --delete --exclude='.env' --exclude='.env.*' /tmp/vexa-source/frontend/ frontend/
+          rsync -a --delete --exclude='.env' --exclude='.env.*' /tmp/vexa-source/backend/ backend/
+          printf 'API_URL=http://localhost:4000\n' > frontend/.env.example
+          cat > backend/.env.example <<'EOF'
+          PORT=4000
+          FRONTEND_URL=http://localhost:3000
+          MONGODB_URL=mongodb://127.0.0.1:27017/vexa
+          JWT_SECRET=replace-with-a-long-random-secret
+          JWT_ACCESS_EXPIRATION_MINUTES=30
+          JWT_REFRESH_EXPIRATION_DAYS=30
+          JWT_RESET_PASSWORD_TOKEN_EXPIRATION_MINUTES=10
+          JWT_VERIFY_EMAIL_TOKEN_EXPIRATION_MINUTES=10
+          REDIS_HOST=redis://127.0.0.1:6379
+          EOF
+          cp /tmp/vexa-source/LICENSE SOURCE_LICENSE.md
+          cp /tmp/vexa-source/README.md SOURCE_README.md
+          cat > frontend/src/vexa-theme.scss <<'EOF'
+          :root {
+            --vexa-green: #22c55e;
+            --vexa-green-strong: #16a34a;
+            --vexa-green-soft: #86efac;
+            --vexa-black: #090d0b;
+            --vexa-panel: #111915;
+            --vexa-panel-raised: #18231c;
+            --vexa-border: #26382c;
+            --vexa-text: #ecfdf3;
+            --vexa-muted: #9fb5a5;
+          }
+          body { background: var(--vexa-black); }
+          .channels--scrollbar::-webkit-scrollbar-track,
+          .main--chat--scrollbar::-webkit-scrollbar-track,
+          .sidebar--users--scrollbar::-webkit-scrollbar-track,
+          .channels--scrollbar::-webkit-scrollbar,
+          .main--chat--scrollbar::-webkit-scrollbar,
+          .sidebar--users--scrollbar::-webkit-scrollbar { background-color: var(--vexa-panel); }
+          .channels--scrollbar::-webkit-scrollbar-thumb,
+          .main--chat--scrollbar::-webkit-scrollbar-thumb,
+          .sidebar--users--scrollbar::-webkit-scrollbar-thumb { background-color: var(--vexa-border); }
+          EOF
+          printf '\n@import "./vexa-theme.scss";\n' >> frontend/src/app.styles.scss
+          # Use relative asset URLs so the compiled app works under /webapp/ on static hosting.
+          sed -i "s|publicPath: '/'|publicPath: './'|" frontend/config/webpack.prod.js
+          cd frontend
+          npm install --no-audit --no-fund
+          API_URL=http://localhost:4000 npm run build
+          cd ..
+          rm -rf webapp
+          mkdir -p webapp
+          cp -a frontend/dist/. webapp/
+          cat > app.html <<'EOF'
+          <!doctype html>
+          <html lang="fa" dir="rtl">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+            <meta name="theme-color" content="#090d0b">
+            <title>Vexa — وب‌اپ</title>
+            <meta http-equiv="refresh" content="0; url=./webapp/">
+            <style>html,body{margin:0;min-height:100%;background:#090d0b;color:#ecfdf3;font:16px system-ui,Tahoma,sans-serif}main{min-height:100dvh;display:grid;place-content:center;text-align:center;padding:24px;gap:14px}a{color:#22c55e}</style>
+          </head>
+          <body><main><strong>در حال باز کردن وب‌اپ Vexa…</strong><a href="./webapp/">اگر خودکار باز نشد، اینجا بزن.</a></main><script>location.replace(new URL('./webapp/',location.href).href)</script></body>
+          </html>
+          EOF
+          cat > VEXA_INTEGRATION.md <<'EOF'
+          # Vexa integration
+          - The original root `index.html` is preserved.
+          - The Discord-like React frontend source is in `frontend/`.
+          - The Node/Express backend source is in `backend/`.
+          - The production frontend build is in `webapp/`; `app.html` routes into it.
+          - Copy `backend/.env.example` to `backend/.env`, set a strong JWT_SECRET and real MongoDB/Redis URLs, then deploy the backend separately. Update frontend API_URL to the deployed backend before rebuilding for production.
+          - Never commit real environment files or credentials.
+          EOF
+      - name: Commit complete import and built web app
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend backend webapp app.html SOURCE_LICENSE.md SOURCE_README.md VEXA_INTEGRATION.md
+          git diff --cached --quiet && exit 0
+          git commit -m "Replace Vexa web app with full Discord clone fork"
+          git pull --rebase origin main
+          git push origin HEAD:main
