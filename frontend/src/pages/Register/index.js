@@ -54,7 +54,7 @@ export default function Index() {
       <div className='z-10 bg-discord-semi600 w-full sm:w-4/6 md:w-4/6 lg:w-2/6 rounded-md p-5 m-12 flex flex-row mx-auto mt-16'>
         <div className='flex flex-col w-full'>
           <h4 className='text-xl text-white font-semibold text-center'>
-            Create an account
+            ساخت حساب کاربری
           </h4>
 
           <Formik
@@ -68,9 +68,9 @@ export default function Index() {
                   fieldClass='mb-4 mt-4'
                   labelClass='block text-discord-sideBarChannels font-semibold text-xs mb-2'
                   inputClass='focus:outline-none border-discord-transparentBlack1 border-1
-                   focus:ring-2 focus:ring-blue-400 bg-discord-transparentBlack2 text-white
+                   focus:ring-2 focus:ring-green-400 bg-discord-transparentBlack2 text-white
                     w-full rounded py-1 px-2'
-                  label='EMAIL'
+                  label='ایمیل'
                   name='email'
                   type='email'
                 />
@@ -79,9 +79,9 @@ export default function Index() {
                   fieldClass='mb-4 mt-4'
                   labelClass='block text-discord-sideBarChannels font-semibold text-xs mb-2'
                   inputClass='focus:outline-none border-discord-transparentBlack1 border-1
-                   focus:ring-2 focus:ring-blue-400 bg-discord-transparentBlack2 text-white
+                   focus:ring-2 focus:ring-green-400 bg-discord-transparentBlack2 text-white
                     w-full rounded py-1 px-2'
-                  label='USERNAME'
+                  label='نام کاربری'
                   name='username'
                   type='text'
                 />
@@ -90,9 +90,9 @@ export default function Index() {
                   fieldClass='mb-4 mt-4'
                   labelClass='block text-discord-sideBarChannels font-semibold text-xs mb-2'
                   inputClass='focus:outline-none border-discord-transparentBlack1 border-1
-                   focus:ring-2 focus:ring-blue-400 bg-discord-transparentBlack2 text-white
+                   focus:ring-2 focus:ring-green-400 bg-discord-transparentBlack2 text-white
                     w-full rounded py-1 px-2'
-                  label='PASSWORD'
+                  label='گذرواژه'
                   name='password'
                   type='password'
                 />
@@ -123,7 +123,7 @@ export default function Index() {
                       ></path>
                     </svg>
                   ) : (
-                    'Continue'
+                    'ساخت حساب'
                   )}
                 </button>
               </Form>
@@ -135,7 +135,7 @@ export default function Index() {
               href='#'
               className='text-xs text-discord-textLink hover:underline'
             >
-              Already have an account?
+              از قبل حساب کاربری داری؟
             </Link>
           </div>
         </div>
