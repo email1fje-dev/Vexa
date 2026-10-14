@@ -1,5 +1,5 @@
 module.exports = {
-  purge: [],
+  // Purge unused Tailwind utilities in production; the empty list previously emitted several megabytes of CSS.\n  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   target: 'relaxed',
   prefix: '',
   important: false,
