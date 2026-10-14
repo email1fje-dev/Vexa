@@ -18,6 +18,101 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
 @media(max-width:700px){.topbar{width:calc(100% - 28px);height:66px}.top-note{display:none}.auth-layout{width:calc(100% - 28px);display:flex;flex-direction:column;gap:22px;margin:18px auto 32px;min-height:unset;align-items:stretch}.intro{padding:10px 2px 0}.intro h1{font-size:34px;margin:16px 0 10px;letter-spacing:-.8px}.intro>p{font-size:13px;line-height:1.9}.perk-list{grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.perk{font-size:11px;gap:7px;align-items:flex-start}.perk-icon{width:29px;height:29px;border-radius:10px}.preview-card{display:none}.auth-card{max-width:none;padding:23px 19px;border-radius:21px}.card-brand{display:flex;margin-bottom:22px}.auth-card h2{font-size:24px}.foot{width:calc(100% - 28px);flex-wrap:wrap;justify-content:center;text-align:center}.app-shell{display:block}.sidebar{position:fixed;z-index:10;inset:0 auto 0 0;width:270px;transform:translateX(-105%);transition:transform .22s;box-shadow:var(--shadow);border-left:0;border-right:1px solid var(--line)}.sidebar.open{transform:translateX(0)}.mobile-side-toggle{display:grid}.app-topbar{height:65px;padding:0 14px}.app-content{width:calc(100% - 28px);margin:24px auto 45px}.welcome{display:block}.welcome .badge{display:inline-flex;margin-top:15px}.stat-grid{grid-template-columns:1fr;gap:10px}.stat-card{display:grid;grid-template-columns:40px 1fr;align-items:center;column-gap:13px;padding:14px}.stat-icon{grid-row:span 2}.stat-card strong{font-size:17px;margin:0 0 4px}.stat-card span{font-size:11px}.panel{padding:18px}.profile-layout{grid-template-columns:1fr}.profile-card{gap:12px}.profile-card h2{font-size:15px}.app-top-actions .logout-label{display:none}}
 @media(max-width:380px){.brand{font-size:19px}.brand-mark{width:35px;height:35px}.intro h1{font-size:31px}.perk-list{grid-template-columns:1fr}.auth-card{padding:20px 15px}.form-meta{align-items:flex-start;flex-direction:column}.app-top-actions{gap:6px}.app-top-actions .theme-btn{width:38px;height:38px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+
+/* Vexa Discord-style workspace */
+#app-view{position:fixed;inset:0;overflow:hidden;background:#1e1f22;color:#f2f3f5;display:flex!important}
+#app-view.hidden{display:none!important}
+#app-view .app-shell{width:100%;height:100%;display:flex;min-width:0;direction:ltr}
+#app-view .app-sidebar{width:250px;flex:0 0 250px;background:#2b2d31;display:flex;flex-direction:column;min-width:0;border:0}
+#app-view .app-main{flex:1;min-width:0;display:flex;flex-direction:column;background:#313338}
+#app-view .app-topbar{height:58px;min-height:58px;border-bottom:1px solid #26272b;padding:0 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 0 #17181a;direction:ltr}
+#app-view .crumb{font-size:15px;color:#f2f3f5;direction:ltr}
+#app-view .app-top-actions{display:flex;gap:8px;align-items:center}
+#app-view .app-top-actions button{background:transparent;color:#dbdee1;border:0}
+#app-view .app-content{flex:1;min-height:0;overflow:auto;padding:0;direction:ltr}
+.vx-brand{height:58px;display:flex;align-items:center;gap:12px;padding:0 16px;font-weight:900;font-size:18px;border-bottom:1px solid #202125;box-shadow:0 1px 0 #36383d;color:#f2f3f5}
+.vx-logo{width:32px;height:32px;border-radius:11px;background:#23a55a;display:grid;place-items:center;color:white;font-weight:1000}
+.vx-search{margin:12px 10px 14px;width:calc(100% - 20px);border:0;border-radius:5px;background:#1e1f22;color:#dbdee1;padding:9px 10px;font-size:12px;text-align:left;outline:none}
+.vx-nav{padding:0 8px;display:grid;gap:3px}
+.vx-nav button,.vx-section-head,.vx-dm{border:0;background:transparent;color:#b5bac1;border-radius:5px;text-align:left;padding:10px 10px;display:flex;align-items:center;gap:11px;width:100%;font-size:14px}
+.vx-nav button:hover,.vx-dm:hover{background:#35373c;color:#f2f3f5}
+.vx-nav button.active{background:#404249;color:#fff}
+.vx-nav .vx-nav-icon{font-size:19px;width:23px;text-align:center}
+.vx-section-head{font-size:11px;font-weight:800;color:#949ba4;text-transform:uppercase;letter-spacing:.4px;margin-top:16px;padding:8px 10px}
+.vx-section-head button{margin-left:auto;border:0;background:transparent;color:#b5bac1;font-size:18px}
+.vx-dm-list{padding:0 8px;overflow:auto;flex:1}
+.vx-dm{padding:8px;margin-bottom:2px;cursor:pointer}
+.vx-dm.active{background:#404249;color:white}
+.vx-avatar{width:34px;height:34px;border-radius:50%;background:#5865f2;color:#fff;display:grid;place-items:center;font-weight:800;flex-shrink:0;position:relative}
+.vx-avatar.small{width:30px;height:30px;font-size:12px}
+.vx-online{position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;background:#23a55a;border:3px solid #2b2d31}
+.vx-dm-copy{min-width:0;flex:1;overflow:hidden}
+.vx-dm-copy strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px;font-weight:600}
+.vx-dm-copy small{display:block;color:#949ba4;font-size:11px;margin-top:3px}
+.vx-mebar{padding:10px;background:#232428;display:flex;align-items:center;gap:9px;min-height:65px}
+.vx-mebar .vx-dm-copy strong{font-size:13px}
+.vx-mebar button{background:transparent;border:0;color:#b5bac1;padding:7px}
+.vx-main-head{height:58px;display:flex;align-items:center;padding:0 20px;gap:12px;border-bottom:1px solid #26272b;box-shadow:0 1px 0 #383a40}
+.vx-main-head h2{font-size:16px;margin:0;font-weight:800;color:#f2f3f5}
+.vx-head-symbol{font-size:23px;color:#949ba4}
+.vx-head-tools{margin-left:auto;display:flex;gap:16px;color:#b5bac1;font-size:20px}
+.vx-pane{padding:28px 30px;max-width:1000px;margin:0 auto;width:100%;color:#dbdee1}
+.vx-pane h1{font-size:30px;margin:0 0 8px;color:#f2f3f5}
+.vx-pane p{color:#b5bac1;line-height:1.7}
+.vx-friend-tabs{display:flex;gap:20px;border-bottom:1px solid #42444b;padding:0 0 12px;margin:24px 0}
+.vx-friend-tabs button{border:0;background:transparent;color:#b5bac1;padding:7px 2px;font-weight:700}
+.vx-friend-tabs button.active{color:#fff;border-bottom:2px solid #23a55a}
+.vx-add-row{display:flex;gap:8px;margin:15px 0 20px;background:#1e1f22;border:1px solid #1e1f22;border-radius:8px;padding:6px}
+.vx-add-row input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#f2f3f5;padding:8px;direction:ltr;text-align:left}
+.vx-green-btn{border:0;border-radius:5px;background:#248046;color:white;padding:10px 15px;font-weight:700}
+.vx-green-btn:hover{background:#1a6335}
+.vx-person-row{display:flex;align-items:center;gap:12px;padding:12px 6px;border-top:1px solid #3f4147}
+.vx-person-row .vx-dm-copy strong{color:#f2f3f5}
+.vx-person-row .vx-person-actions{margin-left:auto;display:flex;gap:7px}
+.vx-person-actions button{border:0;border-radius:50%;width:35px;height:35px;background:#232428;color:#dbdee1}
+.vx-chat{height:100%;display:flex;flex-direction:column;min-height:0}
+.vx-chat-body{flex:1;overflow:auto;padding:22px 24px 12px;display:flex;flex-direction:column;gap:14px}
+.vx-chat-intro{margin-top:auto;padding-bottom:20px}
+.vx-chat-intro .vx-avatar{width:68px;height:68px;font-size:28px;border-radius:22px;margin-bottom:15px}
+.vx-chat-intro h1{font-size:28px;margin:0 0 8px;color:#f2f3f5}
+.vx-chat-intro p{margin:0;color:#b5bac1}
+.vx-message{display:flex;gap:12px;align-items:flex-start}
+.vx-message .vx-avatar{width:38px;height:38px;font-size:14px}
+.vx-message-copy{min-width:0;flex:1}
+.vx-message-meta{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.vx-message-meta strong{color:#f2f3f5;font-size:14px}
+.vx-message-meta time{font-size:11px;color:#949ba4}
+.vx-message-text{font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;color:#dbdee1}
+.vx-composer-wrap{padding:0 22px 22px}
+.vx-composer{display:flex;align-items:flex-end;gap:10px;background:#383a40;border-radius:8px;padding:10px 12px}
+.vx-composer textarea{flex:1;resize:none;max-height:150px;min-height:26px;background:transparent;border:0;outline:0;color:#f2f3f5;font:inherit;line-height:1.5;padding:3px;direction:auto}
+.vx-composer button{border:0;border-radius:5px;background:#23a55a;color:white;width:34px;height:34px;font-size:18px}
+.vx-composer button:disabled{opacity:.5}
+.vx-empty-chat{margin:auto;text-align:center;max-width:380px;padding:30px}
+.vx-empty-chat .big{font-size:55px;margin-bottom:12px}
+.vx-empty-chat h2{color:#f2f3f5;font-size:22px;margin:0 0 10px}
+.vx-empty-chat p{color:#b5bac1;line-height:1.7}
+.vx-muted-note{font-size:12px;color:#949ba4}
+.vx-toast{position:fixed;z-index:9999;bottom:25px;left:50%;transform:translateX(-50%);background:#111214;border:1px solid #41434a;color:#fff;border-radius:8px;padding:12px 16px;box-shadow:0 10px 30px #0006}
+#app-view .mobile-side-toggle{display:none}
+@media(max-width:700px){
+ #app-view .app-sidebar{width:76px;flex-basis:76px}
+ #app-view .vx-brand{justify-content:center;padding:0}
+ #app-view .vx-brand .vx-brand-name,#app-view .vx-search,#app-view .vx-nav .vx-nav-label,#app-view .vx-section-head span,#app-view .vx-section-head button,#app-view .vx-dm-copy,#app-view .vx-mebar .vx-dm-copy,#app-view .vx-mebar button{display:none}
+ #app-view .vx-nav{padding:0 9px}
+ #app-view .vx-nav button{justify-content:center;padding:12px 0}
+ #app-view .vx-nav .vx-nav-icon{font-size:22px}
+ #app-view .vx-section-head{justify-content:center;padding:10px 0}
+ #app-view .vx-dm-list{padding:0 9px}
+ #app-view .vx-dm{justify-content:center;padding:7px 0}
+ #app-view .vx-mebar{justify-content:center;padding:9px 0}
+ #app-view .vx-pane{padding:22px 16px}
+ #app-view .vx-chat-body{padding:18px 14px 10px}
+ #app-view .vx-composer-wrap{padding:0 10px 12px}
+ #app-view .vx-main-head{padding:0 12px}
+ #app-view .app-topbar{padding:0 12px}
+}
+
 </style>
 </head>
 <body>
@@ -69,24 +164,95 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
   $('auth-form').addEventListener('submit',async(event)=>{event.preventDefault();clearStatus();const email=$('email').value.trim().toLowerCase(),password=$('password').value,username=$('username').value.trim();if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setStatus('یه ایمیل معتبر وارد کن.','error');$('email').focus();return;}if(password.length<6){setStatus('رمز عبور باید حداقل ۶ کاراکتر باشه.','error');$('password').focus();return;}if(state.mode==='signup'&&username.length<4){setStatus('نام کاربری باید حداقل ۴ کاراکتر باشه.','error');$('username').focus();return;}const base=apiBase();if(!base){$('connection-details').open=true;setStatus('اول آدرس API بک‌اند وکسا رو در بخش «تنظیم اتصال سرور» وارد کن؛ ورود و ثبت‌نام بدون سرور واقعی فعال نمی‌شن.','error');return;}const button=$('submit-btn'),old=button.innerHTML;button.disabled=true;button.textContent='در حال اتصال…';try{const endpoint=state.mode==='signup'?'register':'login',payload=state.mode==='signup'?{username,email,password}:{email,password};const response=await fetch(base+'/auth/'+endpoint,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});let data={};try{data=await response.json();}catch{}if(!response.ok)throw Object.assign(new Error(data.message||data.error||'درخواست ناموفق بود.'),{status:response.status});if(!data.tokens||!data.tokens.access||!data.tokens.access.token||!data.user)throw new Error('سرور پاسخ ورود معتبر برنگردوند.');state.user=data.user;state.token=data.tokens.access.token;state.refreshToken=data.tokens.refresh?data.tokens.refresh.token:'';store.set('vexa_access_token',state.token);store.set('vexa_refresh_token',state.refreshToken);store.set('vexa_user',JSON.stringify(state.user));renderApp();}catch(error){setStatus(humanError(error.message,error.status),'error');}finally{button.disabled=false;button.innerHTML=old;}});
   function currentUser(){try{return JSON.parse(store.get('vexa_user','null'));}catch{return null;}}
   function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-  function renderApp(){ $('auth-view').classList.add('hidden');$('app-view').classList.remove('hidden');const user=state.user||currentUser()||{username:'کاربر وکسا',email:''};state.user=user;const name=user.username||'کاربر وکسا';$('side-name').textContent=name;$('side-avatar').textContent=name.slice(0,1).toUpperCase();renderPage(state.page);}
-  function setPage(page){state.page=page;$('sidebar').classList.remove('open');document.querySelectorAll('[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));renderPage(page);}
-  document.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();setPage(el.dataset.page);}));
-  $('open-sidebar').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
-  function renderPage(page){
-    const user=state.user||currentUser()||{},name=escapeHtml(user.username||'دوست وکسا'),email=escapeHtml(user.email||'—');let content='';
-    if(page==='profile'){
-      content='<div class="welcome"><div><h1>پروفایل من</h1><p>اطلاعات حساب فعلی‌ات رو ببین.</p></div><span class="badge">پروفایل شخصی</span></div><div class="profile-layout"><section class="panel profile-card"><div class="profile-big">'+name.slice(0,1).toUpperCase()+'</div><div><h2>'+name+'</h2><p>'+email+'</p></div><span class="badge">عضو وکسا</span></section><section class="panel"><h2>اطلاعات حساب</h2><p>این اطلاعات از سرور حساب کاربری خوانده شده.</p><div class="field"><label>نام کاربری</label><input value="'+name+'" disabled dir="auto"></div><div class="field"><label>ایمیل</label><input value="'+email+'" disabled dir="ltr"></div><div class="status">ویرایش اطلاعات حساب بعد از تکمیل مسیر امن به‌روزرسانی پروفایل فعال می‌شه.</div></section></div>';
-    } else if(page==='settings'){
-      content='<div class="welcome"><div><h1>تنظیمات</h1><p>وکسا رو مطابق سلیقه خودت تنظیم کن.</p></div><span class="badge">ذخیره خودکار</span></div><section class="panel"><h2>ظاهر برنامه</h2><p>تنظیمات ظاهری روی همین دستگاه ذخیره می‌شن.</p><div class="settings-option"><div><strong>تم تاریک</strong><small>پس‌زمینه تیره با رنگ سبز وکسا</small></div><button id="theme-switch" class="switch '+(document.documentElement.dataset.theme==='dark'?'on':'')+'" aria-label="تغییر تم تاریک" type="button"></button></div><div class="settings-option"><div><strong>زبان</strong><small>فارسی · راست‌چین</small></div><span class="badge">فعال</span></div></section><section class="panel"><h2>حساب کاربری</h2><p>از حساب خودت خارج شو؛ برای ورود دوباره به اطلاعات حساب نیاز داری.</p><button class="danger-btn" id="settings-logout">خروج از حساب ↗</button></section>';
-    } else {
-      content='<div class="welcome"><div><h1>سلام '+name+' 👋</h1><p>خوش اومدی به وکسا. فضای خودت از اینجا شروع می‌شه.</p></div><span class="badge">● حساب تو فعاله</span></div><div class="stat-grid"><article class="stat-card"><div class="stat-icon">◉</div><strong>پروفایل تو</strong><span>حساب شخصی‌ات رو مدیریت کن</span></article><article class="stat-card"><div class="stat-icon">✦</div><strong>در راهه</strong><span>کامیونیتی‌ها و کانال‌ها در مرحله بعد</span></article><article class="stat-card"><div class="stat-icon">↗</div><strong>قدم بعدی</strong><span>تنظیماتت رو کامل کن</span></article></div><section class="panel"><h2>به وکسا خوش اومدی 💚</h2><p>مرحله اول آماده‌ست: حساب، ظاهر و پروفایل پایه. پیام‌رسانی، سرورها و کانال‌ها در مرحله‌های بعد اضافه می‌شن.</p><div class="empty-state"><div class="empty-icon">🌱</div><strong>اینجا قراره کامیونیتی تو شکل بگیره</strong><p>فعلاً می‌تونی پروفایل و تنظیمات اولیه رو بررسی کنی. چیزی به‌عنوان چت واقعی یا سرور نمایشی جا نزده‌ایم.</p><button class="primary" id="go-profile" style="margin-top:16px">تکمیل پروفایل ←</button></div></section>';
-    }
-    $('crumb-title').textContent=page==='profile'?'پروفایل من':page==='settings'?'تنظیمات':'خانه';$('page-content').innerHTML=content;
-    const go=$('go-profile');if(go)go.addEventListener('click',()=>setPage('profile'));
-    const sw=$('theme-switch');if(sw)sw.addEventListener('click',()=>{setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');renderPage('settings');});
-    const logout=$('settings-logout');if(logout)logout.addEventListener('click',logoutUser);
+  const apiCall = async (path, options={}) => {
+    const base=apiBase();
+    if(!base) throw new Error('آدرس API تنظیم نشده.');
+    const headers={Accept:'application/json',Authorization:'Bearer '+(state.token||store.get('vexa_access_token')),...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{})};
+    const response=await fetch(base+path,{...options,headers});
+    const raw=await response.text();let data={};try{data=raw?JSON.parse(raw):{};}catch{}
+    if(!response.ok)throw new Error(data.message||data.error||('خطای سرور ('+response.status+')'));
+    return data;
+  };
+  const vx = { friends:[], requests:[], rooms:[], activeFriend:null, activeRoom:null, messages:[], view:'friends', friendTab:'all', busy:false };
+  function initials(name){return String(name||'?').trim().slice(0,1).toUpperCase();}
+  function fullTag(u){return (u?.username||'کاربر')+(u?.shortId?'#'+u.shortId:'');}
+  function toast(message){const old=document.querySelector('.vx-toast');if(old)old.remove();const el=document.createElement('div');el.className='vx-toast';el.textContent=message;document.body.appendChild(el);setTimeout(()=>el.remove(),3000);}
+  function safe(v){return escapeHtml(v??'');}
+  function friendFromRequest(r){return r.from?.id===state.user?.id||r.from?._id===state.user?.id?r.to:r.from;}
+  function isMyId(id){return String(id||'')===String(state.user?.id||state.user?._id||'');}
+  function friendId(u){return u?.id||u?._id;}
+  async function loadWorkspace(){
+    try {
+      const [friends,requests,rooms]=await Promise.all([
+        apiCall('/friends/all-friends'),apiCall('/friends/pending-requests'),apiCall('/rooms/open-rooms')
+      ]);
+      vx.friends=(Array.isArray(friends)?friends:[]).map(r=>({request:r,user:(isMyId(r.from?.id||r.from?._id)?r.to:r.from)})).filter(x=>x.user);
+      vx.requests=Array.isArray(requests)?requests:[];
+      vx.rooms=Array.isArray(rooms)?rooms:[];
+      renderWorkspace();
+      if(vx.activeFriend){const match=vx.friends.find(x=>String(friendId(x.user))===String(friendId(vx.activeFriend)));if(match){vx.activeFriend=match.user;await openDm(match.user,true);}else{vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();}}
+    } catch(e){renderWorkspace();toast('بارگذاری اطلاعات ناموفق بود: '+e.message);}
   }
+  function renderApp(){
+    $('auth-view').classList.add('hidden');$('app-view').classList.remove('hidden');
+    const user=state.user||currentUser()||{username:'کاربر وکسا',email:''};state.user=user;
+    $('app-view').innerHTML='<div class="app-shell"><aside class="app-sidebar"><div class="vx-brand"><span class="vx-logo">V</span><span class="vx-brand-name">vexa</span></div><input class="vx-search" id="vx-search" placeholder="جست‌وجو یا شروع گفتگو" aria-label="جست‌وجو"><nav class="vx-nav"><button id="vx-friends" class="active"><span class="vx-nav-icon">👥</span><span class="vx-nav-label">دوستان</span></button><button id="vx-pending"><span class="vx-nav-icon">✉️</span><span class="vx-nav-label">درخواست‌ها <span id="vx-pending-count"></span></span></button></nav><div class="vx-section-head"><span>پیام‌های مستقیم</span><button id="vx-add-friend" title="افزودن دوست">＋</button></div><div class="vx-dm-list" id="vx-dm-list"></div><div class="vx-mebar"><div class="vx-avatar small" id="vx-my-avatar"></div><div class="vx-dm-copy"><strong id="vx-my-name"></strong><small>آنلاین</small></div><button id="vx-logout" title="خروج">↪</button></div></aside><section class="app-main"><header class="vx-main-head"><span class="vx-head-symbol" id="vx-head-symbol">👥</span><h2 id="vx-head-title">دوستان</h2><div class="vx-head-tools"><span title="کمک">ⓘ</span></div></header><div class="app-content" id="vx-content"></div></section></div>';
+    $('vx-my-avatar').textContent=initials(user.username);$('vx-my-name').textContent=user.username||'کاربر وکسا';
+    $('vx-friends').onclick=()=>{vx.view='friends';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();};
+    $('vx-pending').onclick=()=>{vx.view='pending';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();};
+    $('vx-add-friend').onclick=()=>{vx.view='friends';vx.friendTab='add';vx.activeFriend=null;renderWorkspace();setTimeout(()=>$('vx-friend-tag')?.focus(),30);};
+    $('vx-logout').onclick=logoutUser;
+    $('vx-search').addEventListener('input',()=>renderDmList());
+    loadWorkspace();
+  }
+  function renderDmList(){
+    const root=$('vx-dm-list');if(!root)return;const q=($('vx-search')?.value||'').toLowerCase();
+    const visible=vx.friends.filter(x=>fullTag(x.user).toLowerCase().includes(q));
+    root.innerHTML=visible.map(x=>'<button class="vx-dm '+(vx.activeFriend&&String(friendId(vx.activeFriend))===String(friendId(x.user))?'active':'')+'" data-dm="'+safe(friendId(x.user))+'"><span class="vx-avatar">'+safe(initials(x.user.username))+'<i class="vx-online"></i></span><span class="vx-dm-copy"><strong>'+safe(x.user.username)+'</strong><small>'+safe(x.user.shortId?'#'+x.user.shortId:'پیام مستقیم')+'</small></span></button>').join('')||'<div class="vx-muted-note" style="padding:10px">هنوز دوستی اضافه نکردی.</div>';
+    root.querySelectorAll('[data-dm]').forEach(b=>b.onclick=()=>{const item=vx.friends.find(x=>String(friendId(x.user))===b.dataset.dm);if(item)openDm(item.user);});
+    const count=$('vx-pending-count');if(count)count.textContent=vx.requests.length?'('+vx.requests.length+')':'';
+  }
+  function renderWorkspace(){
+    renderDmList();const content=$('vx-content');if(!content)return;
+    if(vx.activeFriend&&vx.activeRoom){$('vx-head-symbol').textContent='＠';$('vx-head-title').textContent=fullTag(vx.activeFriend);renderChat();return;}
+    if(vx.view==='pending'){
+      $('vx-head-symbol').textContent='✉️';$('vx-head-title').textContent='درخواست‌های دوستی';
+      content.innerHTML='<div class="vx-pane"><h1>درخواست‌های دوستی</h1><p>آدم‌هایی که می‌خوان باهات ارتباط بگیرن اینجان.</p>'+ (vx.requests.length?vx.requests.map(r=>{const u=r.from||{};return '<div class="vx-person-row"><div class="vx-avatar">'+safe(initials(u.username))+'</div><div class="vx-dm-copy"><strong>'+safe(fullTag(u))+'</strong><small>درخواست دوستی</small></div><div class="vx-person-actions"><button data-accept="'+safe(r.id||r._id)+'" title="قبول">✓</button></div></div>';}).join(''):'<div class="vx-empty-chat"><div class="big">📭</div><h2>فعلاً خبری نیست</h2><p>وقتی درخواست جدیدی بیاد اینجا نمایش داده می‌شه.</p></div>')+'</div>';
+      content.querySelectorAll('[data-accept]').forEach(b=>b.onclick=async()=>{try{await apiCall('/friends/accept-pending-request',{method:'PATCH',body:JSON.stringify({id:b.dataset.accept})});toast('درخواست دوستی قبول شد 💚');await loadWorkspace();}catch(e){toast(e.message);}});
+      return;
+    }
+    $('vx-head-symbol').textContent='👥';$('vx-head-title').textContent='دوستان';
+    const add=vx.friendTab==='add';
+    content.innerHTML='<div class="vx-pane"><h1>دوستان</h1><p>با دوستات وصل شو، پیام بده و گپ رو شروع کن.</p><div class="vx-friend-tabs"><button class="'+(!add?'active':'')+'" id="vx-tab-all">همهٔ دوستان · '+vx.friends.length+'</button><button class="'+(add?'active':'')+'" id="vx-tab-add">＋ افزودن دوست</button></div>'+(add?'<h3>افزودن دوست</h3><p>نام کاربری و کد چهاررقمی دوستت رو وارد کن؛ مثلاً <b dir="ltr">parsa#1234</b></p><form class="vx-add-row" id="vx-add-form"><input id="vx-friend-tag" placeholder="username#1234" autocomplete="off" required><button class="vx-green-btn">ارسال درخواست</button></form><div class="vx-muted-note">کد کاربری رو از پروفایل دوستت بگیر.</div>':'<div id="vx-friend-list">'+(vx.friends.length?vx.friends.map(x=>'<div class="vx-person-row"><div class="vx-avatar">'+safe(initials(x.user.username))+'</div><div class="vx-dm-copy"><strong>'+safe(x.user.username)+'</strong><small dir="ltr">'+safe(fullTag(x.user))+'</small></div><div class="vx-person-actions"><button data-message="'+safe(friendId(x.user))+'" title="پیام">✉</button></div></div>').join(''):'<div class="vx-empty-chat"><div class="big">👋</div><h2>اینجا قراره دوستات باشن</h2><p>هنوز کسی اضافه نکردی. از دکمهٔ «افزودن دوست» استفاده کن تا اولین گفت‌وگوی واقعی‌ت رو شروع کنی.</p><button class="vx-green-btn" id="vx-first-add">＋ افزودن دوست</button></div>')+'</div>')+'</div>';
+    $('vx-tab-all').onclick=()=>{vx.friendTab='all';renderWorkspace();};$('vx-tab-add').onclick=()=>{vx.friendTab='add';renderWorkspace();};
+    const first=$('vx-first-add');if(first)first.onclick=()=>{vx.friendTab='add';renderWorkspace();};
+    const form=$('vx-add-form');if(form)form.onsubmit=async e=>{e.preventDefault();const tag=$('vx-friend-tag').value.trim();const match=tag.match(/^(.+)#(\d{4})$/);if(!match){toast('فرمت درست: username#1234');return;}const btn=form.querySelector('button');btn.disabled=true;try{await apiCall('/friends/add-friend-request',{method:'POST',body:JSON.stringify({username:match[1].trim(),shortId:match[2]})});toast('درخواست دوستی ارسال شد!');vx.friendTab='all';await loadWorkspace();}catch(err){toast(err.message);}finally{btn.disabled=false;}};
+    content.querySelectorAll('[data-message]').forEach(b=>b.onclick=()=>{const item=vx.friends.find(x=>String(friendId(x.user))===b.dataset.message);if(item)openDm(item.user);});
+  }
+  async function openDm(friend,keepScroll=false){
+    vx.activeFriend=friend;vx.view='chat';renderDmList();$('vx-head-title').textContent=fullTag(friend);$('vx-head-symbol').textContent='＠';
+    const content=$('vx-content');content.innerHTML='<div class="vx-empty-chat"><div class="big">⏳</div><h2>دارم گفتگو رو باز می‌کنم…</h2></div>';
+    try{
+      const room=await apiCall('/rooms/get-or-create',{method:'POST',body:JSON.stringify({id:friendId(friend)})});
+      vx.activeRoom=room;await loadMessages(keepScroll);
+    }catch(e){vx.activeRoom=null;content.innerHTML='<div class="vx-empty-chat"><div class="big">⚠️</div><h2>گفتگو باز نشد</h2><p>'+safe(e.message)+'</p></div>';toast(e.message);}
+  }
+  async function loadMessages(keepScroll=false){
+    if(!vx.activeRoom)return;const old=$('vx-chat-body');const nearBottom=!old||old.scrollHeight-old.scrollTop-old.clientHeight<100;
+    try{const data=await apiCall('/messages/'+encodeURIComponent(vx.activeRoom.id||vx.activeRoom._id)+'?limit=100&page=1');vx.messages=(data.results||data||[]).slice().reverse();renderChat();const body=$('vx-chat-body');if(body&&(nearBottom||!keepScroll))body.scrollTop=body.scrollHeight;}catch(e){toast('پیام‌ها بارگذاری نشدن: '+e.message);renderChat();}
+  }
+  function renderChat(){
+    const content=$('vx-content'),friend=vx.activeFriend;if(!content||!friend||!vx.activeRoom)return;
+    const messages=vx.messages.map(m=>{const mine=isMyId(m.senderId?.id||m.senderId?._id||m.senderId);const who=mine?(state.user?.username||'من'):(friend.username||'دوست');const date=m.createdAt?new Date(m.createdAt):null;return '<div class="vx-message"><div class="vx-avatar">'+safe(initials(who))+'</div><div class="vx-message-copy"><div class="vx-message-meta"><strong>'+safe(who)+'</strong><time>'+(date&&!Number.isNaN(date.getTime())?date.toLocaleString('fa-IR',{hour:'2-digit',minute:'2-digit',month:'short',day:'numeric'}):'')+'</time></div><div class="vx-message-text">'+safe(m.message||m.text||'')+'</div></div></div>';}).join('');
+    content.innerHTML='<div class="vx-chat"><div class="vx-chat-body" id="vx-chat-body">'+(!messages?'<div class="vx-chat-intro"><div class="vx-avatar">'+safe(initials(friend.username))+'</div><h1>'+safe(friend.username)+'</h1><p dir="ltr">'+safe(fullTag(friend))+'</p><p style="margin-top:12px">این ابتدای گفتگوی شماست. یه سلام بفرست 👋</p></div>':'')+messages+'</div><div class="vx-composer-wrap"><form class="vx-composer" id="vx-composer"><textarea id="vx-message-input" rows="1" placeholder="پیام به '+safe(friend.username)+'" aria-label="پیام"></textarea><button type="submit" aria-label="ارسال پیام">➤</button></form><div class="vx-muted-note" style="padding:7px 3px 0">گفت‌وگوی مستقیم · Enter برای ارسال، Shift+Enter برای خط جدید</div></div></div>';
+    const body=$('vx-chat-body');if(body)body.scrollTop=body.scrollHeight;
+    const form=$('vx-composer'),input=$('vx-message-input');if(!form||!input)return;
+    input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
+    input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,150)+'px';});
+    form.onsubmit=async e=>{e.preventDefault();const text=input.value.trim();if(!text)return;const btn=form.querySelector('button');btn.disabled=true;try{await apiCall('/messages/send-message',{method:'POST',body:JSON.stringify({roomId:vx.activeRoom.id||vx.activeRoom._id,text})});input.value='';input.style.height='auto';await loadMessages();}catch(err){toast('پیام ارسال نشد: '+err.message);}finally{btn.disabled=false;input.focus();}};
+  }
+  function setPage(page){state.page=page;}
+  function renderPage(){renderWorkspace();}
   async function logoutUser(){const refresh=state.refreshToken||store.get('vexa_refresh_token'),base=apiBase();if(refresh&&base){try{await fetch(base+'/auth/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refreshToken:refresh})});}catch{}}['vexa_access_token','vexa_refresh_token','vexa_user'].forEach(store.remove);state.user=null;state.token=null;state.refreshToken=null;state.page='home';$('app-view').classList.add('hidden');$('auth-view').classList.remove('hidden');setMode('login');toast('از حساب خارج شدی.');}
   $('logout-btn').addEventListener('click',logoutUser);$('top-logout').addEventListener('click',logoutUser);
   const savedToken=store.get('vexa_access_token'),savedUser=currentUser();if(savedToken&&savedUser){state.token=savedToken;state.refreshToken=store.get('vexa_refresh_token');state.user=savedUser;renderApp();}
