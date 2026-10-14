@@ -3,14 +3,14 @@ import * as yup from 'yup'
 export default yup.object().shape({
   email: yup
     .string()
-    .email('Not a well formed email address')
+    .email('لطفاً یک نشانی ایمیل معتبر وارد کن')
     .lowercase()
-    .required('Email is required')
+    .required('وارد کردن ایمیل الزامی است')
     .defined(),
   password: yup
     .string()
-    .min(6, 'Password must be at least 6 characters')
+    .min(6, 'گذرواژه باید حداقل ۶ نویسه داشته باشد')
     .max(100)
-    .required('Password is required')
+    .required('وارد کردن گذرواژه الزامی است')
     .defined(),
 })
