@@ -1,0 +1,9 @@
+{
+  "name": "vexa-webapp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vexa Persian social web app rebuilt from scratch",
+  "scripts": {
+    "build": "node build.js"
+  }
+}

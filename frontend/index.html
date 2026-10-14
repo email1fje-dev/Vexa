@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0e0d"><meta name="description" content="وکسا؛ جایی برای فکرها، آدم‌ها و لحظه‌های تو.">
+<title>وکسا | Vexa</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="#" data-page="home"><span class="brand-mark">v</span><span>vexa<span class="brand-dot">.</span></span></a>
+    <button class="compose-side" data-action="focus-compose"><span>＋</span> پست جدید</button>
+    <nav class="nav-list" aria-label="ناوبری اصلی">
+      <button class="nav-item active" data-page="home"><span class="nav-icon">⌂</span> خانه</button>
+      <button class="nav-item" data-page="explore"><span class="nav-icon">⌕</span> کاوش</button>
+      <button class="nav-item" data-page="notifications"><span class="nav-icon">♧</span> اعلان‌ها <i class="nav-count" id="notification-count">2</i></button>
+      <button class="nav-item" data-page="messages"><span class="nav-icon">▤</span> پیام‌ها <span class="soon-dot"></span></button>
+      <button class="nav-item" data-page="bookmarks"><span class="nav-icon">♧</span> ذخیره‌شده‌ها</button>
+      <button class="nav-item" data-page="profile"><span class="nav-icon">◉</span> پروفایل</button>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="nav-item" id="theme-toggle"><span class="nav-icon">◐</span> تغییر تم <span class="theme-pill">روشن / تاریک</span></button>
+      <div class="side-user" id="side-user"><div class="avatar avatar-green">و</div><div class="user-meta"><b>مهمان وکسا</b><span>@guest</span></div><button class="dots" aria-label="بیشتر">•••</button></div>
+      <div class="side-note"><span class="online-dot"></span> یک شروع تازه، با وکسا.</div>
+    </div>
+  </aside>
+  <main class="main-column">
+    <header class="mobile-header"><button class="mobile-menu" id="mobile-menu" aria-label="باز کردن منو">☰</button><a class="brand compact" href="#"><span class="brand-mark">v</span><span>vexa<span class="brand-dot">.</span></span></a><button class="icon-btn" data-page="profile">◉</button></header>
+    <div class="mobile-nav" id="mobile-nav"><button data-page="home">خانه</button><button data-page="explore">کاوش</button><button data-page="notifications">اعلان‌ها</button><button data-page="bookmarks">ذخیره‌ها</button></div>
+    <section class="topbar"><div><div class="eyebrow"><span class="online-dot"></span> فضای خودت رو پیدا کن</div><h1 id="page-title">خانه</h1><p id="page-subtitle">اینجا فکرها به هم می‌رسن.</p></div><button class="icon-btn search-shortcut" data-page="explore" aria-label="جست‌وجو">⌕</button></section>
+    <div class="feed-tabs" id="feed-tabs"><button class="tab active" data-feed="for-you">برای تو</button><button class="tab" data-feed="following">دنبال‌شده‌ها</button><span class="tab-line"></span></div>
+    <section class="composer card" id="composer">
+      <div class="avatar avatar-green" id="composer-avatar">و</div>
+      <div class="composer-content"><textarea id="post-input" maxlength="500" rows="2" placeholder="چی توی ذهنته؟"></textarea><div class="composer-footer"><span class="composer-hint">کوتاه بنویس، واقعی باش ✳</span><div class="composer-actions"><span class="char-count" id="char-count">۰/۵۰۰</span><button class="primary-btn small" id="publish-post" disabled>انتشار پست <span>↗</span></button></div></div></div>
+    </section>
+    <section class="search-panel card hidden" id="search-panel"><span class="search-symbol">⌕</span><input id="search-input" placeholder="دنبال آدم‌ها یا موضوع‌ها بگرد..." autocomplete="off"><button class="clear-search" id="clear-search">×</button></section>
+    <section class="feed" id="feed" aria-live="polite"></section>
+    <section class="empty-state hidden" id="empty-state"><div class="empty-orb">✳</div><h3>اینجا فعلاً ساکته</h3><p>اولین نفری باش که چیزی به اینجا اضافه می‌کنه.</p><button class="primary-btn" data-action="focus-compose">نوشتن اولین پست</button></section>
+    <footer class="footer-note"><span class="brand-mini">v</span><span>وکسا هنوز در حال ساخته‌شدنه.</span><span>با کنجکاوی ساخته شده <b>✳</b></span></footer>
+  </main>
+  <aside class="right-column">
+    <div class="search-box"><span>⌕</span><input id="right-search" placeholder="جست‌وجو در وکسا"><kbd>/</kbd></div>
+    <section class="right-card welcome-card"><div class="welcome-art"><span class="art-ring ring-one"></span><span class="art-ring ring-two"></span><span class="art-star">✳</span><span class="art-v">v</span></div><div class="card-kicker">خوش اومدی به</div><h2>فضای خودت.</h2><p>وکسا برای حرف‌هایی ساخته شده که ارزش شنیده‌شدن دارن.</p><button class="outline-btn" id="learn-more">بیشتر درباره وکسا <span>←</span></button></section>
+    <section class="right-card trends-card"><div class="section-heading"><h3>چیزهایی که می‌چرخه</h3><span class="sparkle">✳</span></div><div id="trends-list"><button class="trend" data-query="طراحی"><span class="trend-number">01</span><span><b># طراحی</b><small>ایده‌های تازه</small></span><span class="trend-arrow">↗</span></button><button class="trend" data-query="زندگی"><span class="trend-number">02</span><span><b># زندگی</b><small>لحظه‌های روزمره</small></span><span class="trend-arrow">↗</span></button><button class="trend" data-query="بازی"><span class="trend-number">03</span><span><b># بازی</b><small>دنیای گیم</small></span><span class="trend-arrow">↗</span></button></div><button class="text-link" data-page="explore">دیدن همه موضوع‌ها ←</button></section>
+    <section class="right-card join-card"><div class="join-icon">↗</div><h3>هنوز حساب نداری؟</h3><p>یه گوشه از وکسا رو برای خودت بساز.</p><button class="primary-btn full" data-action="open-auth">ساخت حساب رایگان</button><button class="text-link centered" data-action="open-auth">از قبل حساب داری؟ ورود</button></section>
+    <div class="right-footer">درباره · حریم خصوصی · قوانین<br><span>© ۲۰۲۶ Vexa — نسخه‌ی اولیه</span></div>
+  </aside>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<div class="modal-backdrop hidden" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+ <div class="auth-modal">
+  <button class="modal-close" id="close-auth" aria-label="بستن">×</button>
+  <a class="brand modal-brand" href="#"><span class="brand-mark">v</span><span>vexa<span class="brand-dot">.</span></span></a>
+  <div class="auth-ornament">✳</div><h2 id="auth-title">به فضای خودت خوش اومدی.</h2><p class="auth-subtitle">برای شروع، یه قدم کوچیک بردار.</p>
+  <div class="auth-switch"><button class="active" data-auth-mode="login">ورود</button><button data-auth-mode="signup">ساخت حساب</button></div>
+  <form id="auth-form"><label for="auth-name" id="name-label" class="hidden">نام نمایشی</label><input id="auth-name" class="auth-input hidden" placeholder="مثلاً پارسا" autocomplete="nickname"><label for="auth-email">ایمیل</label><input id="auth-email" class="auth-input" type="email" placeholder="you@example.com" autocomplete="email" required><label for="auth-password">رمز عبور</label><input id="auth-password" class="auth-input" type="password" placeholder="حداقل ۶ کاراکتر" minlength="6" autocomplete="current-password" required><p class="demo-warning">نسخه‌ی نمایشی: ورود فعلاً فقط روی همین دستگاه ذخیره می‌شه؛ حساب واقعی هنوز به سرور وصل نیست.</p><button class="primary-btn full auth-submit" type="submit" id="auth-submit">ورود به وکسا <span>↗</span></button></form>
+  <div class="auth-bottom">با ادامه‌دادن، با <a href="#">قوانین وکسا</a> موافقت می‌کنی.</div>
+ </div>
+</div>
+<div class="modal-backdrop hidden" id="about-modal" role="dialog" aria-modal="true"><div class="auth-modal about-modal"><button class="modal-close" data-action="close-about">×</button><div class="auth-ornament">✳</div><h2>وکسا، یه شروع تازه.</h2><p>یه فضای اجتماعی فارسی برای اشتراک فکرها، کشف آدم‌های تازه و نگه‌داشتن لحظه‌های کوچیک.</p><div class="about-points"><div><b>01</b><span><strong>خودت باش</strong><small>حرف‌هات لازم نیست بی‌نقص باشن.</small></span></div><div><b>02</b><span><strong>کنجکاو بمون</strong><small>موضوع‌ها و دیدگاه‌های تازه رو کشف کن.</small></span></div><div><b>03</b><span><strong>باهم بسازیم</strong><small>این نسخه‌ی اول راهه، نه خط پایان.</small></span></div></div><button class="primary-btn full" data-action="close-about">بزن بریم <span>↗</span></button></div></div>
+<script src="./app.js"></script>
+</body></html>
