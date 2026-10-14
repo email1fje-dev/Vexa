@@ -65,6 +65,8 @@ jobs:
           sed -i "s|publicPath: '/'|publicPath: './'|" frontend/config/webpack.prod.js
           cd frontend
           npm install --legacy-peer-deps --no-audit --no-fund
+          # The legacy postcss-loader imports postcss/lib/node; pin a compatible PostCSS release.
+          npm install --no-save --legacy-peer-deps --no-audit --no-fund postcss@8.4.31
           API_URL=http://localhost:4000 npm run build
           cd ..
           rm -rf webapp
