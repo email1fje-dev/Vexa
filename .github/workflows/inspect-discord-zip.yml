@@ -1,0 +1,60 @@
+name: Inspect uploaded Discord clone ZIP
+
+on:
+  push:
+    paths:
+      - ".github/workflows/inspect-discord-zip.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Vexa
+        uses: actions/checkout@v4
+      - name: Inspect archive without replacing Vexa files
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="discord-clone-main (1).zip"
+          if [ ! -f "$ZIP" ]; then
+            echo "ZIP not found at repository root: $ZIP" > ZIP-INSPECTION.md
+          else
+            mkdir -p /tmp/vexa-zip-inspect
+            unzip -q "$ZIP" -d /tmp/vexa-zip-inspect
+            {
+              echo "# گزارش بررسی ZIP پروژه Vexa"
+              echo
+              echo "- فایل آرشیو: $ZIP"
+              echo "- حجم: $(du -h "$ZIP" | cut -f1)"
+              echo
+              echo "## ساختار فایل‌ها (حداکثر 250 مورد)"
+              printf '```text\n'
+              find /tmp/vexa-zip-inspect -type f -printf '%P\n' | sort | head -n 250
+              printf '\n```\n'
+              echo
+              echo "## فایل‌های package.json"
+              find /tmp/vexa-zip-inspect -name package.json -type f -print0 | while IFS= read -r -d '' f; do
+                echo
+                echo "### ${f#/tmp/vexa-zip-inspect/}"
+                node -e 'const fs=require("fs");try{const p=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));console.log(JSON.stringify({name:p.name,version:p.version,scripts:p.scripts,dependencies:p.dependencies,devDependencies:p.devDependencies},null,2))}catch(e){console.log("Could not parse package.json: "+e.message)}' "$f"
+              done
+              echo
+              echo "## فایل‌های راهنمای پروژه"
+              find /tmp/vexa-zip-inspect -maxdepth 4 -type f \( -iname 'README*' -o -iname 'vite.config.*' -o -iname 'next.config.*' -o -iname 'webpack.config.*' -o -iname 'Dockerfile' \) -printf '%P\n' | sort
+            } > ZIP-INSPECTION.md
+          fi
+      - name: Save inspection report to the repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ZIP-INSPECTION.md
+          if git diff --cached --quiet; then
+            echo "No report changes."
+          else
+            git commit -m "Inspect uploaded Discord clone archive"
+            git push
+          fi
