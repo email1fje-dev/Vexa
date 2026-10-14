@@ -1,5 +1,4 @@
 :root {
-  color-scheme: dark;
   --vexa-green: #22c55e;
   --vexa-green-strong: #16a34a;
   --vexa-green-soft: #86efac;
@@ -10,61 +9,13 @@
   --vexa-text: #ecfdf3;
   --vexa-muted: #9fb5a5;
 }
-html[data-theme='light'] {
-  color-scheme: light;
-  --vexa-green: #168344;
-  --vexa-green-strong: #16a34a;
-  --vexa-green-soft: #bbf7d0;
-  --vexa-black: #f4faf5;
-  --vexa-panel: #ffffff;
-  --vexa-panel-raised: #eaf4ed;
-  --vexa-border: #d2e4d7;
-  --vexa-text: #15271a;
-  --vexa-muted: #5f7565;
-}
-html, body, #root { width: 100%; min-height: 100%; margin: 0; }
-html, body { overflow-x: hidden; }
-html[dir='rtl'], body { direction: rtl; }
-body {
-  background: var(--vexa-black);
-  color: var(--vexa-text);
-  font-family: Tahoma, 'Vazirmatn', 'Segoe UI', sans-serif;
-}
-*, *::before, *::after { box-sizing: border-box; }
-button, input, textarea, select { font: inherit; }
-button, a { -webkit-tap-highlight-color: transparent; }
-button { touch-action: manipulation; }
-img, svg, video, canvas { max-width: 100%; }
-a { color: var(--vexa-green-soft); }
-input, textarea, select { accent-color: var(--vexa-green); max-width: 100%; }
-input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible {
-  outline: 2px solid var(--vexa-green) !important;
-  outline-offset: 2px;
-}
-#root [class*='bg-discord-primary'],
-#root [class*='bg-discord-dark'],
-#root [class*='bg-discord-semi600'],
-#root [class*='bg-discord-secondPrimary'] {
-  background-color: var(--vexa-panel) !important;
-}
-#root [class*='border-discord'] { border-color: var(--vexa-border) !important; }
-#root [class*='text-blue'],
-#root [class*='text-discord-textLink'] { color: var(--vexa-green) !important; }
-#root [class*='bg-blue'],
-#root [class*='bg-discord-experiment500'],
-#root [class*='bg-discord-experiment560'] { background-color: var(--vexa-green-strong) !important; }
-#root [class*='ring-blue'] { --tw-ring-color: var(--vexa-green) !important; }
-#root [class*='rounded-lg'], #root [class*='rounded-xl'] { border-radius: 14px; }
-#root main, #root [role='main'] { width: 100%; max-width: 100%; min-width: 0; }
-#root form { max-width: 100%; }
-#root input, #root textarea { direction: rtl; }
-@media (max-width: 767px) {
-  html, body, #root { width: 100%; max-width: 100vw; }
-  #root [class*='w-screen'] { width: 100% !important; }
-  #root [class*='min-w-'] { min-width: 0; }
-  #root input, #root textarea, #root select { font-size: 16px !important; }
-  #root button { min-height: 38px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-}
+body { background: var(--vexa-black); }
+.channels--scrollbar::-webkit-scrollbar-track,
+.main--chat--scrollbar::-webkit-scrollbar-track,
+.sidebar--users--scrollbar::-webkit-scrollbar-track,
+.channels--scrollbar::-webkit-scrollbar,
+.main--chat--scrollbar::-webkit-scrollbar,
+.sidebar--users--scrollbar::-webkit-scrollbar { background-color: var(--vexa-panel); }
+.channels--scrollbar::-webkit-scrollbar-thumb,
+.main--chat--scrollbar::-webkit-scrollbar-thumb,
+.sidebar--users--scrollbar::-webkit-scrollbar-thumb { background-color: var(--vexa-border); }
