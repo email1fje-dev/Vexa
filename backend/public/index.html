@@ -429,7 +429,7 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
     paintAvatars(content);content.querySelectorAll('[data-message]').forEach(b=>b.onclick=()=>{const item=vx.friends.find(x=>String(friendId(x.user))===b.dataset.message);if(item)openDm(item.user);});
   }
   async function openDm(friend,keepScroll=false){
-    vx.activeFriend=friend;vx.view='chat';renderDmList();$('vx-head-title').textContent=fullTag(friend);$('vx-head-symbol').textContent='＠';
+    vx.activeFriend=friend;vx.view='chat';renderDmList();$('vx-head-title').textContent=fullTag(friend);$('vx-head-symbol').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>';
     const content=$('vx-content');content.innerHTML='<div class="vx-empty-chat"><div class="big"></div><h2>دارم گفتگو رو باز می‌کنم…</h2></div>';
     try{
       const room=await apiCall('/rooms/get-or-create',{method:'POST',body:JSON.stringify({id:friendId(friend)})});
