@@ -359,6 +359,21 @@ html[data-theme="light"] #app-view .vx-profile-form label{color:#294c32}
 html[data-theme="light"] #app-view .vx-profile-form input,html[data-theme="light"] #app-view .vx-profile-form textarea,html[data-theme="light"] #app-view .vx-profile-form select{background:#f7fbf7;border-color:#d0e3d3;color:#193b25}
 html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-color:#d2e4d5;color:#275333}
 
+
+/* Profile polish */
+#app-view .vx-profile-grid{grid-template-columns:minmax(230px,.75fr) minmax(0,1.25fr);align-items:start;gap:18px}
+#app-view .vx-profile-card,#app-view .vx-profile-editor{border-radius:14px;padding:20px;box-shadow:0 8px 24px #00000012}
+#app-view .vx-profile-card{position:relative}
+#app-view .vx-profile-form input[type="file"]{padding:8px;background:transparent;border-style:dashed;cursor:pointer}
+#app-view .vx-profile-form input[type="file"]::file-selector-button{border:0;border-radius:8px;background:#24462d;color:#e4f8e8;padding:9px 11px;margin-inline-end:10px;cursor:pointer;font-weight:700}
+#app-view .vx-profile-form input,#app-view .vx-profile-form textarea,#app-view .vx-profile-form select{font:inherit;font-size:13px}
+#app-view .vx-profile-form label{gap:9px}
+#app-view .vx-user-code{flex-wrap:wrap}
+#app-view .vx-profile-hint{overflow-wrap:anywhere}
+#app-view .vx-mebar #vx-my-avatar,#app-view .vx-mebar #vx-my-name{cursor:pointer}
+#app-view .vx-section-head button:focus-visible,#app-view .vx-head-tools button:focus-visible,#app-view .vx-profile-form button:focus-visible{outline:2px solid #4ade80;outline-offset:2px}
+@media(max-width:700px){#app-view .vx-profile-grid{grid-template-columns:minmax(0,1fr)}#app-view .vx-profile-card,#app-view .vx-profile-editor{padding:16px}}
+
 </style>
 </head>
 <body>
@@ -410,12 +425,33 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
   $('auth-form').addEventListener('submit',async(event)=>{event.preventDefault();clearStatus();const email=$('email').value.trim().toLowerCase(),password=$('password').value,username=$('username').value.trim();if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setStatus('یه ایمیل معتبر وارد کن.','error');$('email').focus();return;}if(password.length<6){setStatus('رمز عبور باید حداقل ۶ کاراکتر باشه.','error');$('password').focus();return;}if(state.mode==='signup'&&username.length<4){setStatus('نام کاربری باید حداقل ۴ کاراکتر باشه.','error');$('username').focus();return;}const base=apiBase();if(!base){$('connection-details').open=true;setStatus('اول آدرس API بک‌اند وکسا رو در بخش «تنظیم اتصال سرور» وارد کن؛ ورود و ثبت‌نام بدون سرور واقعی فعال نمی‌شن.','error');return;}const button=$('submit-btn'),old=button.innerHTML;button.disabled=true;button.textContent='در حال اتصال…';try{const endpoint=state.mode==='signup'?'register':'login',payload=state.mode==='signup'?{username,email,password}:{email,password};const response=await fetch(base+'/auth/'+endpoint,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});let data={};try{data=await response.json();}catch{}if(!response.ok)throw Object.assign(new Error(data.message||data.error||'درخواست ناموفق بود.'),{status:response.status});if(!data.tokens||!data.tokens.access||!data.tokens.access.token||!data.user)throw new Error('سرور پاسخ ورود معتبر برنگردوند.');state.user=data.user;state.token=data.tokens.access.token;state.refreshToken=data.tokens.refresh?data.tokens.refresh.token:'';store.set('vexa_access_token',state.token);store.set('vexa_refresh_token',state.refreshToken);store.set('vexa_user',JSON.stringify(state.user));renderApp();}catch(error){setStatus(humanError(error.message,error.status),'error');}finally{button.disabled=false;button.innerHTML=old;}});
   function currentUser(){try{return JSON.parse(store.get('vexa_user','null'));}catch{return null;}}
   function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-  const apiCall = async (path, options={}) => {
+  const apiCall = async (path, options={}, retryAuth=true) => {
     const base=apiBase();
     if(!base) throw new Error('آدرس API تنظیم نشده.');
-    const headers={Accept:'application/json',Authorization:'Bearer '+(state.token||store.get('vexa_access_token')),...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{})};
+    const token=state.token||store.get('vexa_access_token');
+    const headers={Accept:'application/json',...(token?{Authorization:'Bearer '+token}:{}),...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{})};
     const response=await fetch(base+path,{...options,headers});
     const raw=await response.text();let data={};try{data=raw?JSON.parse(raw):{};}catch{}
+    if(response.status===401 && retryAuth && path!=='/auth/refresh-tokens'){
+      const refreshToken=state.refreshToken||store.get('vexa_refresh_token');
+      if(refreshToken){
+        try{
+          const refreshResponse=await fetch(base+'/auth/refresh-tokens',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/json'},body:JSON.stringify({refreshToken})});
+          const refreshRaw=await refreshResponse.text();let refreshed={};try{refreshed=refreshRaw?JSON.parse(refreshRaw):{};}catch{}
+          const newAccess=refreshed.tokens?.access?.token||refreshed.access?.token;
+          const newRefresh=refreshed.tokens?.refresh?.token||refreshed.refresh?.token||refreshToken;
+          if(refreshResponse.ok&&newAccess){
+            state.token=newAccess;state.refreshToken=newRefresh;
+            store.set('vexa_access_token',newAccess);store.set('vexa_refresh_token',newRefresh);
+            if(refreshed.user){state.user=refreshed.user;store.set('vexa_user',JSON.stringify(refreshed.user));}
+            return apiCall(path,options,false);
+          }
+        }catch{}
+      }
+      state.token=null;state.refreshToken=null;
+      store.remove('vexa_access_token');store.remove('vexa_refresh_token');
+      throw new Error('نشست ورودت منقضی شده؛ یک‌بار خارج شو و دوباره وارد شو.');
+    }
     if(!response.ok)throw new Error(data.message||data.error||('خطای سرور ('+response.status+')'));
     return data;
   };
