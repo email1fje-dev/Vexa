@@ -39,10 +39,6 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isVerifiedBadge: {
-      type: Boolean,
-      default: false,
-    },
     shortId: {
       type: String,
       required: true,

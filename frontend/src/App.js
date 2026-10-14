@@ -8,7 +8,6 @@ import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Me from './pages/Me'
 import Register from './pages/Register'
-import AdminPanel from './pages/Admin'
 import PrivateRoute from './utils/PrivateRoute'
 export default class App extends React.Component {
   render() {
@@ -18,7 +17,6 @@ export default class App extends React.Component {
         <Route exact path='/login' component={Login} />
         <Route exact path='/register' component={Register} />
         <PrivateRoute exact path='/channels' component={Home} />
-        <PrivateRoute exact path='/admin' component={AdminPanel} />
         <PrivateRoute exact path='/channels/me' component={Me} />
         <PrivateRoute exact path='/channels/me/:dmId' component={Me} />
       </Switch>
