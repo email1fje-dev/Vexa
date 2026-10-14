@@ -68,3 +68,85 @@ jobs:
             git commit -m "Inspect uploaded Discord clone archive"
             git push
           fi
+
+      - name: Set up Node and Yarn for web app build
+        uses: actions/setup-node@v4
+        with:
+          node-version: "16.20.2"
+      - name: Install Yarn Classic
+        run: npm install --global yarn@1.22.22
+      - name: Build and integrate the ZIP frontend
+        id: build-webapp
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          exec > >(tee /tmp/vexa-build.log) 2>&1
+          FRONTEND="/tmp/vexa-zip-inspect/discord-clone-main/frontend"
+          test -f "$FRONTEND/package.json"
+          printf 'API_URL=\n' > "$FRONTEND/.env.production"
+          sed -i "s|publicPath: '/'|publicPath: './'|g" "$FRONTEND/config/webpack.prod.js" "$FRONTEND/config/webpack.common.js"
+          cd "$FRONTEND"
+          yarn install --frozen-lockfile --network-timeout 120000
+          yarn build
+          test -f "$FRONTEND/build/index.html"
+          cd "$GITHUB_WORKSPACE"
+          cp webapp/index.html /tmp/vexa-original-index.html
+          cp -a "$FRONTEND/build/." webapp/
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          original = Path('/tmp/vexa-original-index.html').read_text(encoding='utf-8')
+          built = Path('webapp/index.html').read_text(encoding='utf-8')
+          styles = re.findall(r'<link\b(?=[^>]*\brel=[\"\']stylesheet[\"\'])[^>]*>', built, re.I)
+          scripts = re.findall(r'<script\b(?=[^>]*\bsrc=)[^>]*>\s*</script>', built, re.I)
+          def relative(tag):
+              return re.sub(r'((?:href|src)=[\"\'])/(?!/)', r'\1./', tag)
+          styles = [relative(tag) for tag in styles]
+          scripts = [relative(tag) for tag in scripts]
+          if not scripts:
+              raise SystemExit('Build output contains no external JavaScript bundles')
+          original = re.sub(r'<link\b(?=[^>]*\brel=[\"\']stylesheet[\"\'])[^>]*>', '', original, flags=re.I)
+          css = ''.join(styles) + '<link href="./vexa-overrides.css" rel="stylesheet">'
+          marker = '<style id="vexa-global-theme">'
+          if marker in original:
+              original = original.replace(marker, css + marker, 1)
+          else:
+              original = original.replace('</head>', css + '</head>', 1)
+          original = re.sub(r'<script\b(?=[^>]*\bsrc=)[^>]*>\s*</script>', '', original, flags=re.I)
+          original = original.replace('</body>', ''.join(scripts) + '</body>')
+          Path('webapp/index.html').write_text(original, encoding='utf-8')
+          PY
+      - name: Commit built web app only
+        if: steps.build-webapp.outcome == 'success'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add webapp/
+          if ! git diff --cached --quiet; then
+            git commit -m "Build Vexa web app from uploaded Discord clone ZIP"
+            git push
+          fi
+      - name: Save build diagnostic report
+        if: always()
+        run: |
+          {
+            echo "# Vexa web app build status"
+            echo
+            echo "Build step outcome: ${{ steps.build-webapp.outcome }}"
+            echo
+            echo "## Recent build output"
+            echo '```text'
+            if [ -f /tmp/vexa-build.log ]; then tail -n 120 /tmp/vexa-build.log; else echo 'No build log was produced.'; fi
+            echo '```'
+          } > BUILD-STATUS.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add BUILD-STATUS.md
+          if ! git diff --cached --quiet; then
+            git commit -m "Record Vexa web app build status"
+            git push
+          fi
+      - name: Fail if the build failed
+        if: steps.build-webapp.outcome == 'failure'
+        run: exit 1
