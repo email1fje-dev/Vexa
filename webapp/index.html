@@ -52,7 +52,7 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
   };
   $('api-base').value = new URLSearchParams(location.search).get('api') || store.get('vexa_api_base');
   $('year').textContent = new Date().getFullYear();
-  function apiBase(){ return (store.get('vexa_api_base') || $('api-base').value || '').trim().replace(/\/+$/,''); }
+  function apiBase(){ const configured=(store.get('vexa_api_base') || $('api-base').value || '').trim().replace(/\/+$/,''); if(configured)return configured; if(location.protocol==='http:'||location.protocol==='https:')return location.origin+'/api/v1'; return ''; }
   function setStatus(message,type=''){const el=$('status');el.textContent=message;el.className='status'+(type?' '+type:'');}
   function clearStatus(){$('status').className='status hidden';$('status').textContent='';}
   function toast(message){const root=$('toast-root');root.innerHTML='';const el=document.createElement('div');el.className='toast';el.textContent=message;root.appendChild(el);setTimeout(()=>el.remove(),3200);}
