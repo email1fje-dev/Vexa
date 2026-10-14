@@ -46,6 +46,15 @@ const deleteUser = {
 };
 
 
+const updateMyProfile = {
+  body: Joi.object().keys({
+    username: Joi.string().trim().min(2).max(32),
+    bio: Joi.string().trim().max(160),
+    avatar: Joi.string().max(400000).allow(''),
+    presenceStatus: Joi.string().valid('online', 'idle', 'dnd'),
+  }).min(1),
+};
+
 const createFriendRequest = {
   body: Joi.object().keys({
     username: Joi.string().min(4).required(),
@@ -59,5 +68,6 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  updateMyProfile,
   createFriendRequest
 };
