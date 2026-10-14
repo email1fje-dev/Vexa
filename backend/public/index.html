@@ -351,18 +351,23 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
   function avatarPhoto(name){
     const key=String(name||'vexa').trim().toLowerCase();let hash=0;
     for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))>>>0;
-    return 'https://i.pravatar.cc/120?img='+(hash%70+1);
+    const photo=hash%99+1,gender=hash%2===0?'men':'women';
+    return 'https://randomuser.me/api/portraits/'+gender+'/'+photo+'.jpg';
+  }
+  function avatarFallback(name){
+    const key=String(name||'V').trim();let hash=0;
+    for(let i=0;i<key.length;i++)hash=(hash*33+key.charCodeAt(i))>>>0;
+    const colors=[['%231b6b39','%230e2a18'],['%232b7a4b','%2314261b'],['%233b8050','%2315281b'],['%231f7657','%230f2b23'],['%234a7650','%23172519']];
+    const c=colors[hash%colors.length];
+    const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+c[0]+'"/><stop offset="1" stop-color="'+c[1]+'"/></linearGradient></defs><rect width="96" height="96" rx="24" fill="url(#g)"/><circle cx="48" cy="35" r="17" fill="#c5e9cd" opacity=".92"/><path d="M16 91c2-21 14-32 32-32s30 11 32 32" fill="#c5e9cd" opacity=".92"/><circle cx="76" cy="20" r="5" fill="#8fe0a3"/></svg>';
+    return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
   }
   function paintAvatars(root=document){
     root.querySelectorAll('#app-view .vx-avatar').forEach(el=>{
       if(el.querySelector('img'))return;
-      const name=el.closest('.vx-message')?.querySelector('.vx-message-meta strong')?.textContent
-        ||el.closest('.vx-person-row')?.querySelector('.vx-dm-copy strong')?.textContent
-        ||el.closest('.vx-dm')?.querySelector('.vx-dm-copy strong')?.textContent
-        ||el.closest('.vx-mebar')?.querySelector('.vx-dm-copy strong')?.textContent
-        ||el.textContent.trim()||'vexa';
-      const img=document.createElement('img');img.alt='تصویر نمایه';img.loading='lazy';img.src=avatarPhoto(name);
-      img.onerror=()=>{img.remove();el.style.color='#fff';el.style.fontSize='14px';};
+      const name=el.dataset.avatarName||el.closest('.vx-message')?.querySelector('.vx-message-meta strong')?.textContent||el.closest('.vx-person-row')?.querySelector('.vx-dm-copy strong')?.textContent||el.closest('.vx-dm')?.querySelector('.vx-dm-copy strong')?.textContent||el.closest('.vx-mebar')?.querySelector('.vx-dm-copy strong')?.textContent||el.textContent.trim()||'vexa';
+      const img=document.createElement('img');img.alt='تصویر نمایه';img.loading='lazy';img.referrerPolicy='no-referrer';img.src=avatarPhoto(name);
+      img.onerror=()=>{img.onerror=null;img.src=avatarFallback(name);};
       el.insertBefore(img,el.firstChild);
     });
   }
