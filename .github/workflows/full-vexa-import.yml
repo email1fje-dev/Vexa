@@ -72,7 +72,9 @@ jobs:
           cd ..
           rm -rf webapp
           mkdir -p webapp
-          cp -a frontend/dist/. webapp/
+          # This legacy webpack config emits into frontend/build, not frontend/dist.
+          if [ -d frontend/dist ]; then BUILD_DIR=frontend/dist; elif [ -d frontend/build ]; then BUILD_DIR=frontend/build; else echo 'No frontend build output found'; find frontend -maxdepth 2 -type f -name 'index.html' -print; exit 1; fi
+          cp -a "$BUILD_DIR"/. webapp/
           cat > app.html <<'EOF'
           <!doctype html>
           <html lang="fa" dir="rtl">
