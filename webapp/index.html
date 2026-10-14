@@ -1,4 +1,4 @@
-<!doctype html><html lang="fa" dir="rtl" data-theme="dark"><head><meta charset="UTF-8"/><title>Vexa | فضای گفت‌وگوی تو</title><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1"/><link rel="icon" href="./favicon.png"><link href="./main.da83eb214cfe0baf0cb3.css" rel="stylesheet"><link href="./styles/main.da83eb214cfe0baf0cb3.css" rel="stylesheet"><style id="vexa-global-theme">
+<!doctype html><html lang="fa" dir="rtl" data-theme="dark"><head><meta charset="UTF-8"/><title>Vexa | فضای گفت‌وگوی تو</title><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1"/><link rel="icon" href="./favicon.png"><link href="./main.da83eb214cfe0baf0cb3.css" rel="stylesheet"><link href="./styles/main.da83eb214cfe0baf0cb3.css" rel="stylesheet"><link href="./vexa-overrides.css" rel="stylesheet"><style id="vexa-global-theme">
 :root{color-scheme:dark;--vx-bg:#080d09;--vx-panel:#101812;--vx-panel2:#17251b;--vx-green:#22c55e;--vx-border:#294432;--vx-text:#f1f8f2;--vx-muted:#a7b8aa}
 *{box-sizing:border-box}html,body,#root{min-height:100%;width:100%;margin:0}html[dir=rtl],body{direction:rtl}
 body{background:var(--vx-bg)!important;color:var(--vx-text)!important;font-family:Tahoma,"Segoe UI",sans-serif!important}
@@ -136,4 +136,24 @@ svg [fill="#5865f2"],svg [fill="#5865F2"],svg [fill="#5865f2" i]{fill:#22c55e!im
 })();
 </script>
 
-</head><body><div id="root"></div><script src="./js/runtime.2cf7acf6d00a6f8e9d2a.bundle.js"></script><script src="./js/main.3a239e7ad8d28fca7bf9.bundle.js"></script></body></html>
+</head><body><div id="root"></div><script src="./js/runtime.2cf7acf6d00a6f8e9d2a.bundle.js"></script><script src="./js/main.3a239e7ad8d28fca7bf9.bundle.js"></script><script id="vexa-theme-toggle-script">
+(function(){
+  var key="vexa-theme";
+  try { var saved=localStorage.getItem(key); if(saved==="light"||saved==="dark") document.documentElement.setAttribute("data-theme",saved); } catch(_){}
+  function mount(){
+    if(document.getElementById("vexa-theme-toggle")) return;
+    var b=document.createElement("button");
+    b.id="vexa-theme-toggle"; b.type="button";
+    b.setAttribute("aria-label","تغییر پوسته"); b.setAttribute("title","تغییر پوسته");
+    b.textContent=document.documentElement.getAttribute("data-theme")==="light"?"☾":"☀";
+    b.style.cssText="position:fixed;z-index:99999;left:14px;bottom:14px;width:44px;height:44px;border-radius:14px;border:1px solid var(--vexa-line,#294432);background:var(--vexa-surface,#101612);color:var(--vexa-green,#21c875);box-shadow:0 8px 26px #0004;font-size:20px;cursor:pointer";
+    b.addEventListener("click",function(){
+      var next=document.documentElement.getAttribute("data-theme")==="light"?"dark":"light";
+      document.documentElement.setAttribute("data-theme",next); b.textContent=next==="light"?"☾":"☀";
+      try{localStorage.setItem(key,next)}catch(_){}
+    });
+    document.body.appendChild(b);
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",mount); else mount();
+})();
+</script></body></html>
