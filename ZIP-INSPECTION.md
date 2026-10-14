@@ -394,3 +394,199 @@ discord-clone-main/frontend/yarn.lock
 discord-clone-main/README.md
 discord-clone-main/backend/README.md
 discord-clone-main/frontend/README.md
+
+## SOURCE: frontend/.env.production
+```
+API_URL=https://discord-react-clone-backend.herokuapp.com
+
+```
+
+## SOURCE: frontend/config/paths.js
+```
+const path = require('path')
+
+module.exports = {
+  // Source files
+  src: path.resolve(__dirname, '../src'),
+
+  // Production build files
+  build: path.resolve(__dirname, '../build'),
+
+  // Static files that get copied to build folder
+  public: path.resolve(__dirname, '../public'),
+}
+
+```
+
+## SOURCE: frontend/config/webpack.prod.js
+```
+const paths = require('./paths')
+const Dotenv = require('dotenv-webpack')
+const { merge } = require('webpack-merge')
+const common = require('./webpack.common.js')
+
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
+
+module.exports = merge(common, {
+  mode: 'production',
+  devtool: false,
+  output: {
+    path: paths.build,
+    publicPath: '/',
+    filename: 'js/[name].[contenthash].bundle.js',
+  },
+  plugins: [
+    new Dotenv({
+      path: './.env.production',
+    }),
+    // Extracts CSS into separate files
+    // Note: style-loader is for development, MiniCssExtractPlugin is for production
+    new MiniCssExtractPlugin({
+      filename: 'styles/[name].[contenthash].css',
+      chunkFilename: '[id].css',
+    }),
+  ],
+  module: {
+    rules: [],
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [new OptimizeCssAssetsPlugin(), new TerserPlugin()],
+    // Once your build outputs multiple chunks, this option will ensure they share the webpack runtime
+    // instead of having their own. This also helps with long-term caching, since the chunks will only
+    // change when actual code changes, not the webpack runtime.
+    runtimeChunk: {
+      name: 'runtime',
+    },
+  },
+  performance: {
+    hints: false,
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000,
+  },
+})
+
+```
+
+## SOURCE: frontend/src/api/client.js
+```
+import axios from 'axios'
+import {
+  LOGIN_PAGE,
+  LOGIN_URL,
+  REFRESH_TOKEN_URL,
+} from '../constants/history.constants'
+
+axios.defaults.withCredentials = true
+
+const client = axios.create({
+  baseURL: process.env.API_URL,
+  withCredentials: true,
+})
+
+client.interceptors.request.use(function (config) {
+  if (localStorage.user) {
+    const userStorage = JSON.parse(localStorage.getItem('user'))
+    config.headers.Authorization = `Bearer ${userStorage?.tokens?.access?.token}`
+  }
+  return config
+})
+
+client.interceptors.response.use(
+  (response) => response,
+  async (err) => {
+    const { status } = err.response
+    const originalReq = err.config
+
+    if (originalReq.url !== LOGIN_URL && err.response) {
+      if (
+        err.response.status === 401 &&
+        err.response?.data?.message === 'Token not found'
+      ) {
+        localStorage.removeItem('user')
+        window.location.replace(LOGIN_PAGE)
+        return Promise.reject()
+      }
+
+      if (
+        (err.response.status === 401 &&
+          err.response?.data?.message === 'Please authenticate',
+        err.config && !err.config._retry)
+      ) {
+        originalReq._retry = true
+        const userStorage = JSON.parse(localStorage.getItem('user'))
+        const refreshToken = userStorage?.tokens?.refresh?.token
+
+        // request to refresh token
+        try {
+          const res = await client.post(REFRESH_TOKEN_URL, {
+            refreshToken: refreshToken,
+          })
+
+          localStorage.setItem('user', JSON.stringify(res.data))
+          originalReq.headers[
+            'Authorization'
+          ] = `Bearer ${res.data?.tokens?.access?.token}`
+          originalReq.headers['Device'] = 'device'
+
+          return client(originalReq)
+        } catch (_error) {
+          return Promise.reject(_error)
+        }
+      }
+    }
+
+    switch (status) {
+      case 403:
+        localStorage.removeItem('user')
+        window.location.replace(LOGIN_PAGE)
+        break
+      default:
+        break
+    }
+
+    return Promise.reject(err)
+  }
+)
+export default client
+
+```
+
+## SOURCE: frontend/src/api/auth/index.js
+```
+import { LOGIN_URL } from '../../constants/history.constants'
+import client from '../client'
+
+export const register = (data) => {
+  return client.post('/api/v1/auth/register', data)
+}
+export const login = (data) => {
+  return client.post(LOGIN_URL, data)
+}
+
+export const logout = (refreshToken) => {
+  return client.post('/api/v1/auth/logout', { refreshToken })
+}
+
+```
+
+## SOURCE: frontend/public/index.html
+```
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Discord | Your Place to Talk and Hang Out</title>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+
+```
