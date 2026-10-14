@@ -35,7 +35,14 @@ jobs:
         env:
           NODE_OPTIONS: --openssl-legacy-provider
         run: |
-          npm install --no-audit --no-fund
+          npm install --legacy-peer-deps --no-audit --no-fund
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('config/webpack.prod.js')
+          s = p.read_text()
+          s = s.replace("publicPath: '/',", "publicPath: './',")
+          p.write_text(s)
+          PY
           npm run build
           test -f build/index.html
           test -n "$(find build/js -maxdepth 1 -type f -name 'main.*.bundle.js' -print -quit)"
