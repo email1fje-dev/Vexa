@@ -1,7 +1,6 @@
 import React from 'react'
 import { Provider } from 'react-redux'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { ReactQueryDevtools } from 'react-query/devtools'
 import { HashRouter as Router } from 'react-router-dom'
 import store from './store'
 
@@ -18,7 +17,6 @@ const AppProviders = ({ children }) => {
   return (
     <Provider store={store}>
       <QueryClientProvider client={client}>
-        <ReactQueryDevtools />
         <Router>{children}</Router>
       </QueryClientProvider>
     </Provider>
