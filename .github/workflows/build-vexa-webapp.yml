@@ -64,7 +64,7 @@ jobs:
           original = original.replace('</body>', ''.join(scripts) + '</body>')
           Path('webapp/index.html').write_text(original, encoding='utf-8')
           PY
-          echo "Build completed; existing Vexa translations, auth bridge, theme toggle, and backend files were preserved."
+          echo "Build completed from ZIP; only webapp output is committed, while backend source and settings stay untouched."
       - name: Commit only web app output
         run: |
           git config user.name "github-actions[bot]"
