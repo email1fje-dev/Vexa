@@ -36,6 +36,8 @@ jobs:
           mkdir -p frontend backend
           rsync -a --delete --exclude='.env' --exclude='.env.*' $SOURCE_ROOT/frontend/ frontend/
           rsync -a --delete --exclude='.env' --exclude='.env.*' $SOURCE_ROOT/backend/ backend/
+          # The app is hosted inside /webapp/, so hash routing avoids a blank screen from a path mismatch.
+          sed -i "s/{ BrowserRouter as Router }/{ HashRouter as Router }/" frontend/src/AppProviders.js
           printf 'API_URL=http://localhost:4000\n' > frontend/.env.example
           printf 'API_URL=http://localhost:4000\n' > frontend/.env.production
           cat > backend/.env.example <<'EOF'
