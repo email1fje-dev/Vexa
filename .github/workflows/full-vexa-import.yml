@@ -19,10 +19,23 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git clone --depth 1 https://github.com/email1fje-dev/discord-clone.git /tmp/vexa-source
+          # Prefer the ZIP uploaded into this project; fall back to the fork if it is absent.
+          if [ -f "discord-clone-main (1).zip" ]; then
+            mkdir -p /tmp/vexa-unpack
+            unzip -q "discord-clone-main (1).zip" -d /tmp/vexa-unpack
+            FRONTEND_DIR="$(find /tmp/vexa-unpack -type d -name frontend -print -quit)"
+            SOURCE_ROOT="$(dirname "$FRONTEND_DIR")"
+            if [ -z "$FRONTEND_DIR" ] || [ ! -d "$SOURCE_ROOT/backend" ]; then
+              echo "Uploaded ZIP must contain frontend/ and backend/ directories."
+              exit 1
+            fi
+          else
+            git clone --depth 1 https://github.com/email1fje-dev/discord-clone.git /tmp/vexa-source
+            SOURCE_ROOT=/tmp/vexa-source
+          fi
           mkdir -p frontend backend
-          rsync -a --delete --exclude='.env' --exclude='.env.*' /tmp/vexa-source/frontend/ frontend/
-          rsync -a --delete --exclude='.env' --exclude='.env.*' /tmp/vexa-source/backend/ backend/
+          rsync -a --delete --exclude='.env' --exclude='.env.*' $SOURCE_ROOT/frontend/ frontend/
+          rsync -a --delete --exclude='.env' --exclude='.env.*' $SOURCE_ROOT/backend/ backend/
           printf 'API_URL=http://localhost:4000\n' > frontend/.env.example
           printf 'API_URL=http://localhost:4000\n' > frontend/.env.production
           cat > backend/.env.example <<'EOF'
@@ -36,8 +49,8 @@ jobs:
           JWT_VERIFY_EMAIL_TOKEN_EXPIRATION_MINUTES=10
           REDIS_HOST=redis://127.0.0.1:6379
           EOF
-          cp /tmp/vexa-source/LICENSE SOURCE_LICENSE.md
-          cp /tmp/vexa-source/README.md SOURCE_README.md
+          cp $SOURCE_ROOT/LICENSE SOURCE_LICENSE.md
+          cp $SOURCE_ROOT/README.md SOURCE_README.md
           cat > frontend/src/vexa-theme.scss <<'EOF'
           :root {
             --vexa-green: #22c55e;
