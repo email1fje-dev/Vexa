@@ -37,11 +37,7 @@ export default function ProfileWidget({ user }) {
           ></span>
         </div>
         <div className='flex items-center flex-col ml-2'>
-          <div className='flex items-center gap-1'>
-            <p className='text-white text-xs font-bold'>{user?.username}</p>
-            {user?.isVerifiedBadge && <span title='حساب تأییدشده' aria-label='حساب تأییدشده' style={{ color: '#38bdf8', fontSize: 12, lineHeight: 1 }}>🔵</span>}
-          </div>
-          {user?.role === 'admin' && <a href='/admin' className='text-xs font-semibold' style={{ color: '#4ade80', textDecoration: 'none' }}>پنل مدیریت</a>}
+          <p className='text-white text-xs font-bold'>{user?.username}</p>
           <p className='text-discord-mainText text-xxs'>#{user?.shortId}</p>
         </div>
       </div>
