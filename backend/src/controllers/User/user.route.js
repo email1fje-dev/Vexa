@@ -6,6 +6,8 @@ const userController = require('./user.controller');
 
 const router = express.Router();
 
+router.patch('/me/profile', auth(), validate(userValidation.updateMyProfile), userController.updateMyProfile);
+
 router
   .route('/')
   .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
