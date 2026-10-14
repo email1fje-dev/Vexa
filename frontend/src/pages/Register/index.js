@@ -2,20 +2,20 @@ import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { Formik, Form } from 'formik'
-import RegisterSchema from '../../validation/register.schema'
+import ثبت‌نامSchema from '../../validation/register.schema'
 import TextField from '../../components/shared/Inputs/TextField'
 import { register } from '../../api/auth'
 import { ME_PAGE } from '../../constants/history.constants'
 import apiErrorHandler from '../../utils/apiErrorHandler'
 import { loginSuccess } from '../../store/user'
 
-import LoginBg from '../../assets/login_bg.svg'
+import ورودBg from '../../assets/login_bg.svg'
 
 export default function Index() {
   const history = useHistory()
   const dispatch = useDispatch()
 
-  async function handleRegisterSubmit(values, { setErrors }) {
+  async function handleثبت‌نامSubmit(values, { setErrors }) {
     try {
       const { data } = await register(values)
 
@@ -30,7 +30,7 @@ export default function Index() {
 
   return (
     <div className='flex flex-col   relative bg-discord-semi600 h-screen w-full'>
-      <LoginBg className='z-0 hidden object-cover object-center sm:block absolute top-0 bottom-0 w-full h-screen' />
+      <ورودBg className='z-0 hidden object-cover object-center sm:block absolute top-0 bottom-0 w-full h-screen' />
 
       <Link
         to='/'
@@ -54,13 +54,13 @@ export default function Index() {
       <div className='z-10 bg-discord-semi600 w-full sm:w-4/6 md:w-4/6 lg:w-2/6 rounded-md p-5 m-12 flex flex-row mx-auto mt-16'>
         <div className='flex flex-col w-full'>
           <h4 className='text-xl text-white font-semibold text-center'>
-            Create an account
+            ساخت حساب کاربری
           </h4>
 
           <Formik
             initialValues={{ email: '', username: '', password: '' }}
-            validationSchema={RegisterSchema}
-            onSubmit={handleRegisterSubmit}
+            validationSchema={ثبت‌نامSchema}
+            onSubmit={handleثبت‌نامSubmit}
           >
             {({ isSubmitting }) => (
               <Form>
@@ -70,7 +70,7 @@ export default function Index() {
                   inputClass='focus:outline-none border-discord-transparentBlack1 border-1
                    focus:ring-2 focus:ring-blue-400 bg-discord-transparentBlack2 text-white
                     w-full rounded py-1 px-2'
-                  label='EMAIL'
+                  label='ایمیل'
                   name='email'
                   type='email'
                 />
@@ -81,7 +81,7 @@ export default function Index() {
                   inputClass='focus:outline-none border-discord-transparentBlack1 border-1
                    focus:ring-2 focus:ring-blue-400 bg-discord-transparentBlack2 text-white
                     w-full rounded py-1 px-2'
-                  label='USERNAME'
+                  label='نام کاربری'
                   name='username'
                   type='text'
                 />
@@ -92,7 +92,7 @@ export default function Index() {
                   inputClass='focus:outline-none border-discord-transparentBlack1 border-1
                    focus:ring-2 focus:ring-blue-400 bg-discord-transparentBlack2 text-white
                     w-full rounded py-1 px-2'
-                  label='PASSWORD'
+                  label='رمز عبور'
                   name='password'
                   type='password'
                 />
@@ -135,7 +135,7 @@ export default function Index() {
               href='#'
               className='text-xs text-discord-textLink hover:underline'
             >
-              Already have an account?
+              از قبل حساب کاربری داری؟
             </Link>
           </div>
         </div>
