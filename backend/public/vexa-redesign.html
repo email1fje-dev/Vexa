@@ -32,6 +32,39 @@ html[data-theme=light] .auth{--bg:#f2faf3;--panel:#fff;--panel2:#f5fbf6;--rail:#
 @media(max-width:900px){.app-shell{grid-template-columns:64px 220px minmax(0,1fr)}.active-now-pane{display:none}.member-pane{display:none!important}.server-feature-grid{grid-template-columns:1fr 1fr}.settings-nav{width:170px;min-width:155px}}
 @media(max-width:700px){html,body{height:100%;overflow:hidden}.app-shell{display:flex;flex-direction:column;direction:ltr;height:100dvh;width:100vw;overflow:hidden;background:var(--bg)}.server-rail{display:none}.rail-profile{display:none}.workspace-sidebar{display:none}.main-stage{display:flex;flex:1 1 auto;width:100%;height:auto;min-height:0;min-width:0;overflow:hidden}.mobile-dock{display:grid;position:relative;inset:auto;flex:none;width:100%;height:70px;grid-template-columns:repeat(4,minmax(0,1fr));z-index:30;background:var(--rail);border-top:1px solid var(--line);padding:7px 10px max(7px,env(safe-area-inset-bottom));gap:6px;box-shadow:0 -8px 24px #0000000c}.mobile-dock button{transition:background .18s,color .18s,transform .18s}.mobile-dock button.active{border-radius:14px}.mobile-create{display:grid!important;animation:vexa-pop .32s ease-out both}.main-header{background:var(--panel);border-bottom:1px solid var(--line)}.main-header-title{gap:10px}.main-header-title>.icon{background:var(--soft);color:var(--green);padding:6px;border-radius:10px;width:32px;height:32px}.header-actions{gap:5px}.header-actions .icon-button{border-radius:11px;background:var(--panel2);color:var(--text);width:36px;height:36px}.header-actions .mobile-create{background:var(--green);color:white}.header-actions .mobile-create:hover{background:var(--green2);transform:rotate(90deg)}.mobile-dock button{display:grid;align-content:center;justify-items:center;gap:4px;min-width:0;border:0;border-radius:10px;background:transparent;color:var(--muted);font-size:10px;font-weight:750}.mobile-dock button .icon{width:21px;height:21px}.mobile-dock button.active{background:var(--soft);color:var(--green)}.mobile-dock button:active{transform:scale(.96)}.app-shell.chat-open .workspace-sidebar{display:none}.app-shell.chat-open .main-stage{display:flex}.main-header{height:52px;min-height:52px;padding:0 11px}.main-header-title{font-size:13px}.mobile-back{display:grid}.workspace-content{min-height:0;padding-bottom:0;overscroll-behavior:contain}.friends-layout{display:block;height:auto;min-height:100%}.friends-primary{padding:0 13px 20px;overflow:visible}.friends-toolbar{min-height:57px;gap:7px;position:sticky;top:0;background:var(--bg);z-index:1}.friends-tabs{gap:2px}.friends-tabs button{padding:9px 8px;font-size:11px}.friends-count{display:none}.friend-row{padding:11px 6px;gap:9px}.friend-row .friend-actions .icon-button{width:32px;height:32px}.chat-layout{height:100%;min-height:0}.chat-messages{padding:17px 12px;gap:15px}.chat-input-zone{padding:0 9px 11px max(9px,env(safe-area-inset-left))}.chat-composer{gap:5px;padding:6px}.chat-welcome h2{font-size:21px}.chat-welcome .avatar{width:65px;height:65px}.profile-settings{display:block}.settings-nav{display:none}.settings-content{padding:20px 13px 28px}.settings-content h1{font-size:21px}.settings-cover{height:100px}.settings-profile-top .avatar{width:66px;height:66px}.settings-profile-top{gap:8px}.settings-profile-card{padding:0 12px 14px}.settings-profile-top .settings-profile-copy{padding-top:39px}.settings-profile-copy h2{font-size:15px}.settings-profile-actions .btn{font-size:11px;padding:9px 10px}.settings-panel{padding:13px}.setting-line{align-items:flex-start}.server-page{padding:16px}.server-hero{padding:21px}.server-hero h1{font-size:22px}.server-feature-grid{grid-template-columns:1fr}.dialog-root{padding:10px}.dialog-card{padding:18px;max-height:92dvh}.server-hero-actions .btn{flex:1}.toast{bottom:76px;left:12px;max-width:calc(100% - 24px)}}
 @media(max-width:390px){.friend-actions .icon-button:nth-child(2){display:none}.friends-toolbar{margin-bottom:14px}.friends-tabs button{padding:8px 6px}.friend-row .avatar{width:34px;height:34px}.friend-row .friend-user b{font-size:12px}.settings-profile-copy p{font-size:11px}}
+
+/* DM composer polish */
+.chat-center{background:var(--bg)}
+.chat-messages{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.chat-input-zone{padding:12px 22px 18px;background:linear-gradient(180deg,transparent,var(--bg) 20%);flex:none}
+.chat-composer{width:100%;min-height:60px;align-items:center;gap:10px;padding:9px 12px;border-radius:18px;background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 24px #00000012;transition:border-color .18s,box-shadow .18s,background .18s}
+.chat-composer:focus-within{border-color:var(--green);box-shadow:0 0 0 3px #31c76a1c,0 8px 24px #00000012}
+html[data-theme=light] .chat-composer{background:var(--panel);border-color:var(--line)}
+.chat-composer .composer-plus{width:40px;height:40px;border-radius:13px;background:var(--panel2);color:var(--muted);transition:background .18s,color .18s,transform .18s}
+.chat-composer .composer-plus:hover{background:var(--soft);color:var(--green);transform:rotate(90deg)}
+.composer textarea{min-height:42px;max-height:160px;padding:10px 4px;font-size:15px;line-height:1.65;color:var(--text);outline:none}
+.composer textarea::placeholder{color:var(--muted);opacity:.9}
+.composer-send{width:42px;height:42px;border-radius:13px;box-shadow:0 3px 10px #31c76a35;transition:transform .16s,background .16s,box-shadow .16s}
+.composer-send:hover{transform:translateY(-1px);box-shadow:0 5px 14px #31c76a45}
+.composer-send:active{transform:scale(.94)}
+.composer-send:disabled{opacity:.45;box-shadow:none}
+@media(max-width:700px){
+ .chat-layout{height:100%;min-height:0}
+ .chat-center{width:100%;min-width:0}
+ .chat-messages{padding:17px 13px 20px;gap:16px}
+ .chat-input-zone{padding:10px 10px max(12px,env(safe-area-inset-bottom));background:var(--panel);border-top:1px solid var(--line)}
+ .chat-composer{min-height:62px;gap:8px;padding:8px;border-radius:19px}
+ .chat-composer .composer-plus{width:42px;height:42px;flex:none;border-radius:14px}
+ .composer textarea{min-height:44px;max-height:130px;padding:11px 3px;font-size:16px;line-height:1.5}
+ .composer-send{width:44px;height:44px;flex:none;border-radius:14px}
+ .composer-send .icon{width:20px;height:20px}
+ .chat-welcome{padding:20px 8px 12px;margin-bottom:16px}
+ .chat-welcome h2{font-size:22px}
+ .message-row{gap:10px}
+ .message-text{font-size:14px;line-height:1.75}
+ .main-header .main-header-title{min-width:0;flex:1}
+ .main-header-title span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
 </style><body><section id="auth" class="auth"><div class="auth-card"><div class="brand"><span class="logo">V</span> وکسا</div><h1 id="auth-title">خوش برگشتی 💚</h1><p>دوستات، گفتگوها و کامیونیتی‌هات؛ همه توی یک جا.</p><div class="tabs"><button class="btn primary" id="login-tab">ورود</button><button class="btn" id="signup-tab">ساخت حساب</button></div><form id="auth-form"><div class="field hidden" id="username-wrap"><label>نام کاربری</label><input id="username" minlength="4" autocomplete="username"></div><div class="field"><label>ایمیل</label><input id="email" type="email" required autocomplete="email"></div><div class="field"><label>رمز عبور</label><input id="password" type="password" required minlength="6" autocomplete="current-password"></div><p id="auth-error" class="status"></p><button class="btn primary" style="width:100%" id="auth-submit">ورود به وکسا</button></form></div></section><section id="app" class="hidden"></section><div id="toast"></div><script>
 const $=id=>document.getElementById(id),store={get:(k,d='')=>{try{return localStorage.getItem(k)??d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}},del:k=>{try{localStorage.removeItem(k)}catch{}}};
 const st={mode:'login',user:null,token:null,refresh:null},v={friends:[],requests:[],users:[],rooms:[],view:'friends',tab:'all',friend:null,room:null,messages:[]};
