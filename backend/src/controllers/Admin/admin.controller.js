@@ -125,6 +125,18 @@ const updateReport = catchAsync(async (req, res) => {
   res.send({ id: report.id, status: report.status, resolutionNote: report.resolutionNote, reviewedAt: report.reviewedAt });
 });
 
+const deleteReportedMessage = catchAsync(async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.messageId)) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid message id');
+  const id = String(req.params.messageId);
+  const linkedReport = await Report.findOne({ targetType: 'message', targetId: id });
+  if (!linkedReport) throw new ApiError(httpStatus.FORBIDDEN, 'Only specifically reported messages can be removed here');
+  const message = await Message.findById(id);
+  if (!message) throw new ApiError(httpStatus.NOT_FOUND, 'Message not found');
+  await message.remove();
+  await audit(req, 'message.removed_after_report', id, { reportId: String(linkedReport._id) });
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
 const getAnnouncements = catchAsync(async (req, res) => {
   const { page, limit } = paging(req);
   const filter = {};
@@ -261,6 +273,6 @@ const updateSettings = catchAsync(async (req, res) => {
 
 module.exports = {
   getMe, getOverview, getUsers, setVerifiedBadge, getAudit, getMessageSummary,
-  getReports, updateReport, getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement,
+  getReports, updateReport, deleteReportedMessage, getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement,
   getServers, updateServer, getSettings, updateSettings, getSystemEvents, getSupportTickets, updateSupportTicket,
 };
