@@ -8,6 +8,7 @@ const adminRoute = require('../../controllers/Admin/admin.route');
 const reportRoute = require('../../controllers/Report/report.route');
 const announcementRoute = require('../../controllers/Announcement/announcement.route');
 const serverRoute = require('../../controllers/Server/server.route');
+const supportRoute = require('../../controllers/Support/support.route');
 const { AdminSetting } = require('../../models');
 
 const router = express.Router();
@@ -32,4 +33,5 @@ router.use('/admin', adminRoute);
 router.use('/reports', reportRoute);
 router.use('/announcements', announcementRoute);
 router.use('/servers', serverRoute);
+router.use('/support', supportRoute);
 module.exports = router;
