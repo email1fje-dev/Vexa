@@ -8,8 +8,40 @@ const socketIo = require('./socket/io');
 const { getConnection } = require('./lib/redisConnection');
 
 let server;
-mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
+mongoose.connect(config.mongoose.url, config.mongoose.options).then(async () => {
   console.log('Connected to MongoDB');
+
+  // Provision the Vexa owner account from Railway variables.
+  const adminEmail = process.env.VEXA_ADMIN_EMAIL;
+  const adminUsername = process.env.VEXA_ADMIN_USERNAME || 'Vexa';
+  const adminPassword = process.env.VEXA_ADMIN_PASSWORD;
+  if (adminEmail && adminPassword) {
+    const { User } = require('./models');
+    let admin = await User.findOne({ email: adminEmail.toLowerCase() });
+    if (!admin) {
+      admin = await User.create({
+        username: adminUsername,
+        email: adminEmail.toLowerCase(),
+        password: adminPassword,
+        role: 'admin',
+        isEmailVerified: true,
+        isVerifiedBadge: true,
+        shortId: String(Math.floor(1000 + Math.random() * 9000)),
+        color: 'green',
+      });
+      console.log('Vexa owner account created');
+    } else {
+      admin.username = adminUsername;
+      admin.role = 'admin';
+      admin.isEmailVerified = true;
+      admin.isVerifiedBadge = true;
+      if (process.env.VEXA_ADMIN_SYNC_PASSWORD === 'true') admin.password = adminPassword;
+      await admin.save();
+      console.log('Vexa owner account verified and promoted');
+    }
+  } else {
+    console.warn('VEXA_ADMIN_EMAIL or VEXA_ADMIN_PASSWORD is missing; owner bootstrap skipped');
+  }
 
   server = http.createServer({}, app);
 
