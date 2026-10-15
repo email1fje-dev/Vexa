@@ -568,7 +568,7 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
     if(!response.ok)throw new Error(data.message||data.error||('خطای سرور ('+response.status+')'));
     return data;
   };
-  const vx = { friends:[], requests:[], rooms:[], activeFriend:null, activeRoom:null, messages:[], view:'friends', friendTab:'all', busy:false };
+  const vx = { friends:[], requests:[], rooms:[], users:[], activeFriend:null, activeRoom:null, messages:[], view:'friends', friendTab:'all', busy:false };
 
   function paintAvatars(root=document){
     root.querySelectorAll('.vx-avatar[data-avatar]').forEach(el=>{
@@ -591,9 +591,9 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
   function friendId(u){return u?.id||u?._id;}
   async function loadWorkspace(){
     const results=await Promise.allSettled([
-      apiCall('/friends/all-friends'),apiCall('/friends/pending-requests'),apiCall('/rooms/open-rooms')
+      apiCall('/friends/all-friends'),apiCall('/friends/pending-requests'),apiCall('/rooms/open-rooms'),apiCall('/users/directory')
     ]);
-    const [friendsResult,requestsResult,roomsResult]=results;
+    const [friendsResult,requestsResult,roomsResult,usersResult]=results;
     let loaded=0,errors=[];
     if(friendsResult.status==='fulfilled'){
       const data=friendsResult.value;
@@ -604,6 +604,8 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
     else errors.push('درخواست‌ها: '+requestsResult.reason.message);
     if(roomsResult.status==='fulfilled'){vx.rooms=Array.isArray(roomsResult.value)?roomsResult.value:[];loaded++;}
     else errors.push('گفتگوها: '+roomsResult.reason.message);
+    if(usersResult.status==='fulfilled'){vx.users=Array.isArray(usersResult.value)?usersResult.value:[];loaded++;}
+    else errors.push('فهرست کاربران: '+usersResult.reason.message);
     renderWorkspace();
     if(!loaded)toast('اطلاعات از سرور دریافت نشد: '+errors.join(' | '));
     else if(errors.length)toast('بخشی از اطلاعات لود نشد: '+errors.join(' | '));
