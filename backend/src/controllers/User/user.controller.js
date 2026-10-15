@@ -31,7 +31,7 @@ const updateMyProfile = catchAsync(async (req, res) => {
 
 const getDirectory = catchAsync(async (req, res) => {
   const users = await User.find({ _id: { $ne: req.user.id } })
-    .select('username shortId avatar bio presenceStatus')
+    .select('username shortId avatar profileVideo bio presenceStatus')
     .sort({ username: 1 })
     .limit(50);
   res.send(users);
