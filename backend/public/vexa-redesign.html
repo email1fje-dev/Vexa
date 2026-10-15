@@ -132,20 +132,26 @@ let refreshInProgress=false;
 async function load(silent=false){
  if(refreshInProgress)return;
  refreshInProgress=true;
- const before=JSON.stringify([v.friends,v.requests,v.outgoing,v.rooms,v.users,v.networkError]);
+ const before=JSON.stringify([v.friends,v.requests,v.outgoing,v.rooms,v.users,v.messages,v.networkError]);
  try{
-  const requests=await Promise.allSettled([api('/friends/all-friends'),api('/friends/pending-requests'),api('/friends/outgoing-requests'),api('/rooms/open-rooms'),api('/users/directory')]);
+  const requests=await Promise.allSettled([api('/friends/all-friends'),api('/friends/pending-requests'),api('/friends/outgoing-requests'),api('/rooms/open-rooms'),api('/users/directory'),...(v.view==='chat'&&v.room?[api('/messages/'+encodeURIComponent(userId(v.room))+'?limit=100&page=1')]:[])]);
   v.networkError=requests.every(x=>x.status==='rejected')?(requests[0]?.reason?.message||'ارتباط با سرور برقرار نشد'):'';
   if(requests[0].status==='fulfilled')v.friends=arr(requests[0].value).map(r=>({request:r,user:getFriendRequestUser(r)})).filter(x=>x.user&&userId(x.user));
   if(requests[1].status==='fulfilled')v.requests=arr(requests[1].value);
   if(requests[2].status==='fulfilled')v.outgoing=arr(requests[2].value);
   if(requests[3].status==='fulfilled')v.rooms=arr(requests[3].value);
   if(requests[4].status==='fulfilled')v.users=arr(requests[4].value);
-  const after=JSON.stringify([v.friends,v.requests,v.outgoing,v.rooms,v.users,v.networkError]);
+  if(requests[5]?.status==='fulfilled')v.messages=arr(requests[5].value).slice().reverse();
+  const after=JSON.stringify([v.friends,v.requests,v.outgoing,v.rooms,v.users,v.messages,v.networkError]);
   if(before!==after){
    const shell=$('app-shell');
+   const messageInput=silent&&v.view==='chat'?$('message-input'):null;
+   const draft=messageInput?messageInput.value:null;
+   const wasFocused=messageInput&&document.activeElement===messageInput;
+   const cursor=messageInput?messageInput.selectionStart:null;
    if(silent&&shell)shell.classList.add('auto-refreshing');
    render();
+   if(draft!==null){const next=$('message-input');if(next){next.value=draft;if(wasFocused){next.focus();try{next.setSelectionRange(cursor,cursor)}catch{}}}}
    if(silent&&shell)setTimeout(()=>shell.classList.remove('auto-refreshing'),350);
   }
  }finally{refreshInProgress=false}
