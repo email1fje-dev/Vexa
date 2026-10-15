@@ -348,6 +348,8 @@ function handleClick(event){
  if(action==='open-settings'){v.view='profile';v.profileTab='settings';render();return}
  if(action==='edit-profile'){editProfileDialog();return}
  if(action==='pick-avatar'){$('avatar-file')?.click();return}
+ if(action==='pick-profile-video'){$('profile-video-file')?.click();return}
+ if(action==='remove-profile-video'){v.pendingProfileVideo='';const p=$('profile-video-preview'),empty=$('profile-video-empty');if(p){p.pause();p.removeAttribute('src');p.hidden=true}if(empty)empty.hidden=false;return}
  if(action==='remove-avatar'){v.pendingAvatar='';const p=$('avatar-edit-preview');if(p)p.innerHTML=av({...st.user,avatar:''},'lg');return}
  if(action==='close-dialog'){closeDialog();return}
  if(action==='logout'){logout();return}
