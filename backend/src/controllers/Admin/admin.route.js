@@ -13,6 +13,7 @@ router.patch('/users/:userId/verified', controller.setVerifiedBadge);
 router.get('/audit', controller.getAudit);
 router.get('/messages/summary', controller.getMessageSummary);
 router.get('/reports', controller.getReports);
+router.get('/support', controller.getSupportTickets);
 router.patch('/reports/:reportId', controller.updateReport);
 router.get('/announcements', controller.getAnnouncements);
 router.post('/announcements', controller.createAnnouncement);
