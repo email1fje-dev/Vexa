@@ -140,6 +140,25 @@ html[data-theme=light] .chat-composer{background:linear-gradient(145deg,#fff,#f2
 @media(max-width:850px){.server-members-panel{display:none}.server-channel-sidebar{width:175px;min-width:150px;padding:7px}.server-room-titlebar{margin:8px 8px 0;padding:10px}.server-message-list{padding:12px}.server-message-form{margin:0 8px 8px}.server-channel-header{padding:12px}}
 @media(max-width:520px){.server-channel-sidebar{width:128px;min-width:118px;padding:6px}.server-sidebar-name{padding:8px;font-size:11px}.server-sidebar-mark{width:25px;height:25px}.server-invite-box{padding:7px}.server-invite-box b{font-size:10px;letter-spacing:0}.server-room-count{display:none}.server-room-heading h1{font-size:14px}.server-channel-header>span{display:none}.server-message-form{gap:6px}.server-compose-hash{width:25px;height:25px}}
 
+/* Full-screen server and channel focus */
+.app-shell.server-focus .workspace-sidebar,.app-shell.server-focus .main-header,.app-shell.server-focus .announcement-stack{display:none!important}
+.app-shell.server-focus .main-stage{min-width:0;width:calc(100% - 72px);margin:0;grid-column:2}
+.app-shell.server-focus .workspace-content{padding:0!important;overflow:hidden;min-height:0}
+.server-focus-page{height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);animation:vexa-focus-in .3s cubic-bezier(.2,.75,.25,1) both}
+@keyframes vexa-focus-in{from{opacity:0;transform:translateX(16px) scale(.99);filter:blur(2px)}to{opacity:1;transform:none;filter:blur(0)}}
+.server-focus-top{display:flex;align-items:center;gap:13px;padding:17px clamp(12px,3vw,32px);min-height:88px;flex:none;background:var(--panel);border-bottom:1px solid var(--line)}
+.server-focus-mark{width:48px;height:48px;display:grid;place-items:center;flex:none;overflow:hidden;border-radius:15px;background:var(--soft);color:var(--green);font-size:22px;font-weight:900}
+.server-focus-mark img{width:100%;height:100%;object-fit:cover}.server-focus-mark.small{width:38px;height:38px;border-radius:11px}
+.server-focus-title{flex:1;min-width:0}.server-focus-title small{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}.server-focus-title h1{font-size:clamp(16px,2vw,22px);font-weight:900;margin:0;color:var(--text);overflow-wrap:anywhere}.server-focus-title p{font-size:11px;color:var(--muted);margin:5px 0 0}
+.server-focus-content{width:min(820px,100%);margin:0 auto;padding:clamp(15px,4vw,36px);overflow:auto;flex:1;min-height:0;box-sizing:border-box}
+.server-focus-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}.server-focus-heading small{color:var(--green);font-weight:800}.server-focus-heading h2{font-size:26px;margin:5px 0 0;color:var(--text)}
+.server-channel-cards{display:flex;flex-direction:column;gap:10px}.server-channel-card{display:flex;align-items:center;gap:14px;width:100%;padding:16px;border:1px solid var(--line);border-radius:15px;background:var(--panel);color:var(--text);text-align:right;cursor:pointer;animation:vexa-channel-in .3s both;animation-delay:calc(var(--delay,0)*.03s);transition:transform .2s,border-color .2s,background .2s}.server-channel-card:hover{transform:translateY(-2px);border-color:var(--green);background:var(--panel2)}@keyframes vexa-channel-in{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.server-channel-card .channel-hash{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:var(--soft);color:var(--green);font-size:27px;flex:none}.server-channel-card>span:nth-child(2){display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}.server-channel-card b{font-size:14px}.server-channel-card small{font-size:11px;color:var(--muted)}.server-channel-card>svg{color:var(--muted);transform:rotate(180deg)}
+.server-focus-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}.server-focus-footer span{display:flex;align-items:center;gap:7px}.server-no-channels{padding:50px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:15px}
+.server-channel-top{min-height:70px;padding:11px clamp(10px,2vw,24px);gap:11px}.server-back{white-space:nowrap;font-size:12px}.server-channel-top .server-focus-title h1{font-size:16px}.server-channel-top .channel-hash{color:var(--green);margin-left:5px}
+.server-full-chat{display:flex;flex:1;min-height:0;flex-direction:column;width:100%;max-width:1200px;margin:0 auto;overflow:hidden}.server-full-chat .server-message-list{flex:1;min-height:0;padding:24px clamp(12px,4vw,45px);gap:18px}.server-full-chat .server-message-body p{font-size:14px;line-height:1.9}.server-full-chat .server-message-form{margin:10px clamp(10px,3vw,28px) 18px;padding:10px 12px;border-radius:14px}
+@media(max-width:600px){.app-shell.server-focus .main-stage{width:calc(100% - 60px)}.server-focus-top{min-height:72px;padding:10px}.server-focus-mark{width:40px;height:40px}.server-focus-content{padding:15px 11px}.server-channel-card{padding:12px;gap:10px}.server-focus-heading h2{font-size:21px}.server-focus-heading .btn{font-size:11px;padding:8px}.server-channel-top{gap:7px}.server-back{font-size:0;padding:9px}.server-channel-top .server-focus-title h1{font-size:13px}.server-full-chat .server-message-list{padding:15px 11px}.server-full-chat .server-message-form{margin:8px 8px 10px}}
+@media(prefers-reduced-motion:reduce){.server-focus-page,.server-channel-card{animation:none!important;transition:none!important}}
 </style><body><section id="auth" class="auth"><div class="auth-card"><div class="brand"><span class="logo">V</span> وکسا</div><h1 id="auth-title">خوش برگشتی 💚</h1><p>دوستات، گفتگوها و کامیونیتی‌هات؛ همه توی یک جا.</p><div class="tabs"><button class="btn primary" id="login-tab">ورود</button><button class="btn" id="signup-tab">ساخت حساب</button></div><form id="auth-form"><div class="field hidden" id="username-wrap"><label>نام کاربری</label><input id="username" minlength="4" autocomplete="username"></div><div class="field"><label>ایمیل</label><input id="email" type="email" required autocomplete="email"></div><div class="field"><label>رمز عبور</label><input id="password" type="password" required minlength="6" autocomplete="current-password"></div><p id="auth-error" class="status"></p><button class="btn primary" style="width:100%" id="auth-submit">ورود به وکسا</button></form></div></section><section id="app" class="hidden"></section><div id="toast"></div><script>
 const $=id=>document.getElementById(id),store={get:(k,d='')=>{try{return localStorage.getItem(k)??d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}},del:k=>{try{localStorage.removeItem(k)}catch{}}};
 const st={mode:'login',user:null,token:null,refresh:null},v={friends:[],requests:[],users:[],rooms:[],view:'friends',tab:'all',friend:null,room:null,messages:[]};
@@ -283,6 +302,7 @@ function render(){
  const shell=$('app-shell');if(!shell)return;
  if(v.view!=='serverRoom'&&window.vexaServerMessageTimer){clearInterval(window.vexaServerMessageTimer);window.vexaServerMessageTimer=null;}
  shell.classList.toggle('chat-open',v.view==='chat');
+ shell.classList.toggle('server-focus',v.view==='serverRoom');
  shell.classList.toggle('member-open',v.view==='chat'&&v.memberPanel);
  document.querySelectorAll('[data-nav]').forEach(b=>{const key=b.dataset.nav;const on=(key==='home'&&v.view==='home')||(key==='friends'&&v.view==='friends')||(key==='notifications'&&v.view==='friends'&&v.tab==='pending')||(key==='you'&&v.view==='profile')||(key==='dms'&&(v.view==='dms'||v.view==='chat'))||(key==='servers'&&v.view==='servers');b.classList.toggle('active',on)});
  
@@ -387,18 +407,22 @@ function loadServerMessages(serverId,channelId){
  }).catch(error=>{const root=$('server-message-list');if(root)root.innerHTML='<div class="inline-alert">پیام‌ها بارگذاری نشدند. <button class="btn" data-action="retry-server-messages">تلاش دوباره</button></div>';});
 }
 function renderServerRoom(root,server){
- const name=String(server?.name||'سرور').trim()||'سرور',channels=arr(server?.channels);
+ const name=String(server?.name||'سرور').trim()||'سرور',channels=arr(server?.channels),members=arr(server?.members);
  const active=channels.find(c=>String(c.id)===String(v.currentChannelId))||channels[0];
  if(active&&String(v.currentChannelId||'')!==String(active.id))v.currentChannelId=active.id;
- const members=arr(server?.members);
- const channelHtml=channels.map(c=>'<button class="server-channel '+(active&&String(c.id)===String(active.id)?'active':'')+'" type="button" data-server-channel="'+esc(c.id)+'"><span class="server-channel-hash">#</span><span>'+esc(c.name)+'</span></button>').join('');
- const memberHtml=members.map(m=>'<div class="server-member-row">'+av(m,'sm')+'<span>'+esc(m.username||'کاربر')+'</span>'+(String(m._id||m.id)===String(server?.owner?._id||server?.owner?.id||server?.ownerId)?'<small>مالک</small>':'')+'</div>').join('');
- root.innerHTML='<section class="server-layout"><aside class="server-members-panel"><div class="server-panel-title"><b>اعضای سرور</b><span>'+members.length+'</span></div><div class="server-members-list">'+(memberHtml||'<p class="muted">هنوز عضوی نیست.</p>')+'</div></aside><main class="server-chat-panel"><header class="server-room-titlebar"><div class="server-room-mark">'+(server?.icon||server?.image||server?.avatar?'<img src="'+esc(server.icon||server.image||server.avatar)+'" alt="">':esc(Array.from(name)[0]||'س'))+'</div><div class="server-room-heading"><span>سرور</span><h1>'+esc(name)+'</h1></div><div class="server-room-count">'+members.length+' عضو</div></header><header class="server-channel-header"><div><span class="server-channel-hash">#</span><b>'+esc(active?.name||'کانال')+'</b></div><span>گفت‌وگوی سرور</span></header><div id="server-message-list" class="server-message-list"><div class="empty-state">در حال بارگذاری پیام‌ها…</div></div>'+(active?'<form id="server-message-form" class="server-message-form"><span class="server-compose-hash">+</span><input id="server-message-input" maxlength="2000" autocomplete="off" placeholder="پیام به #'+esc(active.name)+'" required><button class="btn primary" type="submit" aria-label="ارسال پیام">'+ico('send')+'</button></form>':'<div class="server-no-channel">برای شروع، یک کانال بساز.</div>')+'</main><aside class="server-channel-sidebar"><button class="server-sidebar-name" type="button" data-action="server-details"><span class="server-sidebar-mark">'+esc(Array.from(name)[0]||'س')+'</span><span>'+esc(name)+'</span>'+ico('chevronDown')+'</button><div class="server-channel-heading"><span>کانال‌های متنی</span>'+(server?.isOwner?'<button type="button" data-action="server-create-channel" title="ساخت کانال">'+ico('plus')+'</button>':'')+'</div><div class="server-channel-list">'+(channelHtml||'<p class="muted">هنوز کانالی ساخته نشده.</p>')+'</div><div class="server-invite-box"><small>کد دعوت</small><b dir="ltr">'+esc(server?.inviteCode||'')+'</b><button class="btn" type="button" data-action="copy-server-invite">'+ico('copy')+' کپی دعوت</button></div></aside></section>';
+ const mark=server?.icon||server?.image||server?.avatar?'<img src="'+esc(server.icon||server.image||server.avatar)+'" alt="">':esc(Array.from(name)[0]||'س');
+ if(!v.serverChannelOpen){
+  const cards=channels.map((c,i)=>'<button class="server-channel-card" data-server-channel="'+esc(c.id)+'" style="--delay:'+Math.min(i,10)+'"><span class="channel-hash">#</span><span><b>'+esc(c.name)+'</b><small>کانال متنی</small></span>'+ico('chevron')+'</button>').join('');
+  root.innerHTML='<section class="server-focus-page"><header class="server-focus-top"><div class="server-focus-mark">'+mark+'</div><div class="server-focus-title"><small>فضای سرور</small><h1>'+esc(name)+'</h1><p>'+members.length+' عضو · '+channels.length+' کانال</p></div><button class="icon-button" data-action="server-leave" aria-label="بستن سرور">'+ico('close')+'</button></header><div class="server-focus-content"><div class="server-focus-heading"><div><small>کانال‌های سرور</small><h2>کانال‌هات</h2></div>'+(server?.isOwner?'<button class="btn primary" data-action="server-create-channel">'+ico('plus')+' کانال جدید</button>':'')+'</div><div class="server-channel-cards">'+(cards||'<div class="server-no-channels">هنوز کانالی وجود نداره.</div>')+'</div><footer class="server-focus-footer"><span>'+ico('friends')+' '+members.length+' عضو</span><button class="btn" data-action="copy-server-invite">'+ico('copy')+' کپی کد دعوت</button></footer></div></section>';
+  return;
+ }
+ root.innerHTML='<section class="server-focus-page"><header class="server-focus-top server-channel-top"><button class="btn server-back" data-action="server-close-channel">'+ico('chevron')+' کانال‌ها</button><div class="server-focus-mark small">'+mark+'</div><div class="server-focus-title"><small>'+esc(name)+'</small><h1><span class="channel-hash">#</span>'+esc(active?.name||'کانال')+'</h1></div><button class="icon-button" data-action="server-close-channel" aria-label="بستن کانال">'+ico('close')+'</button></header><div class="server-full-chat"><div id="server-message-list" class="server-message-list"><div class="empty-state">در حال بارگذاری پیام‌ها…</div></div>'+(active?'<form id="server-message-form" class="server-message-form"><span class="server-compose-hash">#</span><input id="server-message-input" maxlength="2000" autocomplete="off" placeholder="پیام به #'+esc(active.name)+'…" required><button class="btn primary" type="submit" aria-label="ارسال پیام">'+ico('send')+'</button></form>':'')+'</div></section>';
  if(active)loadServerMessages(server.id,active.id);
 }
 function openServerRoom(serverId){
  api('/servers/'+encodeURIComponent(serverId)).then(server=>{
   v.currentServer=server;v.view='serverRoom';v.friend=null;v.room=null;v.messages=[];
+  v.serverChannelOpen=false;
   v.currentChannelId=arr(server.channels)[0]?.id||null;v.serverMessages=[];
   if(window.vexaServerMessageTimer)clearInterval(window.vexaServerMessageTimer);
   window.vexaServerMessageTimer=setInterval(()=>{if(v.view==='serverRoom'&&v.currentServer&&v.currentChannelId)loadServerMessages(v.currentServer.id,v.currentChannelId)},3000);
@@ -464,7 +488,7 @@ function reportUserDialog(targetId,targetType='user'){
 function handleClick(event){
  const b=event.target.closest('button,[data-nav],[data-action],[data-tab],[data-user-chat],[data-add-user],[data-accept],[data-cancel-request],[data-profile-section],[data-theme-pick]');if(!b)return;
  if(b.dataset.serverOpen){openServerRoom(b.dataset.serverOpen);return}
- if(b.dataset.serverChannel){v.currentChannelId=b.dataset.serverChannel;v.serverMessages=[];render();return}
+ if(b.dataset.serverChannel){v.currentChannelId=b.dataset.serverChannel;v.serverChannelOpen=true;v.serverMessages=[];render();return}
  if(b.dataset.nav){setNav(b.dataset.nav);return}
  if(b.dataset.tab){v.tab=b.dataset.tab;render();return}
  if(b.dataset.userChat||b.dataset.userChat===''){closeDialog();openDm(findUser(b.dataset.userChat));return}
@@ -495,6 +519,8 @@ function handleClick(event){
  if(action==='copy-tag'){const t=tag(st.user);if(navigator.clipboard?.writeText)navigator.clipboard.writeText(t).then(()=>toast('کد کاربری کپی شد')).catch(()=>toast(t));else toast(t);return}
  if(action==='server-create'){serverNotReadyDialog('create');return}
  if(action==='server-join'){serverNotReadyDialog('join');return}
+ if(action==='server-close-channel'){v.serverChannelOpen=false;v.serverMessages=[];render();return}
+ if(action==='server-leave'){if(window.vexaServerMessageTimer){clearInterval(window.vexaServerMessageTimer);window.vexaServerMessageTimer=null}v.serverChannelOpen=false;v.currentServer=null;v.currentChannelId=null;v.serverMessages=[];v.view='dms';render();return}
  if(action==='server-create-channel'){serverCreateChannelDialog();return}
  if(action==='retry-server-messages'){loadServerMessages(v.currentServer?.id,v.currentChannelId);return}
  if(action==='copy-server-invite'){const code=v.currentServer?.inviteCode||'';if(navigator.clipboard?.writeText)navigator.clipboard.writeText(code).then(()=>toast('کد دعوت کپی شد')).catch(()=>toast(code));else toast(code);return}
@@ -529,7 +555,7 @@ async function handleSubmit(event){
  }
  if(form.id==='server-create-channel-form'){
   event.preventDefault();const submit=form.querySelector('[type="submit"]');submit.disabled=true;
-  try{await api('/servers/'+encodeURIComponent(v.currentServer.id)+'/channels',{method:'POST',body:JSON.stringify({name:$('server-channel-name').value.trim()})});const server=await api('/servers/'+encodeURIComponent(v.currentServer.id));v.currentServer=server;v.currentChannelId=arr(server.channels).slice(-1)[0]?.id||arr(server.channels)[0]?.id||null;v.serverMessages=[];closeDialog();render();toast('کانال ساخته شد')}
+  try{await api('/servers/'+encodeURIComponent(v.currentServer.id)+'/channels',{method:'POST',body:JSON.stringify({name:$('server-channel-name').value.trim()})});const server=await api('/servers/'+encodeURIComponent(v.currentServer.id));v.currentServer=server;v.currentChannelId=arr(server.channels).slice(-1)[0]?.id||arr(server.channels)[0]?.id||null;v.serverMessages=[];v.serverChannelOpen=true;closeDialog();render();toast('کانال ساخته شد')}
   catch(e){toast('ساخت کانال ناموفق بود: '+e.message)}finally{submit.disabled=false}
   return;
  }
