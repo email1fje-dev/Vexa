@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
-const { User, Room, Message, Report, Announcement, VexaServer, AdminSetting } = require('../../models');
+const { User, Room, Message, Report, Announcement, VexaServer, AdminSetting, SystemEvent } = require('../../models');
 const AdminAudit = require('../../models/adminAudit.model');
 const ApiError = require('../../utils/ApiError');
 const catchAsync = require('../../utils/catchAsync');
@@ -190,6 +190,17 @@ const updateServer = catchAsync(async (req, res) => {
   res.send({ id: String(server._id), name: server.name, status: server.status, visibility: server.visibility, memberCount: server.memberIds.length });
 });
 
+const getSystemEvents = catchAsync(async (req, res) => {
+  const { page, limit } = paging(req);
+  const filter = {};
+  if (['warning', 'error'].includes(req.query.level)) filter.level = req.query.level;
+  const [total, results] = await Promise.all([
+    SystemEvent.countDocuments(filter),
+    SystemEvent.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit).lean(),
+  ]);
+  res.send({ results, page, limit, total, totalPages: Math.ceil(total / limit) });
+});
+
 const getSettings = catchAsync(async (req, res) => {
   const docs = await AdminSetting.find({}).lean();
   const settings = { maintenanceMode: false, registrationEnabled: true, publicServerDiscovery: true, maxMessageLength: 2000 };
@@ -217,5 +228,5 @@ const updateSettings = catchAsync(async (req, res) => {
 module.exports = {
   getMe, getOverview, getUsers, setVerifiedBadge, getAudit, getMessageSummary,
   getReports, updateReport, getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement,
-  getServers, updateServer, getSettings, updateSettings,
+  getServers, updateServer, getSettings, updateSettings, getSystemEvents,
 };
