@@ -8,3 +8,5 @@ module.exports.Report = require('./report.model');
 module.exports.Announcement = require('./announcement.model');
 module.exports.VexaServer = require('./server.model');
 module.exports.AdminSetting = require('./adminSetting.model');
+
+module.exports.SystemEvent = require('./systemEvent.model');
