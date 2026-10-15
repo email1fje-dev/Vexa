@@ -374,6 +374,45 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
 #app-view .vx-section-head button:focus-visible,#app-view .vx-head-tools button:focus-visible,#app-view .vx-profile-form button:focus-visible{outline:2px solid #4ade80;outline-offset:2px}
 @media(max-width:700px){#app-view .vx-profile-grid{grid-template-columns:minmax(0,1fr)}#app-view .vx-profile-card,#app-view .vx-profile-editor{padding:16px}}
 
+
+/* Refined Discord-like profile and friend controls */
+#app-view .vx-profile-grid{grid-template-columns:minmax(220px,.72fr) minmax(0,1.28fr);gap:18px;align-items:start}
+#app-view .vx-profile-card,#app-view .vx-profile-editor{background:#2b2d31;border:1px solid #3f4147;border-radius:12px;padding:24px;box-shadow:0 2px 8px #00000010}
+#app-view .vx-profile-card{position:relative;overflow:hidden}
+#app-view .vx-profile-avatar{width:100px;height:100px;border-radius:50%;border:5px solid #2b2d31;outline:2px solid #23a55a;margin-bottom:18px}
+#app-view .vx-profile-card h2{font-size:21px;letter-spacing:-.3px}
+#app-view .vx-profile-card p{line-height:1.8;color:#b5bac1}
+#app-view .vx-user-code{justify-content:space-between;gap:8px;flex-wrap:wrap}
+#app-view .vx-user-code code{background:#1e1f22;border:1px solid #41434a;color:#d9fbe2;border-radius:7px;padding:10px 12px;flex:1;text-align:center}
+#app-view .vx-profile-editor{background:#2b2d31}
+#app-view .vx-profile-form{gap:18px}
+#app-view .vx-profile-form label{color:#dbdee1;font-size:13px}
+#app-view .vx-profile-form input,#app-view .vx-profile-form textarea,#app-view .vx-profile-form select{background:#1e1f22;border:1px solid #1e1f22;border-radius:8px;color:#f2f3f5;padding:12px 13px;min-height:44px}
+#app-view .vx-profile-form input[type=file]{font-size:12px;min-height:auto;padding:10px}
+#app-view .vx-profile-form input:focus,#app-view .vx-profile-form textarea:focus,#app-view .vx-profile-form select:focus{border-color:#23a55a;box-shadow:0 0 0 2px #23a55a24}
+#app-view .vx-profile-actions{padding-top:4px}
+#app-view .vx-profile-actions .vx-green-btn{background:#248046;border-radius:7px;min-height:42px;padding:11px 18px}
+#app-view .vx-secondary-btn{background:#383a40;border:1px solid #484a51;color:#dbdee1;border-radius:7px;min-height:42px}
+#app-view #vx-add-friend{display:flex;align-items:center;justify-content:center;width:34px;height:34px;margin-left:auto;border:1px solid #3c6145;border-radius:9px;background:#1f3d28;color:#8ee8a8;transition:background .18s,transform .18s,border-color .18s}
+#app-view #vx-add-friend:hover{background:#28683b;border-color:#3c9b59;transform:translateY(-1px)}
+#app-view #vx-add-friend svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+#app-view .vx-friend-tabs button{padding:9px 12px;border-radius:7px;transition:background .18s,color .18s}
+#app-view .vx-friend-tabs button.active{background:#248046;color:#fff;border-bottom:0}
+#app-view .vx-add-row{background:#1e1f22;border:1px solid #45474f;border-radius:9px;padding:7px;align-items:center}
+#app-view .vx-add-row:focus-within{border-color:#23a55a;box-shadow:0 0 0 2px #23a55a22}
+#app-view .vx-add-row input{padding:10px 12px;min-height:40px}
+#app-view .vx-add-row .vx-green-btn{min-height:40px;padding:10px 17px;border-radius:7px;white-space:nowrap}
+html[data-theme="light"] #app-view .vx-profile-card,html[data-theme="light"] #app-view .vx-profile-editor{background:#fff;border-color:#d9e2dc}
+html[data-theme="light"] #app-view .vx-profile-card h2,html[data-theme="light"] #app-view .vx-profile-form label{color:#26392c}
+html[data-theme="light"] #app-view .vx-profile-card p{color:#637366}
+html[data-theme="light"] #app-view .vx-profile-avatar{border-color:#fff}
+html[data-theme="light"] #app-view .vx-user-code code{background:#f1f7f2;border-color:#d8e5da;color:#245d35}
+html[data-theme="light"] #app-view .vx-profile-form input,html[data-theme="light"] #app-view .vx-profile-form textarea,html[data-theme="light"] #app-view .vx-profile-form select,html[data-theme="light"] #app-view .vx-add-row{background:#f5f8f5;border-color:#d9e2dc;color:#203426}
+html[data-theme="light"] #app-view .vx-profile-form input:focus,html[data-theme="light"] #app-view .vx-profile-form textarea:focus,html[data-theme="light"] #app-view .vx-profile-form select:focus{border-color:#23a55a}
+html[data-theme="light"] #app-view .vx-secondary-btn{background:#eef5ef;border-color:#d5e3d7;color:#2d4934}
+html[data-theme="light"] #app-view #vx-add-friend{background:#e1f5e6;border-color:#c0e4c9;color:#176b34}
+html[data-theme="light"] #app-view #vx-add-friend:hover{background:#c9efd3}
+@media(max-width:700px){#app-view .vx-profile-grid{grid-template-columns:1fr}#app-view .vx-profile-card,#app-view .vx-profile-editor{padding:18px}#app-view .vx-profile-avatar{width:84px;height:84px}#app-view .vx-add-row{flex-wrap:wrap}#app-view .vx-add-row input{width:100%;flex-basis:100%}#app-view .vx-add-row .vx-green-btn{width:100%}}
 </style>
 </head>
 <body>
@@ -539,8 +578,8 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
     $('vx-copy-tag').onclick=async()=>{try{await navigator.clipboard.writeText(tag);toast('کد کاربری کپی شد!');}catch{const t=document.createElement('textarea');t.value=tag;document.body.appendChild(t);t.select();try{document.execCommand('copy');toast('کد کاربری کپی شد!');}catch{toast('کد کاربری: '+tag);}t.remove();}};
     $('vx-profile-back').onclick=()=>{vx.view='friends';renderWorkspace();};
     const file=$('vx-avatar-file');let avatar=user.avatar||'';
-    file.onchange=()=>{const chosen=file.files?.[0];if(!chosen)return;if(!/^image\/(png|jpeg|webp)$/.test(chosen.type)){toast('لطفاً یک عکس PNG، JPG یا WebP انتخاب کن.');file.value='';return;}const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas'),max=360,scale=Math.min(1,max/Math.max(img.width,img.height));canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,canvas.width,canvas.height);avatar=canvas.toDataURL('image/jpeg',.78);const preview=$('vx-profile-avatar');preview.dataset.avatar=avatar;preview.classList.add('has-image');preview.style.backgroundImage='url("'+avatar+'")';preview.textContent='';};img.onerror=()=>toast('این عکس باز نشد؛ یکی دیگه امتحان کن.');img.src=reader.result;};reader.readAsDataURL(chosen);};
-    $('vx-profile-form').onsubmit=async e=>{e.preventDefault();const btn=e.currentTarget.querySelector('[type="submit"]'),old=btn.textContent;btn.disabled=true;btn.textContent='در حال ذخیره…';try{const updated=await apiCall('/users/me/profile',{method:'PATCH',body:JSON.stringify({username:$('vx-profile-username').value.trim(),bio:$('vx-profile-bio').value.trim(),presenceStatus:$('vx-profile-status').value,avatar})});state.user=updated;store.set('vexa_user',JSON.stringify(updated));toast('پروفایلت ذخیره شد 💚');renderApp();vx.view='profile';renderWorkspace();}catch(err){toast('ذخیره نشد: '+err.message);}finally{btn.disabled=false;btn.textContent=old;}};
+    file.onchange=()=>{const chosen=file.files?.[0];if(!chosen)return;if(!/^image\/(png|jpeg|webp)$/.test(chosen.type)){toast('لطفاً یک عکس PNG، JPG یا WebP انتخاب کن.');file.value='';return;}const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas'),max=240,scale=Math.min(1,max/Math.max(img.width,img.height));canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,canvas.width,canvas.height);avatar=canvas.toDataURL('image/jpeg',.62);if(avatar.length>180000){avatar=canvas.toDataURL('image/jpeg',.45);}const preview=$('vx-profile-avatar');preview.dataset.avatar=avatar;preview.classList.add('has-image');preview.style.backgroundImage='url("'+avatar+'")';preview.textContent='';};img.onerror=()=>toast('این عکس باز نشد؛ یکی دیگه امتحان کن.');img.src=reader.result;};reader.readAsDataURL(chosen);};
+    $('vx-profile-form').onsubmit=async e=>{e.preventDefault();const btn=e.currentTarget.querySelector('[type="submit"]'),old=btn.textContent;btn.disabled=true;btn.textContent='در حال ذخیره…';try{const updated=await apiCall('/users/me/profile',{method:'PATCH',body:JSON.stringify({username:$('vx-profile-username').value.trim(),bio:$('vx-profile-bio').value.trim(),presenceStatus:$('vx-profile-status').value,avatar})});state.user={...(state.user||user),...(updated||{}),avatar:typeof updated?.avatar==='string'?updated.avatar:avatar,bio:typeof updated?.bio==='string'?updated.bio:$('vx-profile-bio').value.trim(),username:typeof updated?.username==='string'?updated.username:$('vx-profile-username').value.trim(),presenceStatus:updated?.presenceStatus||$('vx-profile-status').value};store.set('vexa_user',JSON.stringify(state.user));toast('تغییرات پروفایل ذخیره شد');renderApp();vx.view='profile';renderWorkspace();}catch(err){toast('ذخیره نشد: '+err.message);}finally{btn.disabled=false;btn.textContent=old;}};
   }
   async function openDm(friend,keepScroll=false){
     vx.activeFriend=friend;vx.view='chat';renderDmList();$('vx-head-title').textContent=fullTag(friend);$('vx-head-symbol').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>';
