@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const httpStatus = require('http-status');
 const config = require('../config/config');
 const ApiError = require('../utils/ApiError');
+const { SystemEvent } = require('../models');
 
 const errorConverter = (err, req, res, next) => {
   let error = err;
@@ -23,6 +24,11 @@ const errorHandler = (err, req, res, next) => {
   }
 
   res.locals.errorMessage = err.message;
+
+  if (statusCode >= 500) {
+    const route = String(req.path || '').split('?')[0].slice(0, 180);
+    SystemEvent.create({ level: 'error', message: 'Internal server error', method: String(req.method || '').slice(0, 12), route, statusCode }).catch(() => {});
+  }
 
   const response = {
     code: statusCode,
