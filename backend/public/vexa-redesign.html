@@ -398,6 +398,7 @@ function imageFileToDataUrl(file){
  });
 }
 function handleChange(event){
+ if(event.target.id==='profile-video-file'){const file=event.target.files?.[0];if(!file)return;if(!['video/mp4','video/webm'].includes(file.type)){toast('فقط ویدیوی MP4 یا WebM قابل قبول است.');event.target.value='';return}if(file.size>650000){toast('حجم ویدیو باید حداکثر ۶۵۰ کیلوبایت باشد.');event.target.value='';return}const reader=new FileReader();reader.onload=()=>{v.pendingProfileVideo=String(reader.result);const p=$('profile-video-preview'),empty=$('profile-video-empty');if(p){p.src=v.pendingProfileVideo;p.hidden=false;p.muted=true;p.loop=true;p.autoplay=true;p.playsInline=true;p.load();p.play().catch(()=>{})}if(empty)empty.hidden=true;toast('ویدیو آمادهٔ ذخیره است')};reader.onerror=()=>toast('خواندن ویدیو ناموفق بود.');reader.readAsDataURL(file);return}
  if(event.target.id==='avatar-file'){const file=event.target.files?.[0];if(!file)return;imageFileToDataUrl(file).then(data=>{v.pendingAvatar=data;const preview=$('avatar-edit-preview');if(preview)preview.innerHTML=av({...st.user,avatar:data},'lg');toast('عکس آمادهٔ ذخیره است')}).catch(e=>toast(e.message))}
 }
 async function logout(){['vexa_access_token','vexa_refresh_token','vexa_user'].forEach(store.del);st.user=null;st.token=null;v.friend=null;v.room=null;$('app').classList.add('hidden');$('auth').classList.remove('hidden');$('password').value='';showMode('login')}
