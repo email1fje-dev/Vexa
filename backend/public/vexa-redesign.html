@@ -390,7 +390,7 @@ function handleClick(event){
  if(b.dataset.joinServer){api('/servers/join',{method:'POST',body:JSON.stringify({inviteCode:b.dataset.joinServer})}).then(()=>{toast('به سرور پیوستی');render()}).catch(e=>toast(e.message));return}
  if(b.dataset.copyInvite){if(navigator.clipboard?.writeText)navigator.clipboard.writeText(b.dataset.copyInvite).then(()=>toast('کد دعوت کپی شد')).catch(()=>toast(b.dataset.copyInvite));else toast(b.dataset.copyInvite);return}
  if(action==='server-discover'){v.view='serverDiscover';render();return}
- if(action==='sidebar-help'){openDialog('<div class="dialog-card"><div class="dialog-head"><h2>راهنمای وکسا</h2><button data-action="close-dialog">'+ico('close')+'</button></div><p>از «دوستان» برای مدیریت درخواست‌ها، از «پیام‌های مستقیم» برای گفتگوها و از «پروفایل من» برای ویرایش اطلاعات حساب استفاده کن.</p><div class="dialog-actions"><button class="btn primary" data-action="close-dialog">باشه</button></div></div>');return}
+ if(action==='sidebar-help'){openDialog('<div class="dialog-card"><div class="dialog-head"><h2>راهنما و پشتیبانی</h2><button data-action="close-dialog">'+ico('close')+'</button></div><p>برای مشکل حساب، گزارش خطا یا موضوع امنیتی، درخواستت را برای تیم Vexa بفرست.</p><form id="support-ticket-form"><label class="field">موضوع<input id="support-title" required minlength="3" maxlength="120" placeholder="خلاصه درخواست"></label><label class="field">دسته‌بندی<select id="support-category"><option value="account">حساب کاربری</option><option value="bug">گزارش خطا</option><option value="safety">امنیت و ایمنی</option><option value="other">سایر</option></select></label><label class="field">توضیحات<textarea id="support-message" required minlength="10" maxlength="3000" placeholder="مشکل را با جزئیات لازم توضیح بده"></textarea></label><div class="dialog-actions"><button class="btn primary" type="submit">ارسال درخواست</button><button class="btn" type="button" data-action="close-dialog">بستن</button></div></form></div>');return}
  if(action==='attachment-info'){toast('ارسال فایل هنوز به بک‌اند متصل نشده.');return}
  if(action==='toggle-chat-search'){toast('جستجوی پیام‌ها هنوز پیاده‌سازی نشده.');return}
 }
@@ -413,6 +413,10 @@ async function handleSubmit(event){
  if(form.id==='server-join-form'){
   event.preventDefault();const submit=form.querySelector('[type="submit"]');submit.disabled=true;
   try{await api('/servers/join',{method:'POST',body:JSON.stringify({inviteCode:$('server-invite-code').value.trim()})});closeDialog();toast('به سرور پیوستی');v.view='servers';render()}catch(e){toast(e.message)}finally{submit.disabled=false}return;
+ }
+ if(form.id==='support-ticket-form'){
+  event.preventDefault();const submit=form.querySelector('[type="submit"]');submit.disabled=true;
+  try{await api('/support',{method:'POST',body:JSON.stringify({title:$('support-title').value.trim(),category:$('support-category').value,message:$('support-message').value.trim()})});closeDialog();toast('درخواست پشتیبانی ثبت شد')}catch(e){toast(e.message)}finally{submit.disabled=false}return;
  }
  if(form.id==='report-form'){
   event.preventDefault();const submit=form.querySelector('[type="submit"]');submit.disabled=true;
