@@ -650,7 +650,17 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
     $('vx-tab-all').onclick=()=>{vx.friendTab='all';renderWorkspace();};$('vx-tab-pending').onclick=()=>{vx.friendTab='pending';renderWorkspace();};$('vx-tab-add').onclick=()=>{vx.friendTab='add';renderWorkspace();};
     const first=$('vx-first-add');if(first)first.onclick=()=>{vx.friendTab='add';renderWorkspace();};
     const form=$('vx-add-form');if(form)form.onsubmit=async e=>{e.preventDefault();const tag=$('vx-friend-tag').value.trim();const match=tag.match(/^(.+)#(\d{4})$/);if(!match){toast('فرمت درست: username#1234');return;}const btn=form.querySelector('button');btn.disabled=true;try{await apiCall('/friends/add-friend-request',{method:'POST',body:JSON.stringify({username:match[1].trim(),shortId:match[2]})});toast('درخواست دوستی ارسال شد!');vx.friendTab='all';await loadWorkspace();}catch(err){toast(err.message);}finally{btn.disabled=false;}};
+    if(!add)renderDirectory(content);
     paintAvatars(content);content.querySelectorAll('[data-message]').forEach(b=>b.onclick=()=>{const item=vx.friends.find(x=>String(friendId(x.user))===b.dataset.message);if(item)openDm(item.user);});
+  }
+
+  function renderDirectory(content){
+    const known=new Set(vx.friends.map(x=>String(friendId(x.user))));
+    const people=vx.users.filter(u=>friendId(u)&&!known.has(String(friendId(u))));
+    const section=document.createElement('section');section.className='vx-directory';
+    section.innerHTML='<h2>آدم‌های وکسا</h2><p class="vx-directory-sub">برای شروع گفتگو، درخواست دوستی بفرست.</p>'+(people.length?people.map(u=>'<div class="vx-person-row">'+avatarHTML(u)+'<div class="vx-dm-copy"><strong>'+safe(u.username||'کاربر وکسا')+'</strong><small dir="ltr">'+safe(fullTag(u))+'</small></div><div class="vx-person-actions"><button type="button" data-add-user="'+safe(friendId(u))+'">افزودن دوست</button></div></div>').join(''):'<div class="vx-empty-chat"><h2>فعلاً کاربر دیگری پیدا نشد</h2><p>وقتی افراد بیشتری عضو وکسا بشن، از اینجا می‌تونی پیداشون کنی.</p></div>');
+    content.appendChild(section);
+    section.querySelectorAll('[data-add-user]').forEach(button=>button.onclick=async()=>{const u=people.find(x=>String(friendId(x))===button.dataset.addUser);if(!u)return;button.disabled=true;try{await apiCall('/friends/add-friend-request',{method:'POST',body:JSON.stringify({username:u.username,shortId:u.shortId})});toast('درخواست دوستی ارسال شد 💚');await loadWorkspace();}catch(e){toast('درخواست ارسال نشد: '+e.message);button.disabled=false;}});
   }
 
   function renderProfile(){
