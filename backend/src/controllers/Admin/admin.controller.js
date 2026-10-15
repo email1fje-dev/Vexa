@@ -190,6 +190,21 @@ const updateServer = catchAsync(async (req, res) => {
   res.send({ id: String(server._id), name: server.name, status: server.status, visibility: server.visibility, memberCount: server.memberIds.length });
 });
 
+const updateSupportTicket = catchAsync(async (req, res) => {
+  const ticket = await SupportTicket.findById(req.params.ticketId);
+  if (!ticket) throw new ApiError(httpStatus.NOT_FOUND, 'Support ticket not found');
+  const status = req.body.status;
+  const reply = req.body.adminReply;
+  if (status !== undefined && !['open', 'in_review', 'resolved', 'closed'].includes(status)) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid support status');
+  if (reply !== undefined && (typeof reply !== 'string' || reply.length > 3000)) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid support reply');
+  const previous = ticket.status;
+  if (status !== undefined) ticket.status = status;
+  if (reply !== undefined) { ticket.adminReply = reply.trim(); ticket.repliedBy = req.user._id; ticket.repliedAt = new Date(); }
+  await ticket.save();
+  await audit(req, 'support.ticket.updated', ticket._id, { previous, current: ticket.status, replied: reply !== undefined });
+  res.send({ id: ticket.id, status: ticket.status, adminReply: ticket.adminReply, repliedAt: ticket.repliedAt });
+});
+
 const getSupportTickets = catchAsync(async (req, res) => {
   const { page, limit } = paging(req);
   const filter = {};
@@ -239,5 +254,5 @@ const updateSettings = catchAsync(async (req, res) => {
 module.exports = {
   getMe, getOverview, getUsers, setVerifiedBadge, getAudit, getMessageSummary,
   getReports, updateReport, getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement,
-  getServers, updateServer, getSettings, updateSettings, getSystemEvents, getSupportTickets,
+  getServers, updateServer, getSettings, updateSettings, getSystemEvents, getSupportTickets, updateSupportTicket,
 };
