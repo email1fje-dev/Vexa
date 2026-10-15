@@ -7,6 +7,7 @@ const userController = require('./user.controller');
 const router = express.Router();
 
 router.patch('/me/profile', auth(), validate(userValidation.updateMyProfile), userController.updateMyProfile);
+router.get('/directory', auth(), userController.getDirectory);
 
 router
   .route('/')
