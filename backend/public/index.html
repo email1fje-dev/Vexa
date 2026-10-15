@@ -732,7 +732,9 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
     finally{pendingPollBusy=false;}
   }
   // Initial snapshot avoids showing a false "new request" toast on first load.
-  if(state.token||store.get('vexa_access_token')){pollFriendRequests();setInterval(pollFriendRequests,3000);setInterval(refreshMessagesRealtime,1600);}
+  if(state.token||store.get('vexa_access_token'))pollFriendRequests();
+  // Keep polling timers alive for users who log in after the page first loads too.
+  setInterval(pollFriendRequests,3000);setInterval(refreshMessagesRealtime,1600);
   const savedToken=store.get('vexa_access_token'),savedUser=currentUser();if(savedToken&&savedUser){state.token=savedToken;state.refreshToken=store.get('vexa_refresh_token');state.user=savedUser;renderApp();}
 })();
 </script>
