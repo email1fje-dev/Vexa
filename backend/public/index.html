@@ -674,6 +674,29 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
   function renderPage(){renderWorkspace();}
   async function logoutUser(){const refresh=state.refreshToken||store.get('vexa_refresh_token'),base=apiBase();if(refresh&&base){try{await fetch(base+'/auth/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refreshToken:refresh})});}catch{}}['vexa_access_token','vexa_refresh_token','vexa_user'].forEach(store.remove);state.user=null;state.token=null;state.refreshToken=null;state.page='home';$('app-view').classList.add('hidden');$('auth-view').classList.remove('hidden');setMode('login');toast('از حساب خارج شدی.');}
   $('logout-btn').addEventListener('click',logoutUser);$('top-logout').addEventListener('click',logoutUser);
+  // Poll for incoming friend requests while the app is open; refresh the UI only when the list changes.
+  let pendingSignature='';
+  let pendingPollBusy=false;
+  async function pollFriendRequests(){
+    if(pendingPollBusy||document.hidden||!state.token&&!store.get('vexa_access_token'))return;
+    pendingPollBusy=true;
+    try{
+      const data=await apiCall('/friends/pending-requests');
+      const next=Array.isArray(data)?data:[];
+      const signature=next.map(r=>String(r.id||r._id||'')+':'+String(r.from?.id||r.from?._id||'')).sort().join('|');
+      if(signature!==pendingSignature){
+        pendingSignature=signature;
+        vx.requests=next;
+        const count=$('vx-pending-count');
+        if(count){count.textContent=next.length?'('+next.length+')':'';count.classList.toggle('has-pending',next.length>0);}
+        if(vx.view==='pending')renderWorkspace();
+        if(next.length)toast('درخواست دوستی جدید داری');
+      }
+    }catch(e){/* transient network/auth errors are handled by the normal API flow */}
+    finally{pendingPollBusy=false;}
+  }
+  // Initial snapshot avoids showing a false "new request" toast on first load.
+  if(state.token||store.get('vexa_access_token')){pollFriendRequests();setInterval(pollFriendRequests,3000);}
   const savedToken=store.get('vexa_access_token'),savedUser=currentUser();if(savedToken&&savedUser){state.token=savedToken;state.refreshToken=store.get('vexa_refresh_token');state.user=savedUser;renderApp();}
 })();
 </script>
