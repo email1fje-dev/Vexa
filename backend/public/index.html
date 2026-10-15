@@ -480,6 +480,13 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
 #app-view #vx-mobile-menu{display:none}
 #app-view #vx-mobile-menu svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 @media(max-width:700px){#app-view #vx-mobile-menu{display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:8px;background:transparent;color:#dbdee1}html[data-theme="light"] #app-view #vx-mobile-menu{color:#34513b}}
+
+#app-view .vx-server-create svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#app-view .vx-friend-tabs{display:flex;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line);gap:8px}
+#app-view .vx-friend-tabs button{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:12px 13px;font-weight:800;white-space:nowrap}
+#app-view .vx-friend-tabs button.active{color:var(--text);border-bottom-color:var(--green)}
+#app-view .vx-friend-tabs #vx-pending-count{color:var(--green);font-size:12px}
+#app-view .vx-request-list{margin-top:12px}
 </style>
 </head>
 <body>
@@ -514,7 +521,7 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
   };
   $('api-base').value = new URLSearchParams(location.search).get('api') || store.get('vexa_api_base');
   $('year').textContent = new Date().getFullYear();
-  function apiBase(){ const configured=(store.get('vexa_api_base') || $('api-base').value || '').trim().replace(/\/+$/,''); if(configured)return configured; if(location.protocol==='http:'||location.protocol==='https:')return location.origin+'/api/v1'; return ''; }
+  function apiBase(){ if(location.protocol==='http:'||location.protocol==='https:')return location.origin+'/api/v1'; return (store.get('vexa_api_base')||$('api-base').value||'').trim().replace(/\/+$/,''); }
   function setStatus(message,type=''){const el=$('status');el.textContent=message;el.className='status'+(type?' '+type:'');}
   function clearStatus(){$('status').className='status hidden';$('status').textContent='';}
   function toast(message){const root=$('toast-root');root.innerHTML='';const el=document.createElement('div');el.className='toast';el.textContent=message;root.appendChild(el);setTimeout(()=>el.remove(),3200);}
@@ -583,25 +590,32 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
   function isMyId(id){return String(id||'')===String(state.user?.id||state.user?._id||'');}
   function friendId(u){return u?.id||u?._id;}
   async function loadWorkspace(){
-    try {
-      const [friends,requests,rooms]=await Promise.all([
-        apiCall('/friends/all-friends'),apiCall('/friends/pending-requests'),apiCall('/rooms/open-rooms')
-      ]);
-      vx.friends=(Array.isArray(friends)?friends:[]).map(r=>({request:r,user:(isMyId(r.from?.id||r.from?._id)?r.to:r.from)})).filter(x=>x.user);
-      vx.requests=Array.isArray(requests)?requests:[];
-      vx.rooms=Array.isArray(rooms)?rooms:[];
-      renderWorkspace();
-      if(vx.activeFriend){const match=vx.friends.find(x=>String(friendId(x.user))===String(friendId(vx.activeFriend)));if(match){vx.activeFriend=match.user;await openDm(match.user,true);}else{vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();}}
-    } catch(e){renderWorkspace();toast('بارگذاری اطلاعات ناموفق بود: '+e.message);}
+    const results=await Promise.allSettled([
+      apiCall('/friends/all-friends'),apiCall('/friends/pending-requests'),apiCall('/rooms/open-rooms')
+    ]);
+    const [friendsResult,requestsResult,roomsResult]=results;
+    let loaded=0,errors=[];
+    if(friendsResult.status==='fulfilled'){
+      const data=friendsResult.value;
+      vx.friends=(Array.isArray(data)?data:[]).map(r=>({request:r,user:(isMyId(r.from?.id||r.from?._id)?r.to:r.from)})).filter(x=>x.user&&friendId(x.user));
+      loaded++;
+    }else errors.push('دوستان: '+friendsResult.reason.message);
+    if(requestsResult.status==='fulfilled'){vx.requests=Array.isArray(requestsResult.value)?requestsResult.value:[];loaded++;}
+    else errors.push('درخواست‌ها: '+requestsResult.reason.message);
+    if(roomsResult.status==='fulfilled'){vx.rooms=Array.isArray(roomsResult.value)?roomsResult.value:[];loaded++;}
+    else errors.push('گفتگوها: '+roomsResult.reason.message);
+    renderWorkspace();
+    if(!loaded)toast('اطلاعات از سرور دریافت نشد: '+errors.join(' | '));
+    else if(errors.length)toast('بخشی از اطلاعات لود نشد: '+errors.join(' | '));
+    if(vx.activeFriend){const match=vx.friends.find(x=>String(friendId(x.user))===String(friendId(vx.activeFriend)));if(match){vx.activeFriend=match.user;if(!vx.activeRoom)await openDm(match.user,true);}else{vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();}}
   }
   function renderApp(){
     $('auth-view').classList.add('hidden');$('app-view').classList.remove('hidden');
     const user=state.user||currentUser()||{username:'کاربر وکسا',email:''};state.user=user;
-    $('app-view').innerHTML='<div class="app-shell"><aside class="vx-server-rail" aria-label="ناوبری اصلی"><button class="vx-server-home" id="vx-server-home" title="خانه وکسا" aria-label="خانه وکسا">V</button><span class="vx-rail-divider"></span><button class="vx-server-active" id="vx-server-friends" title="دوستان" aria-label="دوستان"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 0 0 6m2 2a5 5 0 0 1 3 4v2"/></svg></button><button class="vx-server-create" id="vx-server-create" title="ساخت سرور" aria-label="ساخت سرور">+</button></aside><aside class="app-sidebar"><div class="vx-brand"><span class="vx-logo"><img alt="نشان وکسا" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2218%22 fill=%22%231e8e49%22/%3E%3Cpath d=%22M13 18h10l9 26 9-26h10L36 50H28z%22 fill=%22white%22/%3E%3C/svg%3E"></span><span class="vx-brand-name">vexa</span></div><input class="vx-search" id="vx-search" placeholder="جست‌وجو یا شروع گفتگو" aria-label="جست‌وجو"><nav class="vx-nav"><button id="vx-friends" class="active"><span class="vx-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6m2 2a5 5 0 0 1 3 4v2"/></svg></span><span class="vx-nav-label">دوستان</span></button><button id="vx-pending"><span class="vx-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></span><span class="vx-nav-label">درخواست‌ها <span id="vx-pending-count"></span></span></button></nav><div class="vx-section-head"><span>پیام‌های مستقیم</span><button id="vx-add-friend" title="افزودن دوست"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div><div class="vx-dm-list" id="vx-dm-list"></div><div class="vx-mebar"><div class="vx-avatar small" id="vx-my-avatar"></div><div class="vx-dm-copy"><strong id="vx-my-name"></strong><small>آنلاین</small></div><button id="vx-logout" title="خروج"></button></div></aside><section class="app-main"><header class="vx-main-head"><span class="vx-head-symbol" id="vx-head-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6m2 2a5 5 0 0 1 3 4v2"/></svg></span><h2 id="vx-head-title">دوستان</h2><div class="vx-head-tools"><button id="vx-mobile-menu" title="باز کردن فهرست" aria-label="باز کردن فهرست"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><button id="vx-theme-toggle" title="تغییر تم" aria-label="تغییر تم"></button><button id="vx-profile-open" title="پروفایل من" aria-label="پروفایل من"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></button></div></header><div class="app-content" id="vx-content"></div></section></div>';
+    $('app-view').innerHTML='<div class="app-shell"><aside class="vx-server-rail" aria-label="ناوبری اصلی"><button class="vx-server-home" id="vx-server-home" title="خانه وکسا" aria-label="خانه وکسا">V</button><span class="vx-rail-divider"></span><button class="vx-server-active" id="vx-server-friends" title="دوستان" aria-label="دوستان"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 0 0 6m2 2a5 5 0 0 1 3 4v2"/></svg></button><button class="vx-server-create" id="vx-server-create" title="سرورها" aria-label="سرورها"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="6" rx="2"/><rect x="4" y="14" width="16" height="6" rx="2"/><path d="M8 7h.01M8 17h.01M12 7h4M12 17h4"/></svg></button></aside><aside class="app-sidebar"><div class="vx-brand"><span class="vx-logo"><img alt="نشان وکسا" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2218%22 fill=%22%231e8e49%22/%3E%3Cpath d=%22M13 18h10l9 26 9-26h10L36 50H28z%22 fill=%22white%22/%3E%3C/svg%3E"></span><span class="vx-brand-name">vexa</span></div><input class="vx-search" id="vx-search" placeholder="جست‌وجو یا شروع گفتگو" aria-label="جست‌وجو"><nav class="vx-nav"><button id="vx-friends" class="active"><span class="vx-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6m2 2a5 5 0 0 1 3 4v2"/></svg></span><span class="vx-nav-label">دوستان</span></button></nav><div class="vx-section-head"><span>پیام‌های مستقیم</span><button id="vx-add-friend" title="افزودن دوست"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div><div class="vx-dm-list" id="vx-dm-list"></div><div class="vx-mebar"><div class="vx-avatar small" id="vx-my-avatar"></div><div class="vx-dm-copy"><strong id="vx-my-name"></strong><small>آنلاین</small></div><button id="vx-logout" title="خروج"></button></div></aside><section class="app-main"><header class="vx-main-head"><span class="vx-head-symbol" id="vx-head-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6m2 2a5 5 0 0 1 3 4v2"/></svg></span><h2 id="vx-head-title">دوستان</h2><div class="vx-head-tools"><button id="vx-mobile-menu" title="باز کردن فهرست" aria-label="باز کردن فهرست"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><button id="vx-theme-toggle" title="تغییر تم" aria-label="تغییر تم"></button><button id="vx-profile-open" title="پروفایل من" aria-label="پروفایل من"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></button></div></header><div class="app-content" id="vx-content"></div></section></div>';
     $('vx-my-avatar').textContent=initials(user.username);if(user.avatar)$('vx-my-avatar').dataset.avatar=user.avatar;$('vx-my-avatar').setAttribute('aria-label',user.username||'کاربر وکسا');$('vx-my-name').textContent=user.username||'کاربر وکسا';const meStatus=$('vx-my-name')?.parentElement?.querySelector('small');if(meStatus)meStatus.textContent=({online:'در دسترس',idle:'بی‌حوصله',dnd:'مزاحم نشو'})[user.presenceStatus||'online'];paintAvatars($('app-view'));const themeToggle=$('vx-theme-toggle');if(themeToggle){themeToggle.innerHTML=document.documentElement.dataset.theme==='dark'?'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5z"/></svg>';themeToggle.onclick=()=>{setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');renderWorkspace();};}const openProfile=()=>{vx.view='profile';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();};$('vx-profile-open')?.addEventListener('click',openProfile);$('vx-mobile-menu')?.addEventListener('click',()=>document.querySelector('#app-view .app-sidebar')?.classList.toggle('open'));$('vx-server-home')?.addEventListener('click',openProfile);$('vx-server-friends')?.addEventListener('click',()=>{vx.view='friends';vx.friendTab='all';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();});$('vx-server-create')?.addEventListener('click',()=>toast('ساخت سرور به‌زودی به وکسا اضافه می‌شه.'));$('vx-my-avatar')?.addEventListener('click',openProfile);$('vx-my-name')?.addEventListener('click',openProfile);
-    $('vx-friends').onclick=()=>{vx.view='friends';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();};
-    $('vx-pending').onclick=()=>{vx.view='pending';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();};
-    $('vx-add-friend').onclick=()=>{vx.view='friends';vx.friendTab='add';vx.activeFriend=null;renderWorkspace();setTimeout(()=>$('vx-friend-tag')?.focus(),30);};
+    $('vx-friends').onclick=()=>{vx.view='friends';vx.friendTab='all';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();};
+    $('vx-add-friend').onclick=()=>{vx.view='friends';vx.friendTab='add';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();setTimeout(()=>$('vx-friend-tag')?.focus(),30);};
     $('vx-logout').onclick=logoutUser;
     $('vx-search').addEventListener('input',()=>renderDmList());
     loadWorkspace();
@@ -621,16 +635,17 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
     const content=$('vx-content');if(!content)return;
     if(vx.activeFriend&&vx.activeRoom){$('vx-head-symbol').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6m2 2a5 5 0 0 1 3 4v2"/></svg>';$('vx-head-title').textContent=fullTag(vx.activeFriend);renderChat();return;}
     if(vx.view==='profile'){renderProfile();return;}
-    if(vx.view==='pending'){
-      $('vx-head-symbol').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>';$('vx-head-title').textContent='درخواست‌های دوستی';
-      content.innerHTML='<div class="vx-pane"><h1>درخواست‌های دوستی</h1><p>آدم‌هایی که می‌خوان باهات ارتباط بگیرن اینجان.</p>'+ (vx.requests.length?vx.requests.map(r=>{const u=r.from||{};return '<div class="vx-person-row">'+avatarHTML(u)+'<div class="vx-dm-copy"><strong>'+safe(fullTag(u))+'</strong><small>درخواست دوستی</small></div><div class="vx-person-actions"><button data-accept="'+safe(r.id||r._id)+'" title="قبول"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button></div></div>';}).join(''):'<div class="vx-empty-chat"><div class="big"></div><h2>فعلاً خبری نیست</h2><p>وقتی درخواست جدیدی بیاد اینجا نمایش داده می‌شه.</p></div>')+'</div>';
-      paintAvatars(content);content.querySelectorAll('[data-accept]').forEach(b=>b.onclick=async()=>{try{await apiCall('/friends/accept-pending-request',{method:'PATCH',body:JSON.stringify({id:b.dataset.accept})});toast('درخواست دوستی قبول شد ');await loadWorkspace();}catch(e){toast(e.message);}});
+    if(vx.view==='pending'||(vx.view==='friends'&&vx.friendTab==='pending')){
+      vx.view='friends';$('vx-head-symbol').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 0 0 6m2 2a5 5 0 0 1 3 4v2"/></svg>';$('vx-head-title').textContent='دوستان';
+      content.innerHTML='<div class="vx-pane"><h1>دوستان</h1><p>مدیریت دوست‌ها و درخواست‌های دوستی در یک جا.</p><div class="vx-friend-tabs"><button id="vx-tab-all">همهٔ دوستان · '+vx.friends.length+'</button><button id="vx-tab-pending" class="active">درخواست‌ها <span id="vx-pending-count">'+(vx.requests.length?'('+vx.requests.length+')':'')+'</span></button><button id="vx-tab-add">افزودن دوست</button></div><div class="vx-request-list">'+(vx.requests.length?vx.requests.map(r=>{const u=r.from||{};return '<div class="vx-person-row">'+avatarHTML(u)+'<div class="vx-dm-copy"><strong>'+safe(fullTag(u))+'</strong><small>درخواست دوستی</small></div><div class="vx-person-actions"><button data-accept="'+safe(r.id||r._id)+'" title="قبول درخواست"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button></div></div>';}).join(''):'<div class="vx-empty-chat"><div class="big"></div><h2>درخواستی نداری</h2><p>درخواست‌های جدید دوستی همین‌جا نمایش داده می‌شن.</p></div>')+'</div></div>';
+      $('vx-tab-all').onclick=()=>{vx.friendTab='all';renderWorkspace();};$('vx-tab-pending').onclick=()=>{vx.friendTab='pending';renderWorkspace();};$('vx-tab-add').onclick=()=>{vx.friendTab='add';renderWorkspace();setTimeout(()=>$('vx-friend-tag')?.focus(),30);};
+      paintAvatars(content);content.querySelectorAll('[data-accept]').forEach(b=>b.onclick=async()=>{try{await apiCall('/friends/accept-pending-request',{method:'PATCH',body:JSON.stringify({id:b.dataset.accept})});toast('درخواست دوستی قبول شد 💚');await loadWorkspace();vx.friendTab='all';renderWorkspace();}catch(e){toast(e.message);}});
       return;
     }
     $('vx-head-symbol').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6m2 2a5 5 0 0 1 3 4v2"/></svg>';$('vx-head-title').textContent='دوستان';
     const add=vx.friendTab==='add';
-    content.innerHTML='<div class="vx-pane"><h1>دوستان</h1><p>با دوستات وصل شو، پیام بده و گپ رو شروع کن.</p><div class="vx-friend-tabs"><button class="'+(!add?'active':'')+'" id="vx-tab-all">همهٔ دوستان · '+vx.friends.length+'</button><button class="'+(add?'active':'')+'" id="vx-tab-add">＋ افزودن دوست</button></div>'+(add?'<h3>افزودن دوست</h3><p>نام کاربری و کد چهاررقمی دوستت رو وارد کن؛ مثلاً <b dir="ltr">parsa#1234</b></p><form class="vx-add-row" id="vx-add-form"><input id="vx-friend-tag" placeholder="username#1234" autocomplete="off" required><button class="vx-green-btn">ارسال درخواست</button></form><div class="vx-muted-note">کد کاربری رو از پروفایل دوستت بگیر.</div>':'<div id="vx-friend-list">'+(vx.friends.length?vx.friends.map(x=>'<div class="vx-person-row">'+avatarHTML(x.user)+'<div class="vx-dm-copy"><strong>'+safe(x.user.username)+'</strong><small dir="ltr">'+safe(fullTag(x.user))+'</small></div><div class="vx-person-actions"><button data-message="'+safe(friendId(x.user))+'" title="پیام"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></button></div></div>').join(''):'<div class="vx-empty-chat"><div class="big"></div><h2>اینجا قراره دوستات باشن</h2><p>هنوز کسی اضافه نکردی. از دکمهٔ «افزودن دوست» استفاده کن تا اولین گفت‌وگوی واقعی‌ت رو شروع کنی.</p><button class="vx-green-btn" id="vx-first-add"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> افزودن دوست</button></div>')+'</div>')+'</div>';
-    $('vx-tab-all').onclick=()=>{vx.friendTab='all';renderWorkspace();};$('vx-tab-add').onclick=()=>{vx.friendTab='add';renderWorkspace();};
+    content.innerHTML='<div class="vx-pane"><h1>دوستان</h1><p>با دوستات وصل شو، پیام بده و گپ رو شروع کن.</p><div class="vx-friend-tabs"><button class="'+(!add?'active':'')+'" id="vx-tab-all">همهٔ دوستان · '+vx.friends.length+'</button><button id="vx-tab-pending">درخواست‌ها <span id="vx-pending-count">'+(vx.requests.length?'('+vx.requests.length+')':'')+'</span></button><button class="'+(add?'active':'')+'" id="vx-tab-add">افزودن دوست</button></div>'+(add?'<h3>افزودن دوست</h3><p>نام کاربری و کد چهاررقمی دوستت رو وارد کن؛ مثلاً <b dir="ltr">parsa#1234</b></p><form class="vx-add-row" id="vx-add-form"><input id="vx-friend-tag" placeholder="username#1234" autocomplete="off" required><button class="vx-green-btn">ارسال درخواست</button></form><div class="vx-muted-note">کد کاربری رو از پروفایل دوستت بگیر.</div>':'<div id="vx-friend-list">'+(vx.friends.length?vx.friends.map(x=>'<div class="vx-person-row">'+avatarHTML(x.user)+'<div class="vx-dm-copy"><strong>'+safe(x.user.username)+'</strong><small dir="ltr">'+safe(fullTag(x.user))+'</small></div><div class="vx-person-actions"><button data-message="'+safe(friendId(x.user))+'" title="پیام"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></button></div></div>').join(''):'<div class="vx-empty-chat"><div class="big"></div><h2>اینجا قراره دوستات باشن</h2><p>هنوز کسی اضافه نکردی. از دکمهٔ «افزودن دوست» استفاده کن تا اولین گفت‌وگوی واقعی‌ت رو شروع کنی.</p><button class="vx-green-btn" id="vx-first-add"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> افزودن دوست</button></div>')+'</div>')+'</div>';
+    $('vx-tab-all').onclick=()=>{vx.friendTab='all';renderWorkspace();};$('vx-tab-pending').onclick=()=>{vx.friendTab='pending';renderWorkspace();};$('vx-tab-add').onclick=()=>{vx.friendTab='add';renderWorkspace();};
     const first=$('vx-first-add');if(first)first.onclick=()=>{vx.friendTab='add';renderWorkspace();};
     const form=$('vx-add-form');if(form)form.onsubmit=async e=>{e.preventDefault();const tag=$('vx-friend-tag').value.trim();const match=tag.match(/^(.+)#(\d{4})$/);if(!match){toast('فرمت درست: username#1234');return;}const btn=form.querySelector('button');btn.disabled=true;try{await apiCall('/friends/add-friend-request',{method:'POST',body:JSON.stringify({username:match[1].trim(),shortId:match[2]})});toast('درخواست دوستی ارسال شد!');vx.friendTab='all';await loadWorkspace();}catch(err){toast(err.message);}finally{btn.disabled=false;}};
     paintAvatars(content);content.querySelectorAll('[data-message]').forEach(b=>b.onclick=()=>{const item=vx.friends.find(x=>String(friendId(x.user))===b.dataset.message);if(item)openDm(item.user);});
@@ -656,9 +671,29 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
       vx.activeRoom=room;await loadMessages(keepScroll);
     }catch(e){vx.activeRoom=null;content.innerHTML='<div class="vx-empty-chat"><div class="big"></div><h2>گفتگو باز نشد</h2><p>'+safe(e.message)+'</p></div>';toast(e.message);}
   }
+  function normalizeMessages(data){const list=Array.isArray(data)?data:(Array.isArray(data?.results)?data.results:[]);return list.slice().reverse();}
   async function loadMessages(keepScroll=false){
     if(!vx.activeRoom)return;const old=$('vx-chat-body');const nearBottom=!old||old.scrollHeight-old.scrollTop-old.clientHeight<100;
-    try{const data=await apiCall('/messages/'+encodeURIComponent(vx.activeRoom.id||vx.activeRoom._id)+'?limit=100&page=1');vx.messages=(data.results||data||[]).slice().reverse();renderChat();const body=$('vx-chat-body');if(body&&(nearBottom||!keepScroll))body.scrollTop=body.scrollHeight;}catch(e){toast('پیام‌ها بارگذاری نشدن: '+e.message);renderChat();}
+    try{const data=await apiCall('/messages/'+encodeURIComponent(vx.activeRoom.id||vx.activeRoom._id)+'?limit=100&page=1');vx.messages=normalizeMessages(data);renderChat();const body=$('vx-chat-body');if(body&&(nearBottom||!keepScroll))body.scrollTop=body.scrollHeight;}catch(e){toast('پیام‌ها بارگذاری نشدن: '+e.message);renderChat();}
+  }
+  let messagePollBusy=false;
+  async function refreshMessagesRealtime(){
+    if(messagePollBusy||document.hidden||!vx.activeRoom||!state.token&&!store.get('vexa_access_token'))return;
+    messagePollBusy=true;
+    const roomId=String(vx.activeRoom.id||vx.activeRoom._id||'');
+    try{
+      const data=await apiCall('/messages/'+encodeURIComponent(roomId)+'?limit=100&page=1');
+      if(!vx.activeRoom||String(vx.activeRoom.id||vx.activeRoom._id||'')!==roomId)return;
+      const fresh=normalizeMessages(data);
+      const signature=list=>list.map(m=>String(m.id||m._id||'')+':'+String(m.updatedAt||m.createdAt||'')+':'+String(m.message||m.text||'')).join('|');
+      if(signature(fresh)===signature(vx.messages))return;
+      const input=$('vx-message-input'),hadFocus=!!input&&document.activeElement===input,draft=input?.value||'',start=input?.selectionStart,end=input?.selectionEnd;
+      const body=$('vx-chat-body'),nearBottom=!body||body.scrollHeight-body.scrollTop-body.clientHeight<120;
+      vx.messages=fresh;renderChat();
+      const nextInput=$('vx-message-input');if(nextInput){nextInput.value=draft;if(hadFocus){nextInput.focus();try{nextInput.setSelectionRange(start,end);}catch{}}}
+      const nextBody=$('vx-chat-body');if(nextBody&&nearBottom)nextBody.scrollTop=nextBody.scrollHeight;
+    }catch(e){/* retry on next poll; don't interrupt typing with transient errors */}
+    finally{messagePollBusy=false;}
   }
   function renderChat(){
     const content=$('vx-content'),friend=vx.activeFriend;if(!content||!friend||!vx.activeRoom)return;
@@ -668,7 +703,7 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
     const form=$('vx-composer'),input=$('vx-message-input');if(!form||!input)return;
     input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
     input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,150)+'px';});
-    form.onsubmit=async e=>{e.preventDefault();const text=input.value.trim();if(!text)return;const btn=form.querySelector('button');btn.disabled=true;try{await apiCall('/messages/send-message',{method:'POST',body:JSON.stringify({roomId:vx.activeRoom.id||vx.activeRoom._id,text})});input.value='';input.style.height='auto';await loadMessages();}catch(err){toast('پیام ارسال نشد: '+err.message);}finally{btn.disabled=false;input.focus();}};
+    form.onsubmit=async e=>{e.preventDefault();const text=input.value.trim();if(!text)return;const btn=form.querySelector('button');btn.disabled=true;try{await apiCall('/messages/send-message',{method:'POST',body:JSON.stringify({roomId:vx.activeRoom.id||vx.activeRoom._id,text})});input.value='';input.style.height='auto';await loadMessages(true);}catch(err){toast('پیام ارسال نشد: '+err.message);}finally{btn.disabled=false;input.focus();}};
   }
   function setPage(page){state.page=page;}
   function renderPage(){renderWorkspace();}
@@ -676,6 +711,7 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
   $('logout-btn').addEventListener('click',logoutUser);$('top-logout').addEventListener('click',logoutUser);
   // Poll for incoming friend requests while the app is open; refresh the UI only when the list changes.
   let pendingSignature='';
+  let pendingInitialized=false;
   let pendingPollBusy=false;
   async function pollFriendRequests(){
     if(pendingPollBusy||document.hidden||!state.token&&!store.get('vexa_access_token'))return;
@@ -685,18 +721,18 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
       const next=Array.isArray(data)?data:[];
       const signature=next.map(r=>String(r.id||r._id||'')+':'+String(r.from?.id||r.from?._id||'')).sort().join('|');
       if(signature!==pendingSignature){
-        pendingSignature=signature;
-        vx.requests=next;
+        const hadSnapshot=pendingInitialized;
+        pendingInitialized=true;pendingSignature=signature;vx.requests=next;
         const count=$('vx-pending-count');
         if(count){count.textContent=next.length?'('+next.length+')':'';count.classList.toggle('has-pending',next.length>0);}
-        if(vx.view==='pending')renderWorkspace();
-        if(next.length)toast('درخواست دوستی جدید داری');
+        if(vx.view==='friends'&&vx.friendTab==='pending')renderWorkspace();
+        if(hadSnapshot&&next.length)toast('درخواست دوستی جدید داری');
       }
     }catch(e){/* transient network/auth errors are handled by the normal API flow */}
     finally{pendingPollBusy=false;}
   }
   // Initial snapshot avoids showing a false "new request" toast on first load.
-  if(state.token||store.get('vexa_access_token')){pollFriendRequests();setInterval(pollFriendRequests,3000);}
+  if(state.token||store.get('vexa_access_token')){pollFriendRequests();setInterval(pollFriendRequests,3000);setInterval(refreshMessagesRealtime,1600);}
   const savedToken=store.get('vexa_access_token'),savedUser=currentUser();if(savedToken&&savedUser){state.token=savedToken;state.refreshToken=store.get('vexa_refresh_token');state.user=savedUser;renderApp();}
 })();
 </script>
