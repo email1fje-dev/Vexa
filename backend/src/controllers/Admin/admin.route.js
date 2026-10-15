@@ -16,6 +16,7 @@ router.get('/reports', controller.getReports);
 router.get('/support', controller.getSupportTickets);
 router.patch('/support/:ticketId', controller.updateSupportTicket);
 router.patch('/reports/:reportId', controller.updateReport);
+router.delete('/messages/:messageId', controller.deleteReportedMessage);
 router.get('/announcements', controller.getAnnouncements);
 router.post('/announcements', controller.createAnnouncement);
 router.patch('/announcements/:announcementId', controller.updateAnnouncement);
