@@ -132,7 +132,7 @@ shield:'<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 
 compass:'<circle cx="12" cy="12" r="10"/><path d="m16.2 7.8-2.7 5.7-5.7 2.7 2.7-5.7z"/>',
 mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>'
 };return '<span class="icon"><svg viewBox="0 0 24 24" aria-hidden="true">'+(icons[name]||icons.message)+'</svg></span>'}
-function av(u,size){u=u||{};const n=(u.username||'V').trim();const inner=u.avatar?'<img src="'+esc(u.avatar)+'" alt="">':esc(n.slice(0,2).toUpperCase());const presence=['online','idle','dnd'].includes(u.presenceStatus)?'<i class="presence-dot '+esc(u.presenceStatus)+'"></i>':'';return '<span class="avatar '+(size||'')+'">'+inner+presence+'</span>'}
+function av(u,size){u=u||{};const n=(u.username||'V').trim();const inner=u.profileVideo?'<video class="profile-video-avatar" src="'+esc(u.profileVideo)+'" autoplay muted loop playsinline preload="metadata"></video>':(u.avatar?'<img src="'+esc(u.avatar)+'" alt="">':esc(n.slice(0,2).toUpperCase()));const presence=['online','idle','dnd'].includes(u.presenceStatus)?'<i class="presence-dot '+esc(u.presenceStatus)+'"></i>':'';return '<span class="avatar '+(size||'')+'">'+inner+presence+'</span>'}
 function shortStatus(s){return s==='idle'?'غیرفعال':s==='dnd'?'مزاحم نشوید':'آنلاین'}
 function statusDot(s){return '<i class="status-dot '+esc(s||'online')+'"></i>'}
 function arr(d){if(Array.isArray(d))return d;if(Array.isArray(d?.results))return d.results;if(Array.isArray(d?.data))return d.data;return []}
