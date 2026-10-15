@@ -319,7 +319,7 @@ async function saveProfile(form){
  const presenceStatus=form.querySelector('[name="presenceStatus"]').value;
  const payload={username,bio,presenceStatus};if(v.pendingAvatar!==null)payload.avatar=v.pendingAvatar;if(v.pendingProfileVideo!==null)payload.profileVideo=v.pendingProfileVideo;
  const submit=form.querySelector('[type="submit"]');if(submit){submit.disabled=true;submit.textContent='در حال ذخیره…'}
- try{const result=await api('/users/me/profile',{method:'PATCH',body:JSON.stringify(payload)});const updated=result?.data||result;st.user={...st.user,...updated,username,bio,presenceStatus};if(v.pendingAvatar!==null)st.user.avatar=v.pendingAvatar;store.set('vexa_user',JSON.stringify(st.user));v.pendingAvatar=null;closeDialog();render();toast('پروفایل ذخیره شد')}
+ try{const result=await api('/users/me/profile',{method:'PATCH',body:JSON.stringify(payload)});const updated=result?.data||result;st.user={...st.user,...updated,username,bio,presenceStatus};if(v.pendingAvatar!==null)st.user.avatar=v.pendingAvatar;if(v.pendingProfileVideo!==null)st.user.profileVideo=v.pendingProfileVideo;store.set('vexa_user',JSON.stringify(st.user));v.pendingAvatar=null;v.pendingProfileVideo=null;closeDialog();render();toast('پروفایل ذخیره شد')}
  catch(e){toast('ذخیرهٔ پروفایل ناموفق بود: '+e.message);if(submit){submit.disabled=false;submit.textContent='ذخیره تغییرات'}}
 }
 function editProfileDialog(){
