@@ -12,6 +12,7 @@ const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 const app = express();
+app.disable('etag');
 
 // set security HTTP headers
 app.use(helmet({ contentSecurityPolicy: false }));
@@ -35,6 +36,14 @@ app.get('/health', (req, res) => res.status(200).json({ status: 'ok', service: '
 // JWT authentication
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);
+
+// API responses must not be cached: clients need fresh friend lists and messages.
+app.use('/api/v1', (req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+});
 
 // API routes
 app.use('/api/v1', routes);
