@@ -543,7 +543,7 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
     if(!base) throw new Error('آدرس API تنظیم نشده.');
     const token=state.token||store.get('vexa_access_token');
     const headers={Accept:'application/json',...(token?{Authorization:'Bearer '+token}:{}),...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{})};
-    const response=await fetch(base+path,{...options,headers});
+    const response=await fetch(base+path,{...options,headers:{...headers,'Cache-Control':'no-cache','Pragma':'no-cache'},cache:'no-store'});
     const raw=await response.text();let data={};try{data=raw?JSON.parse(raw):{};}catch{}
     if(response.status===401 && retryAuth && path!=='/auth/refresh-tokens'){
       const refreshToken=state.refreshToken||store.get('vexa_refresh_token');
