@@ -510,7 +510,7 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
 <div class="field"><label for="password">رمز عبور</label><div class="password-wrap"><input id="password" name="password" type="password" autocomplete="current-password" required minlength="6" placeholder="حداقل ۶ کاراکتر" dir="ltr"><button class="show-pass" id="show-pass" type="button">نمایش</button></div></div>
 <div class="form-meta" id="form-meta"><label class="check-row"><input type="checkbox" id="remember" checked> روی این دستگاه وارد بمون</label><button class="text-link" type="button" id="forgot">رمزت رو یادت رفته؟</button></div><button class="primary submit" type="submit" id="submit-btn">ورود به وکسا <span>←</span></button></form>
 <p class="legal">با ادامه دادن، موافقت می‌کنی که از وکسا با رعایت قوانین و احترام به بقیه استفاده کنی.</p>
-<details class="connection" id="connection-details"><summary>تنظیم اتصال سرور</summary><div class="field"><label for="api-base">آدرس API (مسیر پایه)</label><input id="api-base" type="url" placeholder="https://your-api.up.railway.app/api/v1" dir="ltr" spellcheck="false"></div><button class="secondary" id="save-api" type="button" style="width:100%;padding:10px">ذخیره آدرس سرور</button><p class="tiny muted">برای ورود و ساخت حساب، بک‌اند باید آنلاین و به پایگاه داده وصل باشد. آدرس سرور فقط روی همین دستگاه ذخیره می‌شود. ایمیل‌وریفای در این صفحه استفاده نمی‌شود.</p></details>
+
 </section></main><footer class="foot"><span> <span id="year"></span> Vexa</span><span>ساخته‌شده برای کامیونیتی‌ها </span><a href="../index.html">صفحه اصلی</a></footer></div>
 
 <div id="app-view" class="hidden"><div class="app-shell"><aside class="sidebar" id="sidebar"><a class="brand side-brand" href="#" data-page="home"><span class="brand-mark">V</span><span>وکسا</span></a><div><div class="side-label">فضای تو</div><nav class="side-nav"><button class="side-item active" data-page="home"><span class="side-icon">⌂</span> خانه</button><button class="side-item" data-page="profile"><span class="side-icon">◉</span> پروفایل من</button><button class="side-item" data-page="settings"><span class="side-icon"></span> تنظیمات</button></nav></div><div class="sidebar-bottom"><div class="user-mini"><div class="user-avatar" id="side-avatar">V</div><div><strong id="side-name">کاربر وکسا</strong><small>حساب شخصی</small></div></div><button class="ghost" id="logout-btn" type="button">خروج از حساب </button></div></aside>
@@ -525,9 +525,8 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
     set(key, value) { try { localStorage.setItem(key, value); } catch {} },
     remove(key) { try { localStorage.removeItem(key); } catch {} }
   };
-  $('api-base').value = new URLSearchParams(location.search).get('api') || store.get('vexa_api_base');
   $('year').textContent = new Date().getFullYear();
-  function apiBase(){ if(location.protocol==='http:'||location.protocol==='https:')return location.origin+'/api/v1'; return (store.get('vexa_api_base')||$('api-base').value||'').trim().replace(/\/+$/,''); }
+  function apiBase(){ if(location.protocol==='http:'||location.protocol==='https:')return location.origin+'/api/v1'; return (store.get('vexa_api_base')||'').trim().replace(/\/+$/,''); }
   function setStatus(message,type=''){const el=$('status');el.textContent=message;el.className='status'+(type?' '+type:'');}
   function clearStatus(){$('status').className='status hidden';$('status').textContent='';}
   function toast(message){const root=$('toast-root');root.innerHTML='';const el=document.createElement('div');el.className='toast';el.textContent=message;root.appendChild(el);setTimeout(()=>el.remove(),3200);}
@@ -535,7 +534,6 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
   setTheme(store.get('vexa_theme','dark'));
   $('theme-auth').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
   $('theme-app').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
-  $('save-api').addEventListener('click',()=>{const value=$('api-base').value.trim().replace(/\/+$/,'');if(value&&!/^https?:\/\/.+/i.test(value)){setStatus('آدرس سرور باید با https:// یا http:// شروع بشه.','error');return;}store.set('vexa_api_base',value);clearStatus();toast(value?'آدرس سرور ذخیره شد.':'آدرس سرور پاک شد.');});
   $('login-tab').addEventListener('click',()=>setMode('login'));$('signup-tab').addEventListener('click',()=>setMode('signup'));
   $('show-pass').addEventListener('click',()=>{const input=$('password');const show=input.type==='password';input.type=show?'text':'password';$('show-pass').textContent=show?'مخفی':'نمایش';});
   $('forgot').addEventListener('click',()=>setStatus('بازیابی رمز عبور به سرویس ایمیل بک‌اند نیاز داره. این قابلیت رو بعد از تنظیم سرور فعال می‌کنیم.'));
@@ -662,12 +660,16 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
   }
 
   function renderDirectory(content){
-    const known=new Set(vx.friends.map(x=>String(friendId(x.user))));
-    const people=vx.users.filter(u=>friendId(u)&&!known.has(String(friendId(u))));
+    const friendsById=new Map(vx.friends.map(x=>[String(friendId(x.user)),x.user]));
+    const people=vx.users.filter(u=>friendId(u)&&!isMyId(friendId(u)));
     const section=document.createElement('section');section.className='vx-directory';
-    section.innerHTML='<h2>آدم‌های وکسا</h2><p class="vx-directory-sub">برای شروع گفتگو، درخواست دوستی بفرست.</p>'+(people.length?people.map(u=>'<div class="vx-person-row">'+avatarHTML(u)+'<div class="vx-dm-copy"><strong>'+safe(u.username||'کاربر وکسا')+'</strong><small dir="ltr">'+safe(fullTag(u))+'</small></div><div class="vx-person-actions"><button type="button" data-add-user="'+safe(friendId(u))+'">افزودن دوست</button></div></div>').join(''):'<div class="vx-empty-chat"><h2>فعلاً کاربر دیگری پیدا نشد</h2><p>وقتی افراد بیشتری عضو وکسا بشن، از اینجا می‌تونی پیداشون کنی.</p></div>');
+    section.innerHTML='<h2>آدم‌های وکسا</h2><p class="vx-directory-sub">کاربرها رو پیدا کن؛ اگر از قبل دوست هستید، مستقیم گفتگو رو باز کن.</p>'+(people.length?people.map(u=>{
+      const id=String(friendId(u)),already=friendsById.has(id);
+      return '<div class="vx-person-row">'+avatarHTML(u)+'<div class="vx-dm-copy"><strong>'+safe(u.username||'کاربر وکسا')+'</strong><small dir="ltr">'+safe(fullTag(u))+'</small></div><div class="vx-person-actions"><button type="button" '+(already?'data-message-user="'+safe(id)+'"':'data-add-user="'+safe(id)+'"')+'>'+(already?'پیام دادن':'افزودن دوست')+'</button></div></div>';
+    }).join(''):'<div class="vx-empty-chat"><h2>هنوز کاربر دیگری ثبت نشده</h2><p>اگر قبلاً با کسی دوست شدی، از فهرست دوستان یا پیام‌های مستقیم وارد گفت‌وگوش شو. کاربرهای جدید بعد از ثبت‌نام اینجا نمایش داده می‌شن.</p></div>');
     content.appendChild(section);
     section.querySelectorAll('[data-add-user]').forEach(button=>button.onclick=async()=>{const u=people.find(x=>String(friendId(x))===button.dataset.addUser);if(!u)return;button.disabled=true;try{await apiCall('/friends/add-friend-request',{method:'POST',body:JSON.stringify({username:u.username,shortId:u.shortId})});toast('درخواست دوستی ارسال شد 💚');await loadWorkspace();}catch(e){toast('درخواست ارسال نشد: '+e.message);button.disabled=false;}});
+    section.querySelectorAll('[data-message-user]').forEach(button=>button.onclick=()=>{const user=friendsById.get(button.dataset.messageUser);if(user)openDm(user);});
   }
 
   function renderProfile(){
