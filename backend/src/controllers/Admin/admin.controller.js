@@ -97,10 +97,18 @@ const getReports = catchAsync(async (req, res) => {
   const { page, limit } = paging(req);
   const filter = {};
   if (['open', 'in_review', 'resolved', 'dismissed'].includes(req.query.status)) filter.status = req.query.status;
-  const [total, results] = await Promise.all([
+  const [total, rawResults] = await Promise.all([
     Report.countDocuments(filter),
     Report.find(filter).populate('reporterId', 'username shortId email').populate('reviewedBy', 'username').sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit).lean(),
   ]);
+  const messageIds = rawResults.filter(r => r.targetType === 'message').map(r => r.targetId).filter(id => mongoose.Types.ObjectId.isValid(id));
+  const messageDocs = messageIds.length ? await Message.find({ _id: { $in: messageIds } }).select('message senderId roomId').populate('senderId', 'username shortId').lean() : [];
+  const messageMap = new Map(messageDocs.map(m => [String(m._id), m]));
+  const results = rawResults.map(r => {
+    if (r.targetType !== 'message') return r;
+    const message = messageMap.get(String(r.targetId));
+    return { ...r, targetPreview: message ? String(message.message || '').slice(0, 500) : '[پیام در دسترس نیست]', messageSender: message ? message.senderId : null };
+  });
   res.send({ results, page, limit, total, totalPages: Math.ceil(total / limit) });
 });
 
