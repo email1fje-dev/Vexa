@@ -5,14 +5,18 @@ const friendRoute = require('../../controllers/Friend/friend.route');
 const roomRoute = require('../../controllers/Room/room.route');
 const messageRoute = require('../../controllers/Message/message.route');
 const adminRoute = require('../../controllers/Admin/admin.route');
+const reportRoute = require('../../controllers/Report/report.route');
+const announcementRoute = require('../../controllers/Announcement/announcement.route');
+const serverRoute = require('../../controllers/Server/server.route');
 
 const router = express.Router();
-
 router.use('/auth', authRoute);
 router.use('/users', userRoute);
 router.use('/friends', friendRoute);
 router.use('/rooms', roomRoute);
 router.use('/messages', messageRoute);
 router.use('/admin', adminRoute);
-
+router.use('/reports', reportRoute);
+router.use('/announcements', announcementRoute);
+router.use('/servers', serverRoute);
 module.exports = router;
