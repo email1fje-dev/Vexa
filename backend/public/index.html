@@ -579,8 +579,8 @@ html[data-theme="light"] #app-view .vx-secondary-btn{background:#edf6ee;border-c
   }
   function avatarHTML(user, extra=''){
     const src=typeof user==='string'?'':(user?.avatar||'');
-    const name=typeof user==='string'?user:(user?.username||'?');
-    return '<span class="vx-avatar '+extra+(src?' has-image':'')+'" '+(src?'data-avatar="'+safe(src)+'"':'')+'>'+safe(initials(name))+'</span>';
+    const fallback='<svg class="vx-default-avatar" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>';
+    return '<span class="vx-avatar '+extra+(src?' has-image':'')+'" '+(src?'data-avatar="'+safe(src)+'"':'')+'>'+(src?'':fallback)+'</span>';
   }
   function initials(name){return String(name||'?').trim().slice(0,1).toUpperCase();}
   function fullTag(u){return (u?.username||'کاربر')+(u?.shortId?'#'+u.shortId:'');}
