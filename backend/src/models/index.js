@@ -10,3 +10,5 @@ module.exports.VexaServer = require('./server.model');
 module.exports.AdminSetting = require('./adminSetting.model');
 
 module.exports.SystemEvent = require('./systemEvent.model');
+
+module.exports.SupportTicket = require('./supportTicket.model');
