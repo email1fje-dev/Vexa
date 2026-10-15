@@ -113,6 +113,46 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
  #app-view .app-topbar{padding:0 12px}
 }
 
+
+/* Vexa profile and friend UI rebuild */
+#app-view .vx-nav button{cursor:pointer;transition:background .16s,color .16s}
+#app-view .vx-pane{max-width:940px;padding:clamp(20px,4vw,38px);direction:rtl}
+#app-view .vx-pane h1{font-size:clamp(25px,4vw,34px)}
+#app-view .vx-pane>p{font-size:14px;max-width:650px;margin:8px 0 22px}
+#app-view .vx-friend-tabs{gap:8px;flex-wrap:wrap;border:0;margin:22px 0;padding:5px;background:#25262a;border-radius:12px;width:max-content;max-width:100%}
+#app-view .vx-friend-tabs button{border-radius:9px;padding:11px 15px;white-space:nowrap}
+#app-view .vx-friend-tabs button.active{background:#23a55a;color:white;border:0}
+#app-view .vx-add-card,#app-view .vx-profile-hero,#app-view .vx-section-card{border:1px solid #41434a;background:linear-gradient(145deg,#2b2d31,#27282d);border-radius:18px;padding:clamp(18px,3vw,28px);margin-top:16px}
+#app-view .vx-add-card h2,#app-view .vx-section-card h2{font-size:17px;margin:0 0 7px;color:#f2f3f5}
+#app-view .vx-add-card>p,#app-view .vx-section-card>p{font-size:13px;margin:0 0 18px;color:#b5bac1}
+#app-view .vx-add-row{padding:7px;border:1px solid #4b4e56;background:#1e1f22;border-radius:12px;margin:0;gap:9px}
+#app-view .vx-add-row:focus-within{border-color:#23a55a;box-shadow:0 0 0 3px #23a55a22}
+#app-view .vx-add-row input{font-size:14px;padding:11px;min-height:42px}
+#app-view .vx-green-btn{border-radius:9px;padding:12px 16px;white-space:nowrap;transition:.16s}
+#app-view .vx-person-row{border:1px solid #3b3d43;border-radius:14px;padding:13px;margin:9px 0;background:#292a2f;gap:13px}
+#app-view .vx-person-row .vx-avatar{width:44px;height:44px;font-size:16px;background:#1c7541}
+#app-view .vx-person-actions{gap:6px}
+#app-view .vx-person-actions button{border-radius:10px;width:38px;height:38px}
+#app-view .vx-empty-chat{border:1px dashed #4a4d54;border-radius:18px;background:#292a2f;padding:34px 20px}
+#app-view .vx-profile-hero{padding:0;overflow:hidden}
+#app-view .vx-profile-cover{height:112px;background:radial-gradient(circle at 20% 20%,#43d47755,transparent 32%),linear-gradient(120deg,#14532d,#23a55a 58%,#102f1c)}
+#app-view .vx-profile-main{padding:0 24px 24px}
+#app-view .vx-profile-avatar{width:88px;height:88px;margin-top:-42px;border:5px solid #2b2d31;border-radius:26px;background:#23a55a;display:grid;place-items:center;color:#fff;font-weight:900;font-size:34px}
+#app-view .vx-profile-name{font-size:24px;font-weight:900;margin:13px 0 4px;color:#f2f3f5}
+#app-view .vx-profile-tag{color:#b5bac1;font-size:13px;direction:ltr;text-align:right}
+#app-view .vx-profile-bio{margin:18px 0 0;padding:14px 16px;border-radius:12px;background:#222327;color:#c9cdd2;font-size:13px;line-height:1.9}
+#app-view .vx-profile-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+#app-view .vx-profile-stat{border:1px solid #41434a;border-radius:14px;padding:17px;background:#292a2f}
+#app-view .vx-profile-stat strong{font-size:22px;display:block;color:#f2f3f5}
+#app-view .vx-profile-stat span{font-size:12px;color:#b5bac1;display:block;margin-top:5px}
+#app-view .vx-profile-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+#app-view .vx-profile-actions button{border:1px solid #484b52;background:#303238;color:#f2f3f5;border-radius:10px;padding:10px 13px}
+#app-view .vx-profile-info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#app-view .vx-profile-info div{min-width:0;padding:13px;border-radius:12px;background:#222327}
+#app-view .vx-profile-info small{display:block;color:#949ba4;font-size:11px;margin-bottom:6px}
+#app-view .vx-profile-info strong{display:block;font-size:13px;overflow-wrap:anywhere}
+@media(max-width:540px){#app-view .vx-add-row{flex-direction:column;align-items:stretch}#app-view .vx-add-row .vx-green-btn{width:100%}#app-view .vx-profile-info{grid-template-columns:1fr}#app-view .vx-profile-main{padding:0 16px 18px}#app-view .vx-profile-cover{height:85px}#app-view .vx-profile-avatar{width:76px;height:76px;margin-top:-35px}#app-view .vx-friend-tabs{width:100%;display:grid;grid-template-columns:1fr 1fr}#app-view .vx-friend-tabs button{padding:10px 7px}#app-view .vx-person-row{gap:9px;padding:10px}#app-view .vx-person-actions button{width:34px;height:34px}}
+
 </style>
 </head>
 <body>
@@ -196,10 +236,11 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
   function renderApp(){
     $('auth-view').classList.add('hidden');$('app-view').classList.remove('hidden');
     const user=state.user||currentUser()||{username:'کاربر وکسا',email:''};state.user=user;
-    $('app-view').innerHTML='<div class="app-shell"><aside class="app-sidebar"><div class="vx-brand"><span class="vx-logo">V</span><span class="vx-brand-name">vexa</span></div><input class="vx-search" id="vx-search" placeholder="جست‌وجو یا شروع گفتگو" aria-label="جست‌وجو"><nav class="vx-nav"><button id="vx-friends" class="active"><span class="vx-nav-icon">👥</span><span class="vx-nav-label">دوستان</span></button><button id="vx-pending"><span class="vx-nav-icon">✉️</span><span class="vx-nav-label">درخواست‌ها <span id="vx-pending-count"></span></span></button></nav><div class="vx-section-head"><span>پیام‌های مستقیم</span><button id="vx-add-friend" title="افزودن دوست">＋</button></div><div class="vx-dm-list" id="vx-dm-list"></div><div class="vx-mebar"><div class="vx-avatar small" id="vx-my-avatar"></div><div class="vx-dm-copy"><strong id="vx-my-name"></strong><small>آنلاین</small></div><button id="vx-logout" title="خروج">↪</button></div></aside><section class="app-main"><header class="vx-main-head"><span class="vx-head-symbol" id="vx-head-symbol">👥</span><h2 id="vx-head-title">دوستان</h2><div class="vx-head-tools"><span title="کمک">ⓘ</span></div></header><div class="app-content" id="vx-content"></div></section></div>';
+    $('app-view').innerHTML='<div class="app-shell"><aside class="app-sidebar"><div class="vx-brand"><span class="vx-logo">V</span><span class="vx-brand-name">vexa</span></div><input class="vx-search" id="vx-search" placeholder="جست‌وجو یا شروع گفتگو" aria-label="جست‌وجو"><nav class="vx-nav"><button id="vx-friends" class="active"><span class="vx-nav-icon">♧</span><span class="vx-nav-label">دوستان</span></button><button id="vx-pending"><span class="vx-nav-icon">✉</span><span class="vx-nav-label">درخواست‌ها <span id="vx-pending-count"></span></span></button><button id="vx-profile"><span class="vx-nav-icon">◉</span><span class="vx-nav-label">پروفایل من</span></button></nav><div class="vx-section-head"><span>پیام‌های مستقیم</span><button id="vx-add-friend" title="افزودن دوست">＋</button></div><div class="vx-dm-list" id="vx-dm-list"></div><div class="vx-mebar"><div class="vx-avatar small" id="vx-my-avatar"></div><div class="vx-dm-copy"><strong id="vx-my-name"></strong><small>آنلاین</small></div><button id="vx-logout" title="خروج">↪</button></div></aside><section class="app-main"><header class="vx-main-head"><span class="vx-head-symbol" id="vx-head-symbol">👥</span><h2 id="vx-head-title">دوستان</h2><div class="vx-head-tools"><span title="کمک">ⓘ</span></div></header><div class="app-content" id="vx-content"></div></section></div>';
     $('vx-my-avatar').textContent=initials(user.username);$('vx-my-name').textContent=user.username||'کاربر وکسا';
     $('vx-friends').onclick=()=>{vx.view='friends';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();};
     $('vx-pending').onclick=()=>{vx.view='pending';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();};
+    $('vx-profile').onclick=()=>{vx.view='profile';vx.activeFriend=null;vx.activeRoom=null;renderWorkspace();};
     $('vx-add-friend').onclick=()=>{vx.view='friends';vx.friendTab='add';vx.activeFriend=null;renderWorkspace();setTimeout(()=>$('vx-friend-tag')?.focus(),30);};
     $('vx-logout').onclick=logoutUser;
     $('vx-search').addEventListener('input',()=>renderDmList());
@@ -214,6 +255,15 @@ html[data-theme="light"]{color-scheme:light;--bg:#f3faf4;--surface:#fff;--surfac
   }
   function renderWorkspace(){
     renderDmList();const content=$('vx-content');if(!content)return;
+    ['vx-friends','vx-pending','vx-profile'].forEach(id=>$(id)?.classList.toggle('active',(id==='vx-friends'&&(vx.view==='friends'||vx.view==='chat'))||(id==='vx-pending'&&vx.view==='pending')||(id==='vx-profile'&&vx.view==='profile')));
+    if(vx.view==='profile'){
+      $('vx-head-symbol').textContent='◉';$('vx-head-title').textContent='پروفایل من';
+      const u=state.user||currentUser()||{}, tag=fullTag(u), email=u.email||'ثبت نشده';
+      content.innerHTML='<div class="vx-pane"><h1>پروفایل من</h1><p>اطلاعات حسابت رو ببین و شناسه‌ات رو برای دوستات بفرست.</p><section class="vx-profile-hero"><div class="vx-profile-cover"></div><div class="vx-profile-main"><div class="vx-profile-avatar">'+safe(initials(u.username||u.name))+'</div><div class="vx-profile-name">'+safe(u.username||u.name||'کاربر وکسا')+'</div><div class="vx-profile-tag" dir="ltr">'+safe(tag)+'</div><div class="vx-profile-bio">به فضای خودت توی وکسا خوش اومدی 💚<br>شناسه‌ات رو کپی کن تا بقیه بتونن درخواست دوستی بفرستن.</div><div class="vx-profile-actions"><button id="vx-copy-tag">کپی شناسه</button><button id="vx-profile-add" class="vx-green-btn">＋ پیدا کردن دوست</button></div></div></section><div class="vx-profile-stats"><div class="vx-profile-stat"><strong>'+vx.friends.length+'</strong><span>دوست</span></div><div class="vx-profile-stat"><strong>'+vx.requests.length+'</strong><span>درخواست در انتظار</span></div></div><section class="vx-section-card"><h2>اطلاعات حساب</h2><p>اطلاعاتی که باهاش وارد وکسا شدی.</p><div class="vx-profile-info"><div><small>نام کاربری</small><strong dir="ltr">'+safe(u.username||'—')+'</strong></div><div><small>شناسهٔ دوستی</small><strong dir="ltr">'+safe(tag)+'</strong></div><div><small>ایمیل</small><strong dir="ltr">'+safe(email)+'</strong></div><div><small>وضعیت</small><strong>● آنلاین</strong></div></div></section></div>';
+      $('vx-copy-tag').onclick=async()=>{try{await navigator.clipboard.writeText(tag);toast('شناسه کپی شد 💚');}catch{toast('شناسه: '+tag);}};
+      $('vx-profile-add').onclick=()=>{vx.view='friends';vx.friendTab='add';renderWorkspace();setTimeout(()=>$('vx-friend-tag')?.focus(),30);};
+      return;
+    }
     if(vx.activeFriend&&vx.activeRoom){$('vx-head-symbol').textContent='＠';$('vx-head-title').textContent=fullTag(vx.activeFriend);renderChat();return;}
     if(vx.view==='pending'){
       $('vx-head-symbol').textContent='✉️';$('vx-head-title').textContent='درخواست‌های دوستی';
