@@ -1,8 +1,12 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../../utils/catchAsync');
 const { authService, userService, tokenService, emailService } = require('../../services');
+const { AdminSetting } = require('../../models');
+const ApiError = require('../../utils/ApiError');
 
 const register = catchAsync(async (req, res) => {
+  const setting = await AdminSetting.findOne({ key: 'registrationEnabled' }).lean();
+  if (setting && setting.value === false) throw new ApiError(httpStatus.SERVICE_UNAVAILABLE, 'New registrations are currently disabled');
   const user = await userService.createUser(req.body);
   const tokens = await tokenService.generateAuthTokens(user);
   res.status(httpStatus.CREATED).send({ user, tokens });
