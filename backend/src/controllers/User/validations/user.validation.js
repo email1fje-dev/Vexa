@@ -51,6 +51,7 @@ const updateMyProfile = {
     username: Joi.string().trim().min(2).max(32),
     bio: Joi.string().trim().max(160),
     avatar: Joi.string().max(400000).allow(''),
+    profileVideo: Joi.string().max(900000).allow(''),
     presenceStatus: Joi.string().valid('online', 'idle', 'dnd'),
   }).min(1),
 };
