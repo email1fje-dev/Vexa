@@ -24,7 +24,7 @@ html[data-theme=light] .auth{--bg:#f2faf3;--panel:#fff;--panel2:#f5fbf6;--rail:#
 .mobile-dock{display:none}
 @keyframes vexa-enter{from{opacity:0;transform:translateY(9px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes vexa-pop{0%{transform:scale(.86);opacity:.6}65%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
-.workspace-content>*{animation:vexa-enter .24s cubic-bezier(.2,.75,.25,1) both}
+.workspace-content>*{animation:vexa-enter .24s cubic-bezier(.2,.75,.25,1) both}.app-shell.auto-refreshing .workspace-content>*{animation:none!important}
 .mobile-create{display:none}
 .rail-plus{animation:vexa-pop .35s ease-out both}
 .rail-plus:hover{transform:rotate(90deg)}
@@ -128,15 +128,27 @@ function roomPartner(room){return userId(room.sender)===userId(st.user)?room.rec
 function roomsWithPartners(){return v.rooms.map(room=>({room,user:roomPartner(room)})).filter(x=>x.user&&userId(x.user)!==userId(st.user))}
 function openDialog(markup){$('dialog-root').innerHTML=markup;$('dialog-root').classList.add('open');}
 function closeDialog(){$('dialog-root').classList.remove('open');$('dialog-root').innerHTML='';v.pendingAvatar=null;}
-async function load(){
- const requests=await Promise.allSettled([api('/friends/all-friends'),api('/friends/pending-requests'),api('/friends/outgoing-requests'),api('/rooms/open-rooms'),api('/users/directory')]);
- v.networkError=requests.every(x=>x.status==='rejected')?(requests[0]?.reason?.message||'ارتباط با سرور برقرار نشد'):'';
- if(requests[0].status==='fulfilled')v.friends=arr(requests[0].value).map(r=>({request:r,user:getFriendRequestUser(r)})).filter(x=>x.user&&userId(x.user));
- if(requests[1].status==='fulfilled')v.requests=arr(requests[1].value);
- if(requests[2].status==='fulfilled')v.outgoing=arr(requests[2].value);
- if(requests[3].status==='fulfilled')v.rooms=arr(requests[3].value);
- if(requests[4].status==='fulfilled')v.users=arr(requests[4].value);
- render();
+let refreshInProgress=false;
+async function load(silent=false){
+ if(refreshInProgress)return;
+ refreshInProgress=true;
+ const before=JSON.stringify([v.friends,v.requests,v.outgoing,v.rooms,v.users,v.networkError]);
+ try{
+  const requests=await Promise.allSettled([api('/friends/all-friends'),api('/friends/pending-requests'),api('/friends/outgoing-requests'),api('/rooms/open-rooms'),api('/users/directory')]);
+  v.networkError=requests.every(x=>x.status==='rejected')?(requests[0]?.reason?.message||'ارتباط با سرور برقرار نشد'):'';
+  if(requests[0].status==='fulfilled')v.friends=arr(requests[0].value).map(r=>({request:r,user:getFriendRequestUser(r)})).filter(x=>x.user&&userId(x.user));
+  if(requests[1].status==='fulfilled')v.requests=arr(requests[1].value);
+  if(requests[2].status==='fulfilled')v.outgoing=arr(requests[2].value);
+  if(requests[3].status==='fulfilled')v.rooms=arr(requests[3].value);
+  if(requests[4].status==='fulfilled')v.users=arr(requests[4].value);
+  const after=JSON.stringify([v.friends,v.requests,v.outgoing,v.rooms,v.users,v.networkError]);
+  if(before!==after){
+   const shell=$('app-shell');
+   if(silent&&shell)shell.classList.add('auto-refreshing');
+   render();
+   if(silent&&shell)setTimeout(()=>shell.classList.remove('auto-refreshing'),350);
+  }
+ }finally{refreshInProgress=false}
 }
 function renderApp(){
  $('auth').classList.add('hidden');$('app').classList.remove('hidden');
@@ -148,6 +160,8 @@ function renderApp(){
  $('app').onkeydown=e=>{if(e.target&&e.target.id==='message-input'&&e.key==='Enter'&&!e.shiftKey){e.preventDefault();const f=e.target.closest('form');if(f)f.requestSubmit()}};
  $('dialog-root').onclick=e=>{if(e.target.id==='dialog-root'||e.target.closest('[data-action="close-dialog"]'))closeDialog()};
  render();load();
+ if(window.vexaAutoRefreshTimer)clearInterval(window.vexaAutoRefreshTimer);
+ window.vexaAutoRefreshTimer=setInterval(()=>{if(st.user&&$('app')&&!$('app').classList.contains('hidden'))load(true)},1000);
 }
 function renderSidebar(){
  const search=$('dm-search');const q=(search?.value||'').toLowerCase().trim();const entries=roomsWithPartners();const unique=new Map();
@@ -184,7 +198,7 @@ function renderMain(){
  serverDiscover:[ico('discover'),'پیدا کردن سرور','']
  };
  const h=headerMap[v.view]||headerMap.friends;
- head.innerHTML='<div class="main-header-title">'+(v.view==='chat'?'<button class="icon-button mobile-back" data-action="back-mobile">'+ico('chevron')+'</button>':'')+h[0]+'<b>'+h[1]+'</b></div><div class="header-separator"></div><div class="header-actions">'+(v.view==='chat'?'<button class="icon-button" data-action="toggle-members" title="نمایش اعضا">'+ico('friends')+'</button><button class="icon-button" data-action="profile-friend" title="اطلاعات کاربر">'+ico('profile')+'</button>':'<button class="icon-button mobile-create" data-action="server-create" title="ساخت سرور" aria-label="افزودن">'+ico('plus')+'</button><button class="icon-button" data-action="refresh" title="تازه‌سازی">'+ico('refresh')+'</button><button class="icon-button" data-action="theme" title="تغییر پوسته">'+(document.documentElement.dataset.theme==='dark'?ico('sun'):ico('moon'))+'</button>')+'</div>';
+ head.innerHTML='<div class="main-header-title">'+(v.view==='chat'?'<button class="icon-button mobile-back" data-action="back-mobile">'+ico('chevron')+'</button>':'')+h[0]+'<b>'+h[1]+'</b></div><div class="header-separator"></div><div class="header-actions">'+(v.view==='chat'?'<button class="icon-button" data-action="toggle-members" title="نمایش اعضا">'+ico('friends')+'</button><button class="icon-button" data-action="profile-friend" title="اطلاعات کاربر">'+ico('profile')+'</button>':'')+'<button class="icon-button" data-action="theme" title="تغییر پوسته">'+(document.documentElement.dataset.theme==='dark'?ico('sun'):ico('moon'))+'</button></div>';
  if(v.view==='friends'||v.view==='home')renderFriendsPage(content);
  else if(v.view==='dms')renderDmsPage(content);
  else if(v.view==='profile')renderProfilePage(content);
