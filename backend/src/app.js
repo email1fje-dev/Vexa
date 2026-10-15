@@ -48,6 +48,11 @@ app.use('/api/v1', (req, res, next) => {
 // API routes
 app.use('/api/v1', routes);
 
+// Dedicated owner control panel; its API is independently protected server-side.
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/admin.html'));
+});
+
 // Serve the Persian web app from the same Railway service
 app.use(express.static(path.join(__dirname, '../public'), { index: 'index.html' }));
 
