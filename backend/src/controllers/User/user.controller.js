@@ -16,6 +16,13 @@ const updateMyProfile = catchAsync(async (req, res) => {
     }
     allowed.avatar = avatar;
   }
+  if (typeof req.body.profileVideo === 'string') {
+    const profileVideo = req.body.profileVideo;
+    if (profileVideo && (!/^data:video\/(mp4|webm);base64,/.test(profileVideo) || profileVideo.length > 900000)) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Profile video must be a short MP4/WebM video under 650 KB');
+    }
+    allowed.profileVideo = profileVideo;
+  }
   if (['online', 'idle', 'dnd'].includes(req.body.presenceStatus)) allowed.presenceStatus = req.body.presenceStatus;
   if (!Object.keys(allowed).length) throw new ApiError(httpStatus.BAD_REQUEST, 'No profile changes provided');
   const user = await userService.updateUserById(req.user.id, allowed);
