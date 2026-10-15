@@ -83,6 +83,63 @@ html[data-theme=light] .chat-composer{background:linear-gradient(145deg,#fff,#f2
  .main-header-title span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 .verified-badge{display:inline-flex;vertical-align:-3px;align-items:center;justify-content:center;width:17px;height:17px;margin-inline-start:5px;flex:none;line-height:0;filter:drop-shadow(0 1px 1px #0002)}.verified-badge svg{width:17px;height:17px;display:block;overflow:visible}.person-copy b .verified-badge{margin-inline-start:5px}
+
+.server-layout{min-height:100%;height:100%;display:flex;direction:ltr;background:var(--bg);overflow:hidden}
+.server-channel-sidebar{width:225px;min-width:225px;display:flex;flex-direction:column;direction:rtl;background:var(--panel);border-left:1px solid var(--line);padding:10px;gap:10px;overflow:auto}
+.server-sidebar-name{display:flex;align-items:center;gap:9px;width:100%;padding:11px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);font-weight:850;text-align:right;box-shadow:0 4px 14px #00000008}
+.server-sidebar-mark{width:29px;height:29px;display:grid;place-items:center;border-radius:9px;background:var(--soft);color:var(--green);font-weight:900}
+.server-sidebar-name>span:nth-child(2){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.server-channel-heading,.server-panel-title{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:11px;padding:4px 3px}
+.server-channel-heading button{display:grid;place-items:center;border:0;border-radius:7px;background:transparent;color:var(--muted);padding:5px}
+.server-channel-heading button:hover{background:var(--soft);color:var(--green)}
+.server-channel-list{display:flex;flex-direction:column;gap:3px}
+.server-channel{display:flex;align-items:center;gap:8px;width:100%;border:0;border-radius:8px;padding:9px 10px;background:transparent;color:var(--muted);text-align:right;font-size:12px;font-weight:700}
+.server-channel:hover{background:var(--hover);color:var(--text)}
+.server-channel.active{background:var(--soft);color:var(--green)}
+.server-channel-hash{font-size:19px;line-height:1;color:var(--muted);font-weight:500}
+.server-channel.active .server-channel-hash{color:var(--green)}
+.server-invite-box{margin-top:auto;display:flex;flex-direction:column;gap:7px;padding:10px;border:1px solid var(--line);border-radius:11px;background:var(--bg)}
+.server-invite-box small{font-size:10px;color:var(--muted)}
+.server-invite-box b{font-size:13px;letter-spacing:1px}
+.server-invite-box .btn{width:100%;justify-content:center}
+.server-chat-panel{display:flex;flex:1;min-width:0;flex-direction:column;direction:rtl;background:var(--bg);overflow:hidden}
+.server-room-titlebar{display:flex;align-items:center;gap:12px;margin:14px 16px 0;padding:13px 16px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:0 5px 18px #00000008;min-height:66px}
+.server-room-mark{width:39px;height:39px;flex:none;display:grid;place-items:center;border-radius:11px;background:var(--soft);color:var(--green);font-size:17px;font-weight:900;overflow:hidden}
+.server-room-mark img{width:100%;height:100%;object-fit:cover}
+.server-room-heading{min-width:0;flex:1}
+.server-room-heading>span{display:block;font-size:10px;color:var(--muted);margin-bottom:2px}
+.server-room-heading h1{font-size:17px;margin:0;color:var(--text);overflow-wrap:anywhere}
+.server-room-count{font-size:11px;color:var(--muted);white-space:nowrap}
+.server-channel-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);margin-top:8px}
+.server-channel-header>div{display:flex;align-items:center;gap:8px;font-size:14px}
+.server-channel-header>span{font-size:10px;color:var(--muted)}
+.server-message-list{flex:1;min-height:0;overflow:auto;padding:14px 18px 22px;display:flex;flex-direction:column;gap:15px}
+.server-message{display:flex;align-items:flex-start;gap:10px;direction:rtl}
+.server-message-avatar{flex:none}
+.server-message-body{min-width:0;flex:1}
+.server-message-meta{display:flex;align-items:baseline;gap:9px;margin-bottom:3px}
+.server-message-meta b{font-size:12px;color:var(--text)}
+.server-message-meta time{font-size:10px;color:var(--muted)}
+.server-message-body p{margin:0;font-size:13px;line-height:1.8;color:var(--text);overflow-wrap:anywhere;white-space:normal}
+.server-chat-empty{margin:auto;text-align:center;padding:35px 16px;color:var(--muted)}
+.server-chat-empty-mark{display:grid;place-items:center;width:56px;height:56px;border-radius:17px;background:var(--soft);color:var(--green);font-size:33px;margin:0 auto 14px}
+.server-chat-empty h2{font-size:17px;color:var(--text);margin:0 0 8px}
+.server-chat-empty p{font-size:12px;margin:0}
+.server-message-form{display:flex;align-items:center;gap:10px;margin:0 16px 16px;padding:8px 10px;border:1px solid var(--line);border-radius:13px;background:var(--panel)}
+.server-compose-hash{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--soft);color:var(--green);font-size:20px;flex:none}
+.server-message-form input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:13px;padding:8px 2px}
+.server-message-form .btn{min-width:39px;min-height:38px;padding:7px;display:grid;place-items:center}
+.server-no-channel{padding:20px;color:var(--muted);text-align:center}
+.server-members-panel{width:190px;min-width:160px;max-width:210px;direction:rtl;background:var(--panel);border-right:1px solid var(--line);padding:14px 10px;overflow:auto}
+.server-panel-title{padding:5px 7px 12px}
+.server-panel-title span{display:grid;place-items:center;min-width:22px;height:22px;padding:0 5px;border-radius:7px;background:var(--soft);color:var(--green);font-size:10px}
+.server-members-list{display:flex;flex-direction:column;gap:4px}
+.server-member-row{display:flex;align-items:center;gap:8px;padding:7px 5px;border-radius:8px;min-width:0;font-size:11px;color:var(--text)}
+.server-member-row>span:not(.avatar){min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.server-member-row small{font-size:9px;color:var(--green)}
+@media(max-width:850px){.server-members-panel{display:none}.server-channel-sidebar{width:175px;min-width:150px;padding:7px}.server-room-titlebar{margin:8px 8px 0;padding:10px}.server-message-list{padding:12px}.server-message-form{margin:0 8px 8px}.server-channel-header{padding:12px}}
+@media(max-width:520px){.server-channel-sidebar{width:128px;min-width:118px;padding:6px}.server-sidebar-name{padding:8px;font-size:11px}.server-sidebar-mark{width:25px;height:25px}.server-invite-box{padding:7px}.server-invite-box b{font-size:10px;letter-spacing:0}.server-room-count{display:none}.server-room-heading h1{font-size:14px}.server-channel-header>span{display:none}.server-message-form{gap:6px}.server-compose-hash{width:25px;height:25px}}
+
 </style><body><section id="auth" class="auth"><div class="auth-card"><div class="brand"><span class="logo">V</span> وکسا</div><h1 id="auth-title">خوش برگشتی 💚</h1><p>دوستات، گفتگوها و کامیونیتی‌هات؛ همه توی یک جا.</p><div class="tabs"><button class="btn primary" id="login-tab">ورود</button><button class="btn" id="signup-tab">ساخت حساب</button></div><form id="auth-form"><div class="field hidden" id="username-wrap"><label>نام کاربری</label><input id="username" minlength="4" autocomplete="username"></div><div class="field"><label>ایمیل</label><input id="email" type="email" required autocomplete="email"></div><div class="field"><label>رمز عبور</label><input id="password" type="password" required minlength="6" autocomplete="current-password"></div><p id="auth-error" class="status"></p><button class="btn primary" style="width:100%" id="auth-submit">ورود به وکسا</button></form></div></section><section id="app" class="hidden"></section><div id="toast"></div><script>
 const $=id=>document.getElementById(id),store={get:(k,d='')=>{try{return localStorage.getItem(k)??d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}},del:k=>{try{localStorage.removeItem(k)}catch{}}};
 const st={mode:'login',user:null,token:null,refresh:null},v={friends:[],requests:[],users:[],rooms:[],view:'friends',tab:'all',friend:null,room:null,messages:[]};
@@ -224,6 +281,7 @@ function renderSidebar(){
 }
 function render(){
  const shell=$('app-shell');if(!shell)return;
+ if(v.view!=='serverRoom'&&window.vexaServerMessageTimer){clearInterval(window.vexaServerMessageTimer);window.vexaServerMessageTimer=null;}
  shell.classList.toggle('chat-open',v.view==='chat');
  shell.classList.toggle('member-open',v.view==='chat'&&v.memberPanel);
  document.querySelectorAll('[data-nav]').forEach(b=>{const key=b.dataset.nav;const on=(key==='home'&&v.view==='home')||(key==='friends'&&v.view==='friends')||(key==='notifications'&&v.view==='friends'&&v.tab==='pending')||(key==='you'&&v.view==='profile')||(key==='dms'&&(v.view==='dms'||v.view==='chat'))||(key==='servers'&&v.view==='servers');b.classList.toggle('active',on)});
@@ -315,16 +373,40 @@ function renderProfilePage(root){
  }
  root.innerHTML='<div class="profile-settings"><aside class="settings-nav"><h3>تنظیمات کاربر</h3><button class="active" data-profile-section="profile">'+ico('profile')+' پروفایل من</button><button data-profile-section="settings">'+ico('settings')+' تنظیمات</button><button data-profile-section="plus">'+ico('sparkles')+' وکسا پلاس</button><button data-profile-section="appearance">'+ico('sun')+' ظاهر</button></aside><section class="settings-content"><h1>پروفایل من</h1><div class="settings-cover"></div><div class="settings-profile-card"><div class="settings-profile-top">'+av(u,'lg')+'<div class="settings-profile-copy"><h2>'+esc(u.username||'کاربر')+verifiedBadge(u)+'</h2><small dir="ltr">'+esc(tag(u))+'</small><p>'+(esc(u.bio||'هنوز توضیحی برای پروفایلت ننوشتی.'))+'</p></div></div><div class="settings-profile-actions"><button class="btn primary" data-action="edit-profile">'+ico('edit')+' ویرایش پروفایل</button></div></div><div class="settings-panel"><h3>اطلاعات حساب</h3><div class="setting-line"><div class="setting-label">نام کاربری<small>نامی که دیگران در وکسا می‌بینند.</small></div><div class="setting-value">'+esc(u.username||'—')+'</div></div><div class="setting-line"><div class="setting-label">کد کاربری<small>برای پیدا کردن و افزودن دوست.</small></div><div style="display:flex;gap:8px;align-items:center"><div class="setting-value">'+esc(tag(u))+'</div><button class="icon-button" data-action="copy-tag" title="کپی کد کاربری">'+ico('copy')+'</button></div></div><div class="setting-line"><div class="setting-label">ایمیل</div><div class="setting-value">'+esc(u.email||'نمایش داده نمی‌شود')+'</div></div><div class="setting-line"><div class="setting-label">وضعیت</div><div class="setting-value">'+shortStatus(u.presenceStatus)+'</div></div></div><div class="settings-panel"><h3>حساب کاربری</h3><div class="setting-line"><div class="setting-label">خروج از حساب<small>روی این دستگاه از وکسا خارج شو.</small></div><button class="btn" data-action="logout">'+ico('logout')+' خروج</button></div></div></section></div>';
 }
+function renderServerMessages(){
+ const root=$('server-message-list');if(!root)return;
+ const items=arr(v.serverMessages);
+ root.innerHTML=items.length?items.map(m=>'<article class="server-message"><div class="server-message-avatar">'+av(m.author||{username:'کاربر'},'sm')+'</div><div class="server-message-body"><div class="server-message-meta"><b>'+esc(m.author?.username||'کاربر')+'</b><time>'+esc(m.createdAt?new Date(m.createdAt).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'}):'')+'</time></div><p>'+esc(m.text||'').replace(/\n/g,'<br>')+'</p></div></article>').join(''):'<div class="server-chat-empty"><div class="server-chat-empty-mark">#</div><h2>به کانال خوش اومدی!</h2><p>اینجا شروع گفت‌وگوی این کاناله. اولین پیام رو تو بفرست.</p></div>';
+ root.scrollTop=root.scrollHeight;
+}
+function loadServerMessages(serverId,channelId){
+ if(!serverId||!channelId)return Promise.resolve();
+ return api('/servers/'+encodeURIComponent(serverId)+'/channels/'+encodeURIComponent(channelId)+'/messages?limit=100').then(data=>{
+  if(v.view!=='serverRoom'||String(v.currentServer?.id||'')!==String(serverId)||String(v.currentChannelId||'')!==String(channelId))return;
+  v.serverMessages=arr(data);renderServerMessages();
+ }).catch(error=>{const root=$('server-message-list');if(root)root.innerHTML='<div class="inline-alert">پیام‌ها بارگذاری نشدند. <button class="btn" data-action="retry-server-messages">تلاش دوباره</button></div>';});
+}
 function renderServerRoom(root,server){
- const name=String(server?.name||'سرور').trim()||'سرور';
- root.innerHTML='<section class="server-room"><header class="server-room-titlebar"><div class="server-room-mark">'+(server?.icon||server?.image||server?.avatar?'<img src="'+esc(server.icon||server.image||server.avatar)+'" alt="">':esc(Array.from(name)[0]||'س'))+'</div><div class="server-room-heading"><span>سرور</span><h1>'+esc(name)+'</h1></div></header></section>';
+ const name=String(server?.name||'سرور').trim()||'سرور',channels=arr(server?.channels);
+ const active=channels.find(c=>String(c.id)===String(v.currentChannelId))||channels[0];
+ if(active&&String(v.currentChannelId||'')!==String(active.id))v.currentChannelId=active.id;
+ const members=arr(server?.members);
+ const channelHtml=channels.map(c=>'<button class="server-channel '+(active&&String(c.id)===String(active.id)?'active':'')+'" type="button" data-server-channel="'+esc(c.id)+'"><span class="server-channel-hash">#</span><span>'+esc(c.name)+'</span></button>').join('');
+ const memberHtml=members.map(m=>'<div class="server-member-row">'+av(m,'sm')+'<span>'+esc(m.username||'کاربر')+'</span>'+(String(m._id||m.id)===String(server?.owner?._id||server?.owner?.id||server?.ownerId)?'<small>مالک</small>':'')+'</div>').join('');
+ root.innerHTML='<section class="server-layout"><aside class="server-members-panel"><div class="server-panel-title"><b>اعضای سرور</b><span>'+members.length+'</span></div><div class="server-members-list">'+(memberHtml||'<p class="muted">هنوز عضوی نیست.</p>')+'</div></aside><main class="server-chat-panel"><header class="server-room-titlebar"><div class="server-room-mark">'+(server?.icon||server?.image||server?.avatar?'<img src="'+esc(server.icon||server.image||server.avatar)+'" alt="">':esc(Array.from(name)[0]||'س'))+'</div><div class="server-room-heading"><span>سرور</span><h1>'+esc(name)+'</h1></div><div class="server-room-count">'+members.length+' عضو</div></header><header class="server-channel-header"><div><span class="server-channel-hash">#</span><b>'+esc(active?.name||'کانال')+'</b></div><span>گفت‌وگوی سرور</span></header><div id="server-message-list" class="server-message-list"><div class="empty-state">در حال بارگذاری پیام‌ها…</div></div>'+(active?'<form id="server-message-form" class="server-message-form"><span class="server-compose-hash">+</span><input id="server-message-input" maxlength="2000" autocomplete="off" placeholder="پیام به #'+esc(active.name)+'" required><button class="btn primary" type="submit" aria-label="ارسال پیام">'+ico('send')+'</button></form>':'<div class="server-no-channel">برای شروع، یک کانال بساز.</div>')+'</main><aside class="server-channel-sidebar"><button class="server-sidebar-name" type="button" data-action="server-details"><span class="server-sidebar-mark">'+esc(Array.from(name)[0]||'س')+'</span><span>'+esc(name)+'</span>'+ico('chevronDown')+'</button><div class="server-channel-heading"><span>کانال‌های متنی</span>'+(server?.isOwner?'<button type="button" data-action="server-create-channel" title="ساخت کانال">'+ico('plus')+'</button>':'')+'</div><div class="server-channel-list">'+(channelHtml||'<p class="muted">هنوز کانالی ساخته نشده.</p>')+'</div><div class="server-invite-box"><small>کد دعوت</small><b dir="ltr">'+esc(server?.inviteCode||'')+'</b><button class="btn" type="button" data-action="copy-server-invite">'+ico('copy')+' کپی دعوت</button></div></aside></section>';
+ if(active)loadServerMessages(server.id,active.id);
 }
 function openServerRoom(serverId){
- api('/servers/mine').then(data=>{
-  const server=arr(data).find(item=>String(item.id||item._id||'')===String(serverId));
-  if(!server){toast('سرور پیدا نشد یا دیگر عضو آن نیستی.');loadServerRail();return}
-  v.currentServer=server;v.view='serverRoom';v.friend=null;v.room=null;v.messages=[];render();
+ api('/servers/'+encodeURIComponent(serverId)).then(server=>{
+  v.currentServer=server;v.view='serverRoom';v.friend=null;v.room=null;v.messages=[];
+  v.currentChannelId=arr(server.channels)[0]?.id||null;v.serverMessages=[];
+  if(window.vexaServerMessageTimer)clearInterval(window.vexaServerMessageTimer);
+  window.vexaServerMessageTimer=setInterval(()=>{if(v.view==='serverRoom'&&v.currentServer&&v.currentChannelId)loadServerMessages(v.currentServer.id,v.currentChannelId)},3000);
+  render();
  }).catch(error=>toast(error.message||'بارگذاری سرور ناموفق بود.'));
+}
+function serverCreateChannelDialog(){
+ openDialog('<div class="dialog-card"><div class="dialog-head"><h2>ساخت کانال متنی</h2><button data-action="close-dialog">'+ico('close')+'</button></div><form id="server-create-channel-form"><label class="field">نام کانال<input id="server-channel-name" required minlength="2" maxlength="50" placeholder="مثلاً general"></label><p class="muted">فاصله‌ها به خط تیره تبدیل می‌شن.</p><div class="dialog-actions"><button class="btn primary" type="submit">ساخت کانال</button><button class="btn" type="button" data-action="close-dialog">لغو</button></div></form></div>');
 }
 function renderServersPage(root){
  root.innerHTML='<div class="server-page"><section class="server-hero"><h1>یه جای مخصوص جمع خودت بساز</h1><p>سرور بساز، کد دعوت رو با دوستات به اشتراک بذار یا با کد دعوت وارد سرور عمومی شو.</p><div class="server-hero-actions"><button class="btn primary" data-action="server-create">'+ico('plus')+' ساخت سرور</button><button class="btn" data-action="server-join">'+ico('userPlus')+' پیوستن با دعوت‌نامه</button></div></section><div class="section-head"><h2>سرورهای تو</h2><small id="my-server-count">در حال بارگذاری…</small></div><div id="my-servers-list" class="server-feature-grid"><div class="empty-state">در حال دریافت سرورها…</div></div><div class="section-head"><h2>سرورهای عمومی</h2><small>قابل پیوستن با یک کلیک</small></div><div id="discover-servers-list" class="server-feature-grid"><div class="empty-state">در حال بارگذاری…</div></div></div>';
@@ -382,6 +464,7 @@ function reportUserDialog(targetId,targetType='user'){
 function handleClick(event){
  const b=event.target.closest('button,[data-nav],[data-action],[data-tab],[data-user-chat],[data-add-user],[data-accept],[data-cancel-request],[data-profile-section],[data-theme-pick]');if(!b)return;
  if(b.dataset.serverOpen){openServerRoom(b.dataset.serverOpen);return}
+ if(b.dataset.serverChannel){v.currentChannelId=b.dataset.serverChannel;v.serverMessages=[];render();return}
  if(b.dataset.nav){setNav(b.dataset.nav);return}
  if(b.dataset.tab){v.tab=b.dataset.tab;render();return}
  if(b.dataset.userChat||b.dataset.userChat===''){closeDialog();openDm(findUser(b.dataset.userChat));return}
@@ -412,6 +495,9 @@ function handleClick(event){
  if(action==='copy-tag'){const t=tag(st.user);if(navigator.clipboard?.writeText)navigator.clipboard.writeText(t).then(()=>toast('کد کاربری کپی شد')).catch(()=>toast(t));else toast(t);return}
  if(action==='server-create'){serverNotReadyDialog('create');return}
  if(action==='server-join'){serverNotReadyDialog('join');return}
+ if(action==='server-create-channel'){serverCreateChannelDialog();return}
+ if(action==='retry-server-messages'){loadServerMessages(v.currentServer?.id,v.currentChannelId);return}
+ if(action==='copy-server-invite'){const code=v.currentServer?.inviteCode||'';if(navigator.clipboard?.writeText)navigator.clipboard.writeText(code).then(()=>toast('کد دعوت کپی شد')).catch(()=>toast(code));else toast(code);return}
  if(action==='report-user'){reportUserDialog(b.dataset.targetId,'user');return}
  if(action==='report-message'){reportUserDialog(b.dataset.targetId,'message');return}
  if(b.dataset.dismissAnnouncement){const el=b.closest('[data-announcement-banner]');if(el)el.remove();return}
@@ -434,9 +520,22 @@ async function handleSubmit(event){
   catch(e){toast('پیام ارسال نشد: '+e.message)}finally{if(submit)submit.disabled=false}
   return;
  }
+ if(form.id==='server-message-form'){
+  event.preventDefault();const input=$('server-message-input'),text=input.value.trim();if(!text||!v.currentServer||!v.currentChannelId)return;
+  const submit=form.querySelector('[type="submit"]');submit.disabled=true;
+  try{await api('/servers/'+encodeURIComponent(v.currentServer.id)+'/channels/'+encodeURIComponent(v.currentChannelId)+'/messages',{method:'POST',body:JSON.stringify({text})});input.value='';await loadServerMessages(v.currentServer.id,v.currentChannelId)}
+  catch(e){toast('پیام ارسال نشد: '+e.message)}finally{if(submit)submit.disabled=false}
+  return;
+ }
+ if(form.id==='server-create-channel-form'){
+  event.preventDefault();const submit=form.querySelector('[type="submit"]');submit.disabled=true;
+  try{await api('/servers/'+encodeURIComponent(v.currentServer.id)+'/channels',{method:'POST',body:JSON.stringify({name:$('server-channel-name').value.trim()})});const server=await api('/servers/'+encodeURIComponent(v.currentServer.id));v.currentServer=server;v.currentChannelId=arr(server.channels).slice(-1)[0]?.id||arr(server.channels)[0]?.id||null;v.serverMessages=[];closeDialog();render();toast('کانال ساخته شد')}
+  catch(e){toast('ساخت کانال ناموفق بود: '+e.message)}finally{submit.disabled=false}
+  return;
+ }
  if(form.id==='server-create-form'){
   event.preventDefault();const submit=form.querySelector('[type="submit"]');submit.disabled=true;
-  try{await api('/servers',{method:'POST',body:JSON.stringify({name:$('server-name').value.trim(),description:$('server-description').value.trim()})});closeDialog();toast('سرور ساخته شد');loadServerRail();v.view='servers';render()}catch(e){toast(e.message)}finally{submit.disabled=false}return;
+  try{const created=await api('/servers',{method:'POST',body:JSON.stringify({name:$('server-name').value.trim(),description:$('server-description').value.trim()})});closeDialog();toast('سرور ساخته شد');loadServerRail();openServerRoom(created.id)}catch(e){toast(e.message)}finally{submit.disabled=false}return;
  }
  if(form.id==='server-join-form'){
   event.preventDefault();const submit=form.querySelector('[type="submit"]');submit.disabled=true;

@@ -6,4 +6,8 @@ router.get('/discover', controller.listPublic);
 router.get('/mine', auth(), controller.mine);
 router.post('/', auth(), controller.create);
 router.post('/join', auth(), controller.join);
+router.get('/:serverId', auth(), controller.getOne);
+router.post('/:serverId/channels', auth(), controller.createChannel);
+router.get('/:serverId/channels/:channelId/messages', auth(), controller.listMessages);
+router.post('/:serverId/channels/:channelId/messages', auth(), controller.sendMessage);
 module.exports = router;
