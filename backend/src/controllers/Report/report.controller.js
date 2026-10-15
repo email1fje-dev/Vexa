@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const mongoose = require('mongoose');
-const { Report, User } = require('../../models');
+const { Report, User, Message } = require('../../models');
 const ApiError = require('../../utils/ApiError');
 const catchAsync = require('../../utils/catchAsync');
 
@@ -20,6 +20,11 @@ const createReport = catchAsync(async (req, res) => {
   }
   if (targetType === 'user' && !(await User.exists({ _id: targetId }))) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Reported user not found');
+  }
+  if (targetType === 'message') {
+    const message = await Message.findById(targetId).select('senderId');
+    if (!message) throw new ApiError(httpStatus.NOT_FOUND, 'Reported message not found');
+    if (String(message.senderId) === String(req.user.id)) throw new ApiError(httpStatus.BAD_REQUEST, 'You cannot report your own message');
   }
   const recent = await Report.findOne({
     reporterId: req.user.id, targetType, targetId,
