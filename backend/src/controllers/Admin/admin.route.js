@@ -21,5 +21,6 @@ router.delete('/announcements/:announcementId', controller.deleteAnnouncement);
 router.get('/servers', controller.getServers);
 router.patch('/servers/:serverId', controller.updateServer);
 router.get('/settings', controller.getSettings);
+router.get('/system-events', controller.getSystemEvents);
 router.patch('/settings', controller.updateSettings);
 module.exports = router;
