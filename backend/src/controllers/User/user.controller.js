@@ -3,6 +3,7 @@ const pick = require('../../utils/pick');
 const ApiError = require('../../utils/ApiError');
 const catchAsync = require('../../utils/catchAsync');
 const { userService } = require('../../services');
+const { User } = require('../../models');
 
 const updateMyProfile = catchAsync(async (req, res) => {
   const allowed = {};
@@ -19,6 +20,14 @@ const updateMyProfile = catchAsync(async (req, res) => {
   if (!Object.keys(allowed).length) throw new ApiError(httpStatus.BAD_REQUEST, 'No profile changes provided');
   const user = await userService.updateUserById(req.user.id, allowed);
   res.send(user);
+});
+
+const getDirectory = catchAsync(async (req, res) => {
+  const users = await User.find({ _id: { $ne: req.user.id } })
+    .select('username shortId avatar bio presenceStatus')
+    .sort({ username: 1 })
+    .limit(50);
+  res.send(users);
 });
 
 const createUser = catchAsync(async (req, res) => {
@@ -53,6 +62,7 @@ const deleteUser = catchAsync(async (req, res) => {
 
 module.exports = {
   createUser,
+  getDirectory,
   updateMyProfile,
   getUsers,
   getUser,
