@@ -234,6 +234,21 @@ html[data-theme=light] .chat-composer{background:linear-gradient(145deg,#fff,#f2
 .server-settings-dialog>.dialog-head{position:sticky;top:-24px;z-index:8;margin:-24px -24px 12px;padding:20px 24px 12px;background:var(--panel);border-bottom:1px solid var(--line)}
 .server-settings-dialog>.settings-category-grid{position:sticky;top:66px;z-index:7;padding:8px 0;margin:0 0 14px;background:var(--panel)}
 @media(max-width:640px){.server-settings-dialog{padding:16px!important;max-height:calc(100dvh - 28px)!important;border-radius:22px!important}.server-settings-dialog>.dialog-head{top:-16px;margin:-16px -16px 10px;padding:14px 16px 10px}.server-settings-dialog>.settings-category-grid{top:61px;gap:7px;padding:7px 0}.server-settings-dialog .settings-category{min-height:62px}.vexa-select-trigger{min-height:43px;padding:10px 12px}.vexa-select-menu{max-height:34dvh}}
+
+/* Mobile server header repair: keep controls compact and the title from collapsing */
+@media(max-width:640px){
+ .server-focus-top{grid-template-columns:32px 34px minmax(0,1fr) 34px 32px!important;gap:6px!important;padding:10px 9px!important;min-height:70px!important;overflow:hidden}
+ .server-focus-top>.server-focus-mark{width:34px!important;height:34px!important;min-width:34px!important;border-radius:11px!important}
+ .server-focus-top>.server-focus-title{min-width:0!important;width:100%!important;max-width:100%!important;overflow:hidden!important}
+ .server-focus-top>.server-focus-title small,.server-focus-top>.server-focus-title p{display:block!important;max-width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+ .server-focus-top>.server-focus-title h1{display:block!important;max-width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;word-break:normal!important;overflow-wrap:normal!important;font-size:15px!important;line-height:1.35!important}
+ .server-focus-top>.server-invite-compact{width:34px!important;height:34px!important;min-width:34px!important}
+ .server-focus-top>.server-manage-trigger{width:34px!important;height:34px!important;min-width:34px!important}
+ .server-focus-top>[data-action="server-leave"],.server-focus-top>[data-action="server-close-channel"]{width:32px!important;height:32px!important;min-width:32px!important;display:grid!important;place-items:center!important}
+ .server-focus-top.server-channel-top{grid-template-columns:32px 34px minmax(0,1fr) 34px 32px!important}
+ .server-focus-top.server-channel-top>.server-back{width:32px!important;min-width:32px!important;height:32px!important;padding:0!important;font-size:0!important;overflow:hidden}
+ .server-focus-top.server-channel-top>.server-back svg{width:17px!important;height:17px!important;flex:none}
+}
 </style><body><section id="auth" class="auth"><div class="auth-card"><div class="brand"><span class="logo">V</span> وکسا</div><h1 id="auth-title">خوش برگشتی 💚</h1><p>دوستات، گفتگوها و کامیونیتی‌هات؛ همه توی یک جا.</p><div class="tabs"><button class="btn primary" id="login-tab">ورود</button><button class="btn" id="signup-tab">ساخت حساب</button></div><form id="auth-form"><div class="field hidden" id="username-wrap"><label>نام کاربری</label><input id="username" minlength="4" autocomplete="username"></div><div class="field"><label>ایمیل</label><input id="email" type="email" required autocomplete="email"></div><div class="field"><label>رمز عبور</label><input id="password" type="password" required minlength="6" autocomplete="current-password"></div><p id="auth-error" class="status"></p><button class="btn primary" style="width:100%" id="auth-submit">ورود به وکسا</button></form></div></section><section id="app" class="hidden"></section><div id="toast"></div><script>
 const $=id=>document.getElementById(id),store={get:(k,d='')=>{try{return localStorage.getItem(k)??d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}},del:k=>{try{localStorage.removeItem(k)}catch{}}};
 const st={mode:'login',user:null,token:null,refresh:null},v={friends:[],requests:[],users:[],rooms:[],view:'friends',tab:'all',friend:null,room:null,messages:[]};
