@@ -245,14 +245,16 @@ const updateSettings = catchAsync(async (req, res) => {
   }
   if (req.body.icon !== undefined) {
     const icon = String(req.body.icon).trim();
-    if (icon.length > 500) throw new ApiError(httpStatus.BAD_REQUEST, 'Icon URL is too long');
-    if (icon && !/^https:\/\//i.test(icon)) throw new ApiError(httpStatus.BAD_REQUEST, 'Icon must be an HTTPS URL');
+    const uploadedIcon = /^data:image\/(webp|jpeg|png);base64,[A-Za-z0-9+/=]+$/i.test(icon);
+    if (icon.length > 500000) throw new ApiError(httpStatus.BAD_REQUEST, 'Icon image is too large');
+    if (icon && !uploadedIcon && !(icon.length <= 500 && /^https:\/\//i.test(icon))) throw new ApiError(httpStatus.BAD_REQUEST, 'Icon must be an HTTPS URL or an uploaded image');
     server.icon = icon;
   }
   if (req.body.banner !== undefined) {
     const banner = String(req.body.banner).trim();
-    if (banner.length > 500) throw new ApiError(httpStatus.BAD_REQUEST, 'Banner URL is too long');
-    if (banner && !/^https:\/\//i.test(banner)) throw new ApiError(httpStatus.BAD_REQUEST, 'Banner must be an HTTPS URL');
+    const uploadedBanner = /^data:image\/(webp|jpeg|png);base64,[A-Za-z0-9+/=]+$/i.test(banner);
+    if (banner.length > 500000) throw new ApiError(httpStatus.BAD_REQUEST, 'Banner image is too large');
+    if (banner && !uploadedBanner && !(banner.length <= 500 && /^https:\/\//i.test(banner))) throw new ApiError(httpStatus.BAD_REQUEST, 'Banner must be an HTTPS URL or an uploaded image');
     server.banner = banner;
   }
   if (req.body.visibility !== undefined) {
