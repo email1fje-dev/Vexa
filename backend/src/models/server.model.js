@@ -22,6 +22,7 @@ const serverSchema = mongoose.Schema({
   channels: { type: [channelSchema], default: () => [{ name: 'general', type: 'text' }] },
   status: { type: String, enum: ['active', 'suspended', 'archived'], default: 'active', index: true },
   visibility: { type: String, enum: ['public', 'private'], default: 'public' },
+  isVerifiedBadge: { type: Boolean, default: false, index: true },
   createdByAdmin: { type: Boolean, default: false },
 }, { timestamps: true });
 serverSchema.index({ name: 'text', description: 'text' });
