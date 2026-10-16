@@ -5,7 +5,7 @@ const messageSchema = mongoose.Schema({
   text: { type: String, required: true, trim: true, maxlength: 2000 },
   replyTo: { type: mongoose.SchemaTypes.ObjectId },
   threadRootId: { type: mongoose.SchemaTypes.ObjectId },
-  attachments: { type: [{ name: { type: String, maxlength: 180 }, url: { type: String, maxlength: 2000 }, mimeType: { type: String, maxlength: 120 }, size: { type: Number, min: 0 } }], default: [] },
+  attachments: { type: [{ name: { type: String, maxlength: 180 }, url: { type: String, maxlength: 420000 }, mimeType: { type: String, maxlength: 120 }, size: { type: Number, min: 0 } }], default: [] },
   reactions: { type: [{ emoji: { type: String, maxlength: 16 }, userIds: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'User' }] }], default: [] },
   createdAt: { type: Date, default: Date.now },
 }, { _id: true, id: false });
