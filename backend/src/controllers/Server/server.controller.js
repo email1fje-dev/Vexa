@@ -117,7 +117,7 @@ const getOne = catchAsync(async (req, res) => {
       inviteMaxUses: Number(server.inviteMaxUses || 0), inviteUseCount: Number(server.inviteUseCount || 0),
     } : {}),
     roles: (server.roles || []).map(role => ({ id: String(role._id), name: role.name, color: role.color, memberIds: (role.memberIds || []).map(String), permissions: role.permissions || [] })),
-    channels: server.channels.map(channel => ({ id: String(channel._id), name: channel.name, type: channel.type, createdAt: channel.createdAt })),
+    channels: server.channels.map(channel => ({ id: String(channel._id), name: channel.name, type: channel.type, topic: channel.topic || '', category: channel.category || 'عمومی', slowModeSeconds: channel.slowModeSeconds || 0, readOnly: Boolean(channel.readOnly), archived: Boolean(channel.archived), private: Boolean(channel.private), createdAt: channel.createdAt })),
   });
 });
 const createChannel = catchAsync(async (req, res) => {
@@ -156,7 +156,7 @@ const listMessages = catchAsync(async (req, res) => {
   const authorIds = [...new Set(items.map(item => String(item.authorId)))];
   const users = authorIds.length ? await User.find({ _id: { $in: authorIds } }).select('username shortId avatar').lean() : [];
   const userMap = new Map(users.map(user => [String(user._id), user]));
-  res.send(items.map(item => ({ id: String(item._id), text: item.text, createdAt: item.createdAt, author: userMap.get(String(item.authorId)) || { username: 'کاربر', shortId: '' } })));
+  res.send(items.map(item => ({ id: String(item._id), text: item.text, createdAt: item.createdAt, replyTo: item.replyTo ? String(item.replyTo) : null, threadRootId: item.threadRootId ? String(item.threadRootId) : null, reactions: (item.reactions || []).map(reaction => ({ emoji: reaction.emoji, count: (reaction.userIds || []).length, reacted: (reaction.userIds || []).some(id => String(id) === String(req.user.id)) })), pinned: (channel.pinnedMessageIds || []).some(id => String(id) === String(item._id)), author: userMap.get(String(item.authorId)) || { username: 'کاربر', shortId: '' } })));
 });
 const sendMessage = catchAsync(async (req, res) => {
   if (await maintenanceOn()) throw new ApiError(httpStatus.SERVICE_UNAVAILABLE, 'Vexa is in maintenance mode');
