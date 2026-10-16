@@ -89,6 +89,7 @@ const getOne = catchAsync(async (req, res) => {
   res.send({
     ...serialize(server), owner, members,
     isOwner: String(server.ownerId) === String(req.user.id),
+    events: (server.events || []).slice().sort((a, b) => new Date(a.startsAt) - new Date(b.startsAt)).map(event => ({ id: String(event._id), title: event.title, description: event.description || '', startsAt: event.startsAt, attendeeCount: (event.attendeeIds || []).length, attending: (event.attendeeIds || []).some(id => String(id) === String(req.user.id)), createdBy: String(event.createdBy) })),
     ...(String(server.ownerId) === String(req.user.id) ? {
       welcomeMessage: server.welcomeMessage || '', antiSpamEnabled: server.antiSpamEnabled !== false,
       joinApproval: Boolean(server.joinApproval), inviteExpiresAt: server.inviteExpiresAt || null,
@@ -255,6 +256,21 @@ const createEvent = catchAsync(async (req, res) => {
   const event = server.events[server.events.length - 1];
   res.status(httpStatus.CREATED).send({ id: String(event._id), title: event.title, description: event.description, startsAt: event.startsAt, attendeeCount: 0, createdBy: String(event.createdBy) });
 });
+const toggleEventAttendance = catchAsync(async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.serverId) || !mongoose.isValidObjectId(req.params.eventId)) throw new ApiError(httpStatus.NOT_FOUND, 'Event not found');
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
+  const event = server.events.id(req.params.eventId);
+  if (!event) throw new ApiError(httpStatus.NOT_FOUND, 'Event not found');
+  const alreadyAttending = (event.attendeeIds || []).some(id => String(id) === String(req.user.id));
+  if (alreadyAttending) event.attendeeIds = event.attendeeIds.filter(id => String(id) !== String(req.user.id));
+  else event.attendeeIds.push(req.user.id);
+  server.auditLog.push({ actorId: req.user.id, action: alreadyAttending ? 'event_rsvp_cancelled' : 'event_rsvp_added', target: event.title });
+  if (server.auditLog.length > 200) server.auditLog.splice(0, server.auditLog.length - 200);
+  await server.save();
+  res.send({ eventId: String(event._id), attending: !alreadyAttending, attendeeCount: event.attendeeIds.length });
+});
+
 const listAuditLog = catchAsync(async (req, res) => {
   const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' }).select('ownerId roles auditLog').lean();
   if (!server || !hasPermission(server, req.user.id, 'viewAuditLog')) throw new ApiError(httpStatus.FORBIDDEN, 'Audit log access denied');
@@ -321,4 +337,4 @@ const toggleFavorite = catchAsync(async (req, res) => {
   res.send({ favorite: !has, serverId: String(server._id) });
 });
 
-module.exports = { listPublic, mine, create, join, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, listAuditLog, reviewJoinRequest, listJoinRequests, updateRoleMember, listFavorites, toggleFavorite };
+module.exports = { listPublic, mine, create, join, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, toggleEventAttendance, listAuditLog, reviewJoinRequest, listJoinRequests, updateRoleMember, listFavorites, toggleFavorite };
