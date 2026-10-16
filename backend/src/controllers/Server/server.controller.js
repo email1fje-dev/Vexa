@@ -94,6 +94,7 @@ const getOne = catchAsync(async (req, res) => {
       joinApproval: Boolean(server.joinApproval), inviteExpiresAt: server.inviteExpiresAt || null,
       inviteMaxUses: Number(server.inviteMaxUses || 0), inviteUseCount: Number(server.inviteUseCount || 0),
     } : {}),
+    roles: (server.roles || []).map(role => ({ id: String(role._id), name: role.name, color: role.color, memberIds: (role.memberIds || []).map(String), permissions: role.permissions || [] })),
     channels: server.channels.map(channel => ({ id: String(channel._id), name: channel.name, type: channel.type, createdAt: channel.createdAt })),
   });
 });
