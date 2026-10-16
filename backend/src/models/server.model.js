@@ -31,6 +31,8 @@ const eventSchema = mongoose.Schema({
 const serverSchema = mongoose.Schema({
   name: { type: String, required: true, trim: true, maxlength: 80 },
   description: { type: String, trim: true, maxlength: 500, default: '' },
+  category: { type: String, enum: ['gaming', 'community', 'education', 'technology', 'art', 'music', 'other'], default: 'community', index: true },
+  tags: { type: [{ type: String, trim: true, maxlength: 24 }], default: [], validate: value => value.length <= 5 },
   inviteCode: { type: String, required: true, unique: true, index: true },
   inviteExpiresAt: { type: Date, default: null },
   inviteMaxUses: { type: Number, min: 0, max: 10000, default: 0 },
