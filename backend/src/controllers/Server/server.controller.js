@@ -117,7 +117,7 @@ const getOne = catchAsync(async (req, res) => {
       inviteMaxUses: Number(server.inviteMaxUses || 0), inviteUseCount: Number(server.inviteUseCount || 0),
     } : {}),
     roles: (server.roles || []).map(role => ({ id: String(role._id), name: role.name, color: role.color, memberIds: (role.memberIds || []).map(String), permissions: role.permissions || [] })),
-    channels: server.channels.map(channel => ({ id: String(channel._id), name: channel.name, type: channel.type, topic: channel.topic || '', category: channel.category || 'عمومی', slowModeSeconds: channel.slowModeSeconds || 0, readOnly: Boolean(channel.readOnly), archived: Boolean(channel.archived), private: Boolean(channel.private), createdAt: channel.createdAt })),
+    channels: server.channels.map(channel => ({ id: String(channel._id), name: channel.name, type: channel.type, topic: channel.topic || '', category: channel.category || 'عمومی', slowModeSeconds: channel.slowModeSeconds || 0, readOnly: Boolean(channel.readOnly), archived: Boolean(channel.archived), private: Boolean(channel.private), allowedRoleIds: (channel.allowedRoleIds || []).map(String), pinnedMessageIds: (channel.pinnedMessageIds || []).map(String), createdAt: channel.createdAt })),
   });
 });
 const createChannel = catchAsync(async (req, res) => {
@@ -132,7 +132,7 @@ const createChannel = catchAsync(async (req, res) => {
   server.channels.push({ name, type: ['text', 'announcement', 'voice'].includes(req.body.type) ? req.body.type : 'text', category: String(req.body.category || 'عمومی').trim().slice(0, 60) || 'عمومی', createdBy: req.user.id, messages: [] });
   await server.save();
   const channel = server.channels[server.channels.length - 1];
-  res.status(httpStatus.CREATED).send({ id: String(channel._id), name: channel.name, type: channel.type, createdAt: channel.createdAt });
+  res.status(httpStatus.CREATED).send({ id: String(channel._id), name: channel.name, type: channel.type, category: channel.category, topic: channel.topic || '', createdAt: channel.createdAt });
 });
 const listMessages = catchAsync(async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.serverId)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
@@ -165,7 +165,7 @@ const sendMessage = catchAsync(async (req, res) => {
   if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
   const channel = server.channels.id(req.params.channelId);
   if (!channel || channel.archived) throw new ApiError(httpStatus.NOT_FOUND, 'Channel not found');
-  if (channel.private && !(channel.allowedRoleIds || []).some(roleId => (server.roles || []).some(role => String(role._id) === String(roleId) && (role.memberIds || []).some(id => String(id) === String(req.user.id))))) throw new ApiError(httpStatus.FORBIDDEN, 'این کانال خصوصی است.');
+  if (channel.private && String(server.ownerId) !== String(req.user.id) && !(channel.allowedRoleIds || []).some(roleId => (server.roles || []).some(role => String(role._id) === String(roleId) && (role.memberIds || []).some(id => String(id) === String(req.user.id))))) throw new ApiError(httpStatus.FORBIDDEN, 'این کانال خصوصی است.');
   if ((channel.readOnly || channel.type === 'announcement') && !hasPermission(server, req.user.id, 'manageMessages')) throw new ApiError(httpStatus.FORBIDDEN, 'این کانال فقط برای انتشار پیام مدیران است.');
   const slowMode = Number(channel.slowModeSeconds || 0);
   if (slowMode > 0 && !hasPermission(server, req.user.id, 'manageMessages')) {
