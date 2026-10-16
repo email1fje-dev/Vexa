@@ -215,6 +215,25 @@ html[data-theme=light] .chat-composer{background:linear-gradient(145deg,#fff,#f2
 .server-image-preview.banner-preview span{font-size:12px}
 .server-image-field>input[type=url]{width:100%;box-sizing:border-box}
 @media(max-width:480px){.server-image-field{padding:10px}.server-upload-button{padding:8px 9px;font-size:11px}}
+
+/* Vexa custom select system: consistent branded menus instead of browser-native pickers */
+.vexa-select-host{position:relative;width:100%;min-width:0}
+.vexa-select-host>select.vexa-native-select{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;clip-path:inset(50%)!important;left:0;bottom:0;padding:0!important;margin:0!important}
+.vexa-select-trigger{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:10px 13px;border:1px solid var(--line);border-radius:13px;background:linear-gradient(145deg,var(--panel),var(--panel2));color:var(--text);font:inherit;font-size:13px;text-align:right;cursor:pointer;transition:border-color .18s,box-shadow .18s,background .18s}
+.vexa-select-trigger:hover,.vexa-select-host.open .vexa-select-trigger{border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 12%,transparent)}
+.vexa-select-trigger .vexa-select-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.vexa-select-trigger .vexa-select-chevron{flex:none;color:var(--green);transition:transform .2s}
+.vexa-select-host.open .vexa-select-chevron{transform:rotate(180deg)}
+.vexa-select-menu{position:absolute;z-index:120;top:calc(100% + 7px);inset-inline:0;max-height:min(260px,40dvh);overflow:auto;padding:6px;border:1px solid var(--line);border-radius:15px;background:var(--panel);box-shadow:0 14px 38px #0002;backdrop-filter:blur(16px);animation:vexa-menu-in .16s ease-out both}
+.vexa-select-option{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:11px 12px;border:0;border-radius:10px;background:transparent;color:var(--text);font:inherit;font-size:13px;text-align:right;cursor:pointer;transition:background .15s,color .15s}
+.vexa-select-option:hover{background:var(--soft)}
+.vexa-select-option[aria-selected=true]{background:var(--soft);color:var(--green);font-weight:800}
+.vexa-select-option[aria-selected=true]::after{content:'✓';font-weight:900;color:var(--green)}
+@keyframes vexa-menu-in{from{opacity:0;transform:translateY(-4px) scale(.99)}to{opacity:1;transform:none}}
+.server-settings-dialog{scroll-behavior:smooth;scroll-padding-top:14px}
+.server-settings-dialog>.dialog-head{position:sticky;top:-24px;z-index:8;margin:-24px -24px 12px;padding:20px 24px 12px;background:var(--panel);border-bottom:1px solid var(--line)}
+.server-settings-dialog>.settings-category-grid{position:sticky;top:66px;z-index:7;padding:8px 0;margin:0 0 14px;background:var(--panel)}
+@media(max-width:640px){.server-settings-dialog{padding:16px!important;max-height:calc(100dvh - 28px)!important;border-radius:22px!important}.server-settings-dialog>.dialog-head{top:-16px;margin:-16px -16px 10px;padding:14px 16px 10px}.server-settings-dialog>.settings-category-grid{top:61px;gap:7px;padding:7px 0}.server-settings-dialog .settings-category{min-height:62px}.vexa-select-trigger{min-height:43px;padding:10px 12px}.vexa-select-menu{max-height:34dvh}}
 </style><body><section id="auth" class="auth"><div class="auth-card"><div class="brand"><span class="logo">V</span> وکسا</div><h1 id="auth-title">خوش برگشتی 💚</h1><p>دوستات، گفتگوها و کامیونیتی‌هات؛ همه توی یک جا.</p><div class="tabs"><button class="btn primary" id="login-tab">ورود</button><button class="btn" id="signup-tab">ساخت حساب</button></div><form id="auth-form"><div class="field hidden" id="username-wrap"><label>نام کاربری</label><input id="username" minlength="4" autocomplete="username"></div><div class="field"><label>ایمیل</label><input id="email" type="email" required autocomplete="email"></div><div class="field"><label>رمز عبور</label><input id="password" type="password" required minlength="6" autocomplete="current-password"></div><p id="auth-error" class="status"></p><button class="btn primary" style="width:100%" id="auth-submit">ورود به وکسا</button></form></div></section><section id="app" class="hidden"></section><div id="toast"></div><script>
 const $=id=>document.getElementById(id),store={get:(k,d='')=>{try{return localStorage.getItem(k)??d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}},del:k=>{try{localStorage.removeItem(k)}catch{}}};
 const st={mode:'login',user:null,token:null,refresh:null},v={friends:[],requests:[],users:[],rooms:[],view:'friends',tab:'all',friend:null,room:null,messages:[]};
@@ -593,7 +612,7 @@ function handleClick(event){
  const b=event.target.closest('button,[data-nav],[data-action],[data-tab],[data-user-chat],[data-add-user],[data-accept],[data-cancel-request],[data-profile-section],[data-theme-pick],[data-server-member]');if(!b)return;
  if(b.dataset.serverMember){showServerMemberProfile(b.dataset.serverMember);return;}
  if(b.dataset.pickServerImage){const input=document.querySelector('[data-server-image-upload="'+b.dataset.pickServerImage+'"]');if(input)input.click();return;}
- if(b.dataset.serverSettingsTab){const key=b.dataset.serverSettingsTab;const dialog=b.closest('.server-settings-dialog');if(dialog){dialog.querySelectorAll('[data-server-settings-panel]').forEach(p=>p.hidden=p.dataset.serverSettingsPanel!==key);dialog.querySelectorAll('[data-server-settings-tab]').forEach(t=>t.classList.toggle('active',t.dataset.serverSettingsTab===key));}return;}
+ if(b.dataset.serverSettingsTab){const key=b.dataset.serverSettingsTab;const dialog=b.closest('.server-settings-dialog');if(dialog){dialog.querySelectorAll('[data-server-settings-panel]').forEach(p=>p.hidden=p.dataset.serverSettingsPanel!==key);dialog.querySelectorAll('[data-server-settings-tab]').forEach(t=>t.classList.toggle('active',t.dataset.serverSettingsTab===key));dialog.scrollTo({top:0,behavior:'smooth'});}return;}
  if(b.dataset.userSettingsTab!==undefined){const key=b.dataset.userSettingsTab;const root=b.closest('.settings-page');if(root){root.querySelectorAll('[data-user-settings-panel]').forEach(p=>p.hidden=p.dataset.userSettingsPanel!==key);root.querySelectorAll('[data-user-settings-tab]').forEach(t=>t.classList.toggle('active',t.dataset.userSettingsTab===key));}return;}
  if(b.dataset.serverOpen){openServerRoom(b.dataset.serverOpen);return}
  if(b.dataset.serverChannel){v.currentChannelId=b.dataset.serverChannel;v.serverChannelOpen=true;v.serverMessages=[];render();return}
@@ -753,4 +772,21 @@ document.addEventListener('change',async function(event){
   toast(kind==='icon'?'آیکون آماده شد؛ برای ثبت، «ذخیره هویت سرور» رو بزن.':'بنر آماده شد؛ برای ثبت، «ذخیره هویت سرور» رو بزن.');
  }catch(error){toast(error.message||'آپلود تصویر ناموفق بود.')}finally{if(button){button.disabled=false;button.innerHTML=button.dataset.oldText||'↥ آپلود';delete button.dataset.oldText}input.value=''}
 });
+
+function upgradeVexaSelects(root=document){
+ root.querySelectorAll('select:not([data-native-select]):not(.vexa-native-select)').forEach(select=>{
+  if(select.closest('.vexa-select-host'))return;
+  const host=document.createElement('div');host.className='vexa-select-host';
+  select.parentNode.insertBefore(host,select);host.appendChild(select);select.classList.add('vexa-native-select');select.setAttribute('aria-hidden','true');select.tabIndex=-1;
+  const trigger=document.createElement('button');trigger.type='button';trigger.className='vexa-select-trigger';trigger.setAttribute('aria-haspopup','listbox');trigger.setAttribute('aria-expanded','false');
+  const value=document.createElement('span');value.className='vexa-select-value';const chevron=document.createElement('span');chevron.className='vexa-select-chevron';chevron.textContent='⌄';trigger.append(value,chevron);host.appendChild(trigger);
+  const menu=document.createElement('div');menu.className='vexa-select-menu';menu.hidden=true;menu.setAttribute('role','listbox');host.appendChild(menu);
+  function sync(){const option=select.options[select.selectedIndex];value.textContent=option?option.textContent:'انتخاب کن';trigger.disabled=select.disabled;menu.innerHTML='';Array.from(select.options).forEach((opt,index)=>{const item=document.createElement('button');item.type='button';item.className='vexa-select-option';item.textContent=opt.textContent;item.setAttribute('role','option');item.setAttribute('aria-selected',String(index===select.selectedIndex));item.disabled=opt.disabled;item.addEventListener('click',()=>{select.selectedIndex=index;select.dispatchEvent(new Event('change',{bubbles:true}));sync();menu.hidden=true;host.classList.remove('open');trigger.setAttribute('aria-expanded','false')});menu.appendChild(item)})}
+  trigger.addEventListener('click',()=>{document.querySelectorAll('.vexa-select-host.open').forEach(other=>{if(other!==host){other.classList.remove('open');const m=other.querySelector('.vexa-select-menu'),t=other.querySelector('.vexa-select-trigger');if(m)m.hidden=true;if(t)t.setAttribute('aria-expanded','false')}});const opening=menu.hidden;menu.hidden=!opening;host.classList.toggle('open',opening);trigger.setAttribute('aria-expanded',String(opening));if(opening){sync();const chosen=menu.querySelector('[aria-selected=true]');if(chosen)chosen.scrollIntoView({block:'nearest'})}});
+  select.addEventListener('change',sync);new MutationObserver(sync).observe(select,{childList:true,subtree:true,attributes:true,characterData:true});sync();
+ });
+}
+document.addEventListener('click',event=>{if(event.target.closest('.vexa-select-host'))return;document.querySelectorAll('.vexa-select-host.open').forEach(host=>{host.classList.remove('open');const menu=host.querySelector('.vexa-select-menu'),trigger=host.querySelector('.vexa-select-trigger');if(menu)menu.hidden=true;if(trigger)trigger.setAttribute('aria-expanded','false')})});
+upgradeVexaSelects();
+new MutationObserver(records=>records.forEach(record=>record.addedNodes.forEach(node=>{if(node.nodeType===1)upgradeVexaSelects(node)}))).observe(document.documentElement,{childList:true,subtree:true});
 </script></body></html>
