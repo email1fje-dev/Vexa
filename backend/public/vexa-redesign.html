@@ -408,6 +408,26 @@ function loadServerMessages(serverId,channelId){
   v.serverMessages=arr(data);renderServerMessages();
  }).catch(error=>{const root=$('server-message-list');if(root)root.innerHTML='<div class="inline-alert">پیام‌ها بارگذاری نشدند. <button class="btn" data-action="retry-server-messages">تلاش دوباره</button></div>';});
 }
+function serverManageDialog(){
+ if(!v.currentServer?.id)return;
+ const server=v.currentServer;
+ openDialog('<div class="dialog-card" style="max-width:760px"><div class="dialog-head"><div><small class="muted">تنظیمات سرور</small><h2>مدیریت '+esc(server.name)+'</h2></div><button class="icon-button" data-action="close-dialog">'+ico('close')+'</button></div><section class="panel" style="padding:14px;margin-bottom:12px"><h3>ساخت نقش</h3><form id="server-role-form"><label class="field">نام نقش<input id="server-role-name" required minlength="2" maxlength="40" placeholder="مثلاً Moderator"></label><label class="field">رنگ نقش<input id="server-role-color" type="color" value="#34d36a"></label><div class="settings-grid"><label><input type="checkbox" name="role-permission" value="manageChannels"> مدیریت کانال‌ها</label><label><input type="checkbox" name="role-permission" value="manageRoles"> مدیریت نقش‌ها</label><label><input type="checkbox" name="role-permission" value="manageMessages"> مدیریت پیام‌ها</label><label><input type="checkbox" name="role-permission" value="kickMembers"> اخراج اعضا</label><label><input type="checkbox" name="role-permission" value="banMembers"> مسدودکردن اعضا</label><label><input type="checkbox" name="role-permission" value="manageEvents"> مدیریت رویدادها</label><label><input type="checkbox" name="role-permission" value="viewAuditLog"> مشاهده گزارش مدیریت</label></div><div class="dialog-actions"><button class="btn primary" type="submit">ساخت نقش</button></div></form><div id="server-role-list" class="server-channel-cards" style="margin-top:12px">در حال بارگذاری نقش‌ها…</div></section><section class="panel" style="padding:14px;margin-bottom:12px"><h3>امنیت و خوشامدگویی</h3><form id="server-settings-form"><label class="field">پیام خوشامدگویی<textarea id="server-welcome-message" maxlength="500" placeholder="پیام برای اعضای جدید"></textarea></label><label><input id="server-anti-spam" type="checkbox"> فعال‌بودن تنظیم ضداسپم</label><br><label><input id="server-join-approval" type="checkbox"> نیاز به تأیید درخواست عضویت</label><div class="dialog-actions"><button class="btn primary" type="submit">ذخیره تنظیمات</button></div></form></section><section class="panel" style="padding:14px;margin-bottom:12px"><h3>ساخت رویداد</h3><form id="server-event-form"><label class="field">عنوان رویداد<input id="server-event-title" required maxlength="100" placeholder="مثلاً دورهمی جمعه"></label><label class="field">توضیحات<textarea id="server-event-description" maxlength="1000"></textarea></label><label class="field">زمان شروع<input id="server-event-date" type="datetime-local" required></label><div class="dialog-actions"><button class="btn primary" type="submit">ساخت رویداد</button></div></form><div id="server-event-list" class="server-channel-cards" style="margin-top:12px">در حال بارگذاری رویدادها…</div></section><section class="panel" style="padding:14px"><h3>گزارش فعالیت مدیریتی</h3><div id="server-audit-list">در حال بارگذاری…</div></section></div>');
+ const fill=async()=>{
+  try{
+   const [roles,events,audit]=await Promise.all([
+    api('/servers/'+encodeURIComponent(server.id)+'/roles'),
+    api('/servers/'+encodeURIComponent(server.id)+'/events'),
+    api('/servers/'+encodeURIComponent(server.id)+'/audit-log')
+   ]);
+   const roleRoot=$('server-role-list');if(roleRoot)roleRoot.innerHTML=arr(roles).map(r=>'<div class="server-channel-card"><span style="width:10px;height:10px;border-radius:50%;background:'+esc(r.color)+'"></span><span style="flex:1"><b>'+esc(r.name)+'</b><small>'+arr(r.permissions).length+' مجوز · '+arr(r.memberIds).length+' عضو</small></span>'+(['مدیر','عضو'].includes(r.name)?'':'<button class="btn danger" data-role-delete="'+esc(r.id)+'">حذف</button>')+'</div>').join('')||'<p class="muted">هنوز نقشی نیست.</p>';
+   const eventRoot=$('server-event-list');if(eventRoot)eventRoot.innerHTML=arr(events).map(e=>'<div class="server-channel-card"><span style="flex:1"><b>'+esc(e.title)+'</b><small>'+esc(new Date(e.startsAt).toLocaleString('fa-IR'))+' · '+Number(e.attendeeCount||0)+' شرکت‌کننده</small></span></div>').join('')||'<p class="muted">هنوز رویدادی ساخته نشده.</p>';
+   const auditRoot=$('server-audit-list');if(auditRoot)auditRoot.innerHTML=arr(audit).map(e=>'<div class="setting-line"><b>'+esc(e.action)+'</b><span>'+esc(e.target||'')+' · '+esc(new Date(e.createdAt).toLocaleString('fa-IR'))+'</span></div>').join('')||'<p class="muted">هنوز فعالیت مدیریتی ثبت نشده.</p>';
+  }catch(e){const root=$('server-role-list');if(root)root.innerHTML='<div class="inline-alert">'+esc(e.message)+'</div>'}
+ };
+ const welcome=$('server-welcome-message'),spam=$('server-anti-spam'),approval=$('server-join-approval');
+ if(welcome)welcome.value=server.welcomeMessage||'';if(spam)spam.checked=server.antiSpamEnabled!==false;if(approval)approval.checked=Boolean(server.joinApproval);
+ fill();
+}
 function renderServerRoom(root,server){
  const name=String(server?.name||'سرور').trim()||'سرور',channels=arr(server?.channels),members=arr(server?.members);
  const active=channels.find(c=>String(c.id)===String(v.currentChannelId))||channels[0];
@@ -415,7 +435,7 @@ function renderServerRoom(root,server){
  const mark=server?.icon||server?.image||server?.avatar?'<img src="'+esc(server.icon||server.image||server.avatar)+'" alt="">':esc(Array.from(name)[0]||'س');
  if(!v.serverChannelOpen){
   const cards=channels.map((c,i)=>'<button class="server-channel-card" data-server-channel="'+esc(c.id)+'" style="--delay:'+Math.min(i,10)+'"><span class="channel-hash">#</span><span><b>'+esc(c.name)+'</b><small>کانال متنی</small></span>'+ico('chevron')+'</button>').join('');
-  root.innerHTML='<section class="server-focus-page"><header class="server-focus-top"><div class="server-focus-mark">'+mark+'</div><div class="server-focus-title"><small>فضای سرور</small><h1>'+esc(name)+verifiedBadge(server)+'</h1><p>'+members.length+' عضو · '+channels.length+' کانال</p></div><button class="btn server-invite-compact" data-action="copy-server-invite">'+ico('copy')+' دعوت</button><button class="icon-button" data-action="server-leave" aria-label="بستن سرور">'+ico('close')+'</button></header><div class="server-focus-content"><div class="server-focus-heading"><div><small>کانال‌های سرور</small><h2>کانال‌هات</h2></div>'+(server?.isOwner?'<button class="btn primary" data-action="server-create-channel">'+ico('plus')+' کانال جدید</button>':'')+'</div><div class="server-channel-cards">'+(cards||'<div class="server-no-channels">هنوز کانالی وجود نداره.</div>')+'</div></div></section>';
+  root.innerHTML='<section class="server-focus-page"><header class="server-focus-top"><div class="server-focus-mark">'+mark+'</div><div class="server-focus-title"><small>فضای سرور</small><h1>'+esc(name)+verifiedBadge(server)+'</h1><p>'+members.length+' عضو · '+channels.length+' کانال</p></div><button class="btn server-invite-compact" data-action="copy-server-invite">'+ico('copy')+' دعوت</button>'+(server?.isOwner?'<button class="btn" data-action="server-manage">'+ico('settings')+' مدیریت</button>':'')+'<button class="icon-button" data-action="server-leave" aria-label="بستن سرور">'+ico('close')+'</button></header><div class="server-focus-content"><div class="server-focus-heading"><div><small>کانال‌های سرور</small><h2>کانال‌هات</h2></div>'+(server?.isOwner?'<button class="btn primary" data-action="server-create-channel">'+ico('plus')+' کانال جدید</button>':'')+'</div><div class="server-channel-cards">'+(cards||'<div class="server-no-channels">هنوز کانالی وجود نداره.</div>')+'</div></div></section>';
   return;
  }
  root.innerHTML='<section class="server-focus-page"><header class="server-focus-top server-channel-top"><button class="btn server-back" data-action="server-close-channel">'+ico('chevron')+' کانال‌ها</button><div class="server-focus-mark small">'+mark+'</div><div class="server-focus-title"><small>'+esc(name)+verifiedBadge(server)+'</small><h1><span class="channel-hash">#</span>'+esc(active?.name||'کانال')+'</h1></div><button class="btn server-invite-compact" data-action="copy-server-invite">'+ico('copy')+' دعوت</button><button class="icon-button" data-action="server-close-channel" aria-label="بستن کانال">'+ico('close')+'</button></header><div class="server-full-chat"><div id="server-message-list" class="server-message-list"><div class="empty-state">در حال بارگذاری پیام‌ها…</div></div>'+(active?'<form id="server-message-form" class="server-message-form"><span class="server-compose-hash">#</span><input id="server-message-input" maxlength="2000" autocomplete="off" placeholder="پیام به #'+esc(active.name)+'…" required><button class="btn primary" type="submit" aria-label="ارسال پیام">'+ico('send')+'</button></form>':'')+'</div></section>';
@@ -536,6 +556,9 @@ function handleClick(event){
  if(action==='server-close-channel'){v.serverChannelOpen=false;v.serverMessages=[];render();return}
  if(action==='server-leave'){if(window.vexaServerMessageTimer){clearInterval(window.vexaServerMessageTimer);window.vexaServerMessageTimer=null}v.serverChannelOpen=false;v.currentServer=null;v.currentChannelId=null;v.serverMessages=[];v.view='dms';render();return}
  if(action==='server-create-channel'){serverCreateChannelDialog();return}
+ if(action==='server-manage'){serverManageDialog();return}
+ if(b.dataset.roleDelete){api('/servers/'+encodeURIComponent(v.currentServer.id)+'/roles/'+encodeURIComponent(b.dataset.roleDelete),{method:'DELETE'}).then(()=>{toast('نقش حذف شد');serverManageDialog()}).catch(e=>toast(e.message));return}
+
  if(action==='retry-server-messages'){loadServerMessages(v.currentServer?.id,v.currentChannelId);return}
  if(action==='copy-server-invite'){const code=v.currentServer?.inviteCode||'';if(navigator.clipboard?.writeText)navigator.clipboard.writeText(code).then(()=>toast('کد دعوت کپی شد')).catch(()=>toast(code));else toast(code);return}
  if(action==='report-user'){reportUserDialog(b.dataset.targetId,'user');return}
@@ -566,6 +589,16 @@ async function handleSubmit(event){
   try{await api('/servers/'+encodeURIComponent(v.currentServer.id)+'/channels/'+encodeURIComponent(v.currentChannelId)+'/messages',{method:'POST',body:JSON.stringify({text})});input.value='';await loadServerMessages(v.currentServer.id,v.currentChannelId)}
   catch(e){toast('پیام ارسال نشد: '+e.message)}finally{if(submit)submit.disabled=false}
   return;
+ }
+ if(form.id==='server-role-form'){
+  event.preventDefault();const permissions=Array.from(form.querySelectorAll('[name="role-permission"]:checked')).map(x=>x.value);
+  try{await api('/servers/'+encodeURIComponent(v.currentServer.id)+'/roles',{method:'POST',body:JSON.stringify({name:$('server-role-name').value.trim(),color:$('server-role-color').value,permissions})});toast('نقش ساخته شد');serverManageDialog()}catch(e){toast(e.message)}return;
+ }
+ if(form.id==='server-settings-form'){
+  event.preventDefault();try{const data={welcomeMessage:$('server-welcome-message').value,antiSpamEnabled:$('server-anti-spam').checked,joinApproval:$('server-join-approval').checked};await api('/servers/'+encodeURIComponent(v.currentServer.id)+'/settings',{method:'PATCH',body:JSON.stringify(data)});Object.assign(v.currentServer,data);toast('تنظیمات ذخیره شد');serverManageDialog()}catch(e){toast(e.message)}return;
+ }
+ if(form.id==='server-event-form'){
+  event.preventDefault();try{await api('/servers/'+encodeURIComponent(v.currentServer.id)+'/events',{method:'POST',body:JSON.stringify({title:$('server-event-title').value.trim(),description:$('server-event-description').value.trim(),startsAt:new Date($('server-event-date').value).toISOString()})});toast('رویداد ساخته شد');serverManageDialog()}catch(e){toast(e.message)}return;
  }
  if(form.id==='server-create-channel-form'){
   event.preventDefault();const submit=form.querySelector('[type="submit"]');submit.disabled=true;
