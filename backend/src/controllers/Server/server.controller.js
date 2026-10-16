@@ -14,7 +14,7 @@ const serialize = (server) => ({
   id: String(server._id), name: server.name, description: server.description || '',
   inviteCode: server.inviteCode, owner: server.ownerId,
   memberCount: (server.memberIds || []).length, status: server.status,
-  visibility: server.visibility, createdAt: server.createdAt,
+  visibility: server.visibility, isVerifiedBadge: Boolean(server.isVerifiedBadge), createdAt: server.createdAt,
 });
 const isMember = (server, userId) => (server.memberIds || []).some(id => String(id._id || id) === String(userId));
 const ensureDefaultChannel = async (server) => {
