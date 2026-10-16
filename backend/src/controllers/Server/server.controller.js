@@ -212,6 +212,32 @@ const deleteRole = catchAsync(async (req, res) => {
 const updateSettings = catchAsync(async (req, res) => {
   const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
   if (!server || String(server.ownerId) !== String(req.user.id)) throw new ApiError(httpStatus.FORBIDDEN, 'Only the server owner can change settings');
+  if (req.body.name !== undefined) {
+    const name = String(req.body.name).trim();
+    if (name.length < 2 || name.length > 80) throw new ApiError(httpStatus.BAD_REQUEST, 'Server name must be 2-80 characters');
+    server.name = name;
+  }
+  if (req.body.description !== undefined) {
+    const description = String(req.body.description).trim();
+    if (description.length > 500) throw new ApiError(httpStatus.BAD_REQUEST, 'Description is too long');
+    server.description = description;
+  }
+  if (req.body.icon !== undefined) {
+    const icon = String(req.body.icon).trim();
+    if (icon.length > 500) throw new ApiError(httpStatus.BAD_REQUEST, 'Icon URL is too long');
+    if (icon && !/^https:\/\//i.test(icon)) throw new ApiError(httpStatus.BAD_REQUEST, 'Icon must be an HTTPS URL');
+    server.icon = icon;
+  }
+  if (req.body.banner !== undefined) {
+    const banner = String(req.body.banner).trim();
+    if (banner.length > 500) throw new ApiError(httpStatus.BAD_REQUEST, 'Banner URL is too long');
+    if (banner && !/^https:\/\//i.test(banner)) throw new ApiError(httpStatus.BAD_REQUEST, 'Banner must be an HTTPS URL');
+    server.banner = banner;
+  }
+  if (req.body.visibility !== undefined) {
+    if (!['public', 'private'].includes(req.body.visibility)) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid server visibility');
+    server.visibility = req.body.visibility;
+  }
   if (req.body.welcomeMessage !== undefined) {
     const welcomeMessage = String(req.body.welcomeMessage).trim();
     if (welcomeMessage.length > 500) throw new ApiError(httpStatus.BAD_REQUEST, 'Welcome message is too long');
@@ -235,7 +261,7 @@ const updateSettings = catchAsync(async (req, res) => {
   server.auditLog.push({ actorId: req.user.id, action: 'server_settings_updated', target: server.name });
   if (server.auditLog.length > 200) server.auditLog.splice(0, server.auditLog.length - 200);
   await server.save();
-  res.send({ welcomeMessage: server.welcomeMessage, antiSpamEnabled: server.antiSpamEnabled, joinApproval: server.joinApproval, inviteMaxUses: server.inviteMaxUses, inviteExpiresAt: server.inviteExpiresAt, inviteUseCount: server.inviteUseCount });
+  res.send({ name: server.name, description: server.description, icon: server.icon, banner: server.banner, visibility: server.visibility, welcomeMessage: server.welcomeMessage, antiSpamEnabled: server.antiSpamEnabled, joinApproval: server.joinApproval, inviteMaxUses: server.inviteMaxUses, inviteExpiresAt: server.inviteExpiresAt, inviteUseCount: server.inviteUseCount });
 });
 const listEvents = catchAsync(async (req, res) => {
   const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' }).select('memberIds events').lean();
