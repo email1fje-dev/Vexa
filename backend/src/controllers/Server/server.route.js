@@ -8,6 +8,7 @@ router.get('/favorites', auth(), controller.listFavorites);
 router.post('/:serverId/favorite', auth(), controller.toggleFavorite);
 router.post('/', auth(), controller.create);
 router.post('/join', auth(), controller.join);
+router.post('/:serverId/join', auth(), controller.joinPublic);
 router.get('/:serverId/roles', auth(), controller.getRoles);
 router.get('/:serverId/join-requests', auth(), controller.listJoinRequests);
 router.patch('/:serverId/join-requests/:userId', auth(), controller.reviewJoinRequest);
