@@ -14,7 +14,7 @@ const serialize = (server) => ({
   id: String(server._id), name: server.name, description: server.description || '',
   inviteCode: server.inviteCode, owner: server.ownerId,
   memberCount: (server.memberIds || []).length, status: server.status,
-  visibility: server.visibility, isVerifiedBadge: Boolean(server.isVerifiedBadge), welcomeMessage: server.welcomeMessage || '', antiSpamEnabled: server.antiSpamEnabled !== false, joinApproval: Boolean(server.joinApproval), createdAt: server.createdAt,
+  visibility: server.visibility, isVerifiedBadge: Boolean(server.isVerifiedBadge), inviteExpiresAt: server.inviteExpiresAt || null, inviteMaxUses: Number(server.inviteMaxUses || 0), inviteUseCount: Number(server.inviteUseCount || 0), welcomeMessage: server.welcomeMessage || '', antiSpamEnabled: server.antiSpamEnabled !== false, joinApproval: Boolean(server.joinApproval), createdAt: server.createdAt,
 });
 const isMember = (server, userId) => (server.memberIds || []).some(id => String(id._id || id) === String(userId));
 const ensureDefaultChannel = async (server) => {
@@ -56,6 +56,8 @@ const join = catchAsync(async (req, res) => {
   if (!/^[A-HJ-NP-Z2-9]{10}$/.test(code)) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid invite code');
   const server = await VexaServer.findOne({ inviteCode: code, status: 'active' });
   if (!server) throw new ApiError(httpStatus.NOT_FOUND, 'Invite not found or server unavailable');
+  if (server.inviteExpiresAt && new Date(server.inviteExpiresAt).getTime() < Date.now()) throw new ApiError(httpStatus.GONE, 'This invite has expired');
+  if (Number(server.inviteMaxUses || 0) > 0 && Number(server.inviteUseCount || 0) >= Number(server.inviteMaxUses)) throw new ApiError(httpStatus.GONE, 'This invite has reached its usage limit');
   if (!isMember(server, req.user.id)) {
     if (server.joinApproval) {
       if (!(server.pendingJoinIds || []).some(id => String(id) === String(req.user.id))) {
@@ -65,6 +67,7 @@ const join = catchAsync(async (req, res) => {
       return res.send({ pending: true, serverId: String(server._id), name: server.name });
     }
     server.memberIds.push(req.user.id);
+    server.inviteUseCount = Number(server.inviteUseCount || 0) + 1;
     if (server.welcomeMessage) server.auditLog.push({ actorId: req.user.id, action: 'member_joined', target: server.name });
     await server.save();
   }
@@ -205,10 +208,23 @@ const updateSettings = catchAsync(async (req, res) => {
   }
   if (req.body.antiSpamEnabled !== undefined) server.antiSpamEnabled = Boolean(req.body.antiSpamEnabled);
   if (req.body.joinApproval !== undefined) server.joinApproval = Boolean(req.body.joinApproval);
+  if (req.body.inviteMaxUses !== undefined) {
+    const maxUses = Number(req.body.inviteMaxUses);
+    if (!Number.isInteger(maxUses) || maxUses < 0 || maxUses > 10000) throw new ApiError(httpStatus.BAD_REQUEST, 'Invite use limit must be 0-10000');
+    server.inviteMaxUses = maxUses;
+  }
+  if (req.body.inviteExpiresAt !== undefined) {
+    if (req.body.inviteExpiresAt === null || req.body.inviteExpiresAt === '') server.inviteExpiresAt = null;
+    else {
+      const expiry = new Date(req.body.inviteExpiresAt);
+      if (Number.isNaN(expiry.getTime())) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid invite expiry date');
+      server.inviteExpiresAt = expiry;
+    }
+  }
   server.auditLog.push({ actorId: req.user.id, action: 'server_settings_updated', target: server.name });
   if (server.auditLog.length > 200) server.auditLog.splice(0, server.auditLog.length - 200);
   await server.save();
-  res.send({ welcomeMessage: server.welcomeMessage, antiSpamEnabled: server.antiSpamEnabled, joinApproval: server.joinApproval });
+  res.send({ welcomeMessage: server.welcomeMessage, antiSpamEnabled: server.antiSpamEnabled, joinApproval: server.joinApproval, inviteMaxUses: server.inviteMaxUses, inviteExpiresAt: server.inviteExpiresAt, inviteUseCount: server.inviteUseCount });
 });
 const listEvents = catchAsync(async (req, res) => {
   const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' }).select('memberIds events').lean();
