@@ -34,6 +34,7 @@ const serverSchema = mongoose.Schema({
   inviteCode: { type: String, required: true, unique: true, index: true },
   ownerId: { type: mongoose.SchemaTypes.ObjectId, ref: 'User', required: true, index: true },
   memberIds: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'User' }],
+  pendingJoinIds: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'User' }],
   channels: { type: [channelSchema], default: () => [{ name: 'general', type: 'text' }] },
   roles: { type: [roleSchema], default: () => [
     { name: 'مدیر', color: '#4f8cff', permissions: ['manageChannels', 'manageRoles', 'manageMessages', 'kickMembers', 'banMembers', 'manageEvents', 'viewAuditLog'] },
