@@ -7,6 +7,8 @@ router.get('/mine', auth(), controller.mine);
 router.post('/', auth(), controller.create);
 router.post('/join', auth(), controller.join);
 router.get('/:serverId/roles', auth(), controller.getRoles);
+router.get('/:serverId/join-requests', auth(), controller.listJoinRequests);
+router.patch('/:serverId/join-requests/:userId', auth(), controller.reviewJoinRequest);
 router.post('/:serverId/roles', auth(), controller.createRole);
 router.patch('/:serverId/roles/:roleId', auth(), controller.updateRole);
 router.delete('/:serverId/roles/:roleId', auth(), controller.deleteRole);
