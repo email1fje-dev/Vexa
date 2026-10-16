@@ -14,7 +14,7 @@ const serialize = (server) => ({
   id: String(server._id), name: server.name, description: server.description || '',
   inviteCode: server.inviteCode, owner: server.ownerId,
   memberCount: (server.memberIds || []).length, status: server.status,
-  visibility: server.visibility, isVerifiedBadge: Boolean(server.isVerifiedBadge), inviteExpiresAt: server.inviteExpiresAt || null, inviteMaxUses: Number(server.inviteMaxUses || 0), inviteUseCount: Number(server.inviteUseCount || 0), welcomeMessage: server.welcomeMessage || '', antiSpamEnabled: server.antiSpamEnabled !== false, joinApproval: Boolean(server.joinApproval), createdAt: server.createdAt,
+  visibility: server.visibility, isVerifiedBadge: Boolean(server.isVerifiedBadge), createdAt: server.createdAt,
 });
 const isMember = (server, userId) => (server.memberIds || []).some(id => String(id._id || id) === String(userId));
 const ensureDefaultChannel = async (server) => {
@@ -85,6 +85,11 @@ const getOne = catchAsync(async (req, res) => {
   res.send({
     ...serialize(server), owner, members,
     isOwner: String(server.ownerId) === String(req.user.id),
+    ...(String(server.ownerId) === String(req.user.id) ? {
+      welcomeMessage: server.welcomeMessage || '', antiSpamEnabled: server.antiSpamEnabled !== false,
+      joinApproval: Boolean(server.joinApproval), inviteExpiresAt: server.inviteExpiresAt || null,
+      inviteMaxUses: Number(server.inviteMaxUses || 0), inviteUseCount: Number(server.inviteUseCount || 0),
+    } : {}),
     channels: server.channels.map(channel => ({ id: String(channel._id), name: channel.name, type: channel.type, createdAt: channel.createdAt })),
   });
 });
