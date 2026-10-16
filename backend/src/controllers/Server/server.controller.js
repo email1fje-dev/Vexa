@@ -77,6 +77,27 @@ const join = catchAsync(async (req, res) => {
   }
   res.send(serialize(server));
 });
+const joinPublic = catchAsync(async (req, res) => {
+  if (await maintenanceOn()) throw new ApiError(httpStatus.SERVICE_UNAVAILABLE, 'Vexa is in maintenance mode');
+  const serverId = String(req.params.serverId || '');
+  if (!mongoose.isValidObjectId(serverId)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
+  const server = await VexaServer.findOne({ _id: serverId, status: 'active', visibility: 'public' });
+  if (!server) throw new ApiError(httpStatus.NOT_FOUND, 'Public server not found');
+  if (!isMember(server, req.user.id)) {
+    if (server.joinApproval) {
+      if (!(server.pendingJoinIds || []).some(id => String(id) === String(req.user.id))) {
+        server.pendingJoinIds.push(req.user.id);
+        await server.save();
+      }
+      return res.send({ pending: true, serverId: String(server._id), name: server.name });
+    }
+    server.memberIds.push(req.user.id);
+    if (server.welcomeMessage) server.auditLog.push({ actorId: req.user.id, action: 'member_joined', target: server.name });
+    await server.save();
+  }
+  res.send(serialize(server));
+});
+
 const getOne = catchAsync(async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.serverId)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
   const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
