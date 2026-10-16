@@ -592,6 +592,7 @@ function reportUserDialog(targetId,targetType='user'){
 function handleClick(event){
  const b=event.target.closest('button,[data-nav],[data-action],[data-tab],[data-user-chat],[data-add-user],[data-accept],[data-cancel-request],[data-profile-section],[data-theme-pick],[data-server-member]');if(!b)return;
  if(b.dataset.serverMember){showServerMemberProfile(b.dataset.serverMember);return;}
+ if(b.dataset.pickServerImage){const input=document.querySelector('[data-server-image-upload="'+b.dataset.pickServerImage+'"]');if(input)input.click();return;}
  if(b.dataset.serverSettingsTab){const key=b.dataset.serverSettingsTab;const dialog=b.closest('.server-settings-dialog');if(dialog){dialog.querySelectorAll('[data-server-settings-panel]').forEach(p=>p.hidden=p.dataset.serverSettingsPanel!==key);dialog.querySelectorAll('[data-server-settings-tab]').forEach(t=>t.classList.toggle('active',t.dataset.serverSettingsTab===key));}return;}
  if(b.dataset.userSettingsTab!==undefined){const key=b.dataset.userSettingsTab;const root=b.closest('.settings-page');if(root){root.querySelectorAll('[data-user-settings-panel]').forEach(p=>p.hidden=p.dataset.userSettingsPanel!==key);root.querySelectorAll('[data-user-settings-tab]').forEach(t=>t.classList.toggle('active',t.dataset.userSettingsTab===key));}return;}
  if(b.dataset.serverOpen){openServerRoom(b.dataset.serverOpen);return}
@@ -732,4 +733,24 @@ function handleChange(event){
 }
 async function logout(){['vexa_access_token','vexa_refresh_token','vexa_user'].forEach(store.del);st.user=null;st.token=null;v.friend=null;v.room=null;$('app').classList.add('hidden');$('auth').classList.remove('hidden');$('password').value='';showMode('login')}
 if(store.get('vexa_access_token')&&current()){st.user=current();st.token=store.get('vexa_access_token');st.refresh=store.get('vexa_refresh_token');renderApp()}else{$('auth').classList.remove('hidden')}
+
+document.addEventListener('change',async function(event){
+ const input=event.target.closest('[data-server-image-upload]');if(!input||!input.files||!input.files[0])return;
+ const kind=input.dataset.serverImageUpload,file=input.files[0],maxBytes=8*1024*1024;
+ if(!/^image\/(png|jpeg|webp|gif)$/.test(file.type)){toast('لطفاً یک تصویر PNG، JPG، WEBP یا GIF انتخاب کن.');input.value='';return}
+ if(file.size>maxBytes){toast('حجم تصویر باید کمتر از ۸ مگابایت باشد.');input.value='';return}
+ const button=document.querySelector('[data-pick-server-image="'+kind+'"]');if(button){button.disabled=true;button.dataset.oldText=button.innerHTML;button.innerHTML='در حال آماده‌سازی…'}
+ try{
+  const dataUrl=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error('خواندن تصویر ناموفق بود'));reader.readAsDataURL(file)});
+  const img=await new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>reject(new Error('این تصویر باز نشد'));image.src=dataUrl});
+  const maxWidth=kind==='icon'?256:1200,maxHeight=kind==='icon'?256:420,scale=Math.min(1,maxWidth/img.width,maxHeight/img.height);
+  const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
+  const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  let result=canvas.toDataURL('image/webp',.78);if(result.length>430000)result=canvas.toDataURL('image/jpeg',.62);
+  if(result.length>480000)throw new Error('حجم تصویر بعد از فشرده‌سازی هنوز زیاد است؛ تصویر کوچک‌تری انتخاب کن.');
+  const field=document.getElementById(kind==='icon'?'server-profile-icon':'server-profile-banner');if(field){field.value='';field.dataset.uploadedImage=result}
+  const preview=document.getElementById(kind==='icon'?'server-icon-preview':'server-banner-preview');if(preview)preview.innerHTML='<img alt="'+(kind==='icon'?'پیش‌نمایش آیکون':'پیش‌نمایش بنر')+'" src="'+result+'">';
+  toast(kind==='icon'?'آیکون آماده شد؛ برای ثبت، «ذخیره هویت سرور» رو بزن.':'بنر آماده شد؛ برای ثبت، «ذخیره هویت سرور» رو بزن.');
+ }catch(error){toast(error.message||'آپلود تصویر ناموفق بود.')}finally{if(button){button.disabled=false;button.innerHTML=button.dataset.oldText||'↥ آپلود';delete button.dataset.oldText}input.value=''}
+});
 </script></body></html>
