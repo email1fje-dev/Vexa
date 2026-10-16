@@ -384,4 +384,4 @@ const toggleFavorite = catchAsync(async (req, res) => {
   res.send({ favorite: !has, serverId: String(server._id) });
 });
 
-module.exports = { listPublic, mine, create, join, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, toggleEventAttendance, listAuditLog, reviewJoinRequest, listJoinRequests, updateRoleMember, listFavorites, toggleFavorite };
+module.exports = { listPublic, mine, create, join, joinPublic, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, toggleEventAttendance, listAuditLog, reviewJoinRequest, listJoinRequests, updateRoleMember, listFavorites, toggleFavorite };
