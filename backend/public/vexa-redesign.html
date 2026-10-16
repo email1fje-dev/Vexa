@@ -827,4 +827,52 @@ function upgradeVexaSelects(root=document){
 document.addEventListener('click',event=>{if(event.target.closest('.vexa-select-host')||event.target.closest('.vexa-select-menu'))return;document.querySelectorAll('.vexa-select-host.open').forEach(host=>{host.classList.remove('open');const menu=host._vexaSelectMenu,trigger=host.querySelector('.vexa-select-trigger');if(menu){menu.hidden=true;menu.style.display='none'}if(trigger)trigger.setAttribute('aria-expanded','false')})});
 upgradeVexaSelects();
 new MutationObserver(records=>records.forEach(record=>record.addedNodes.forEach(node=>{if(node.nodeType===1)upgradeVexaSelects(node)}))).observe(document.documentElement,{childList:true,subtree:true});
+
+/* Vexa channel toolkit: accessible, mobile-first controls backed by the server API. */
+(function vexaChannelToolkit(){
+ const apiPath=(suffix)=>'/servers/'+encodeURIComponent(v.currentServer.id)+'/channels/'+encodeURIComponent(v.currentChannelId)+suffix;
+ function activeChannel(){return arr(v.currentServer?.channels).find(c=>String(c.id)===String(v.currentChannelId))||{}}
+ function openChannelTools(){
+  if(!v.currentServer?.id||!v.currentChannelId)return;
+  const c=activeChannel();
+  openDialog('<div class="dialog-card vexa-channel-tools"><div class="dialog-head"><div><small class="muted">مرکز کنترل Vexa</small><h2>تنظیمات کانال</h2><p class="muted">تنظیمات هر کانال مستقل ذخیره می‌شود.</p></div><button class="icon-button" data-action="close-dialog">×</button></div><form id="vexa-channel-settings-form" class="vexa-channel-tools-form"><label class="field">نام کانال<input name="name" required minlength="2" maxlength="50" value="'+esc(c.name||'')+'"></label><label class="field">موضوع کانال<input name="topic" maxlength="240" value="'+esc(c.topic||'')+'" placeholder="این کانال برای چه کاریه؟"></label><label class="field">دسته‌بندی<input name="category" maxlength="60" value="'+esc(c.category||'عمومی')+'" placeholder="عمومی، گیمینگ، مدیریت…"></label><label class="field">نوع کانال<select name="type"><option value="text" '+(c.type==='text'?'selected':'')+'>متنی</option><option value="announcement" '+(c.type==='announcement'?'selected':'')+'>اطلاعیه</option><option value="voice" '+(c.type==='voice'?'selected':'')+'>صوتی (نیازمند زیرساخت صوتی)</option></select></label><label class="field">فاصلهٔ ارسال پیام (ثانیه)<input name="slowModeSeconds" type="number" min="0" max="21600" value="'+Number(c.slowModeSeconds||0)+'"></label><label class="vexa-toggle-row"><span><b>فقط‌خواندنی</b><small>فقط مدیران مجاز به ارسال پیام باشند</small></span><input type="checkbox" name="readOnly" '+(c.readOnly?'checked':'')+'></label><label class="vexa-toggle-row"><span><b>کانال خصوصی</b><small>دسترسی اعضا باید با رول‌ها کنترل شود</small></span><input type="checkbox" name="private" '+(c.private?'checked':'')+'></label><label class="vexa-toggle-row"><span><b>بایگانی کانال</b><small>کانال از فهرست فعال خارج شود</small></span><input type="checkbox" name="archived" '+(c.archived?'checked':'')+'></label><div class="dialog-actions"><button class="btn primary" type="submit">ذخیره تغییرات</button><button class="btn" type="button" data-action="close-dialog">انصراف</button></div></form></div>');
+ }
+ function addHeaderTools(){
+  const header=document.querySelector('.server-channel-top');
+  if(!header||header.querySelector('[data-vexa-channel-tools]'))return;
+  const b=document.createElement('button');b.type='button';b.className='icon-button';b.dataset.vexaChannelTools='1';b.title='تنظیمات کانال';b.setAttribute('aria-label','تنظیمات کانال');b.textContent='⚙';
+  const search=document.createElement('button');search.type='button';search.className='icon-button';search.dataset.vexaChannelSearch='1';search.title='جست‌وجوی پیام‌ها';search.setAttribute('aria-label','جست‌وجوی پیام‌ها');search.textContent='⌕';
+  const poll=document.createElement('button');poll.type='button';poll.className='icon-button';poll.dataset.vexaChannelPoll='1';poll.title='ساخت نظرسنجی';poll.setAttribute('aria-label','ساخت نظرسنجی');poll.textContent='▤';
+  const invite=header.querySelector('[data-action="copy-server-invite"]');
+  header.insertBefore(poll,invite||null);header.insertBefore(search,invite||null);header.insertBefore(b,invite||null);
+ }
+ const style=document.createElement('style');
+ style.textContent='.vexa-channel-tools{max-width:650px}.vexa-channel-tools-form{display:grid;gap:13px}.vexa-channel-tools-form .field{display:grid;gap:7px;color:var(--text);font-size:13px;font-weight:700}.vexa-channel-tools-form input,.vexa-channel-tools-form select{width:100%;min-width:0;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);padding:12px;font:inherit;outline:none}.vexa-channel-tools-form input:focus,.vexa-channel-tools-form select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--soft)}.vexa-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2)}.vexa-toggle-row span{display:grid;gap:3px}.vexa-toggle-row small{font-size:11px;color:var(--muted)}.vexa-toggle-row input{width:20px;height:20px;accent-color:var(--green);flex:none}.server-channel-top [data-vexa-channel-tools],.server-channel-top [data-vexa-channel-search],.server-channel-top [data-vexa-channel-poll]{flex:none;transition:transform .18s ease,background .18s ease}.server-channel-top [data-vexa-channel-tools]:hover,.server-channel-top [data-vexa-channel-search]:hover,.server-channel-top [data-vexa-channel-poll]:hover{transform:translateY(-2px);background:var(--soft)}@media(max-width:520px){.vexa-channel-tools-form{gap:10px}.vexa-channel-tools .dialog-head h2{font-size:19px}}';
+ document.head.appendChild(style);
+ document.addEventListener('click',async event=>{
+  const settings=event.target.closest('[data-vexa-channel-tools]');
+  if(settings){openChannelTools();return}
+  const search=event.target.closest('[data-vexa-channel-search]');
+  if(search){
+   const query=prompt('عبارت موردنظر برای جست‌وجو در این کانال:');if(!query||!query.trim())return;
+   try{const rows=await api(apiPath('/messages?q='+encodeURIComponent(query.trim())));openDialog('<div class="dialog-card"><div class="dialog-head"><h2>نتایج جست‌وجو</h2><button class="icon-button" data-action="close-dialog">×</button></div><p class="muted">'+rows.length+' نتیجه</p><div class="vexa-search-results">'+(rows.length?rows.map(m=>'<article class="post"><b>'+esc(m.author?.username||'کاربر')+'</b><p>'+esc(m.text||'')+'</p><small class="muted">'+esc(m.createdAt?new Date(m.createdAt).toLocaleString('fa-IR'):'')+'</small></article>').join(''):'<p class="muted">نتیجه‌ای پیدا نشد.</p>')+'</div></div>')}catch(e){toast(e.message||'جست‌وجو انجام نشد')}
+  }
+  const poll=event.target.closest('[data-vexa-channel-poll]');
+  if(poll){
+   const question=prompt('سؤال نظرسنجی چیه؟');if(!question?.trim())return;
+   const raw=prompt('گزینه‌ها را با ویرگول جدا کن (حداقل دو گزینه):');if(!raw)return;
+   try{await api(apiPath('/polls'),{method:'POST',body:JSON.stringify({question:question.trim(),options:raw.split(',').map(x=>x.trim()).filter(Boolean)})});toast('نظرسنجی ساخته شد.');}catch(e){toast(e.message||'ساخت نظرسنجی ناموفق بود')}
+  }
+ });
+ document.addEventListener('submit',async event=>{
+  const form=event.target;if(form.id!=='vexa-channel-settings-form')return;
+  event.preventDefault();const data=new FormData(form);
+  const body={name:String(data.get('name')||''),topic:String(data.get('topic')||''),category:String(data.get('category')||'عمومی'),type:String(data.get('type')||'text'),slowModeSeconds:Number(data.get('slowModeSeconds')||0),readOnly:data.has('readOnly'),private:data.has('private'),archived:data.has('archived')};
+  try{await api(apiPath(''),{method:'PATCH',body:JSON.stringify(body)});toast('تنظیمات کانال ذخیره شد.');closeDialog();const updated=await api('/servers/'+encodeURIComponent(v.currentServer.id));v.currentServer=updated;if(body.archived){v.currentChannelId=arr(updated.channels).find(c=>!c.archived)?.id||null;v.serverChannelOpen=false}render()}catch(e){toast(e.message||'ذخیره تنظیمات ناموفق بود')}
+ });
+ const observer=new MutationObserver(()=>{if(v.view==='serverRoom')addHeaderTools()});
+ observer.observe(document.documentElement,{childList:true,subtree:true});
+ addHeaderTools();
+})();
+
 </script></body></html>
