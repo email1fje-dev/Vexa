@@ -118,4 +118,105 @@ const sendMessage = catchAsync(async (req, res) => {
   const author = await User.findById(req.user.id).select('username shortId avatar').lean();
   res.status(httpStatus.CREATED).send({ id: String(item._id), text: item.text, createdAt: item.createdAt, author: author || { username: 'کاربر', shortId: '' } });
 });
-module.exports = { listPublic, mine, create, join, getOne, createChannel, listMessages, sendMessage };
+
+const getRoles = catchAsync(async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.serverId)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' }).select('ownerId memberIds roles').lean();
+  if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
+  res.send((server.roles || []).map(role => ({ id: String(role._id), name: role.name, color: role.color, permissions: role.permissions || [], memberIds: (role.memberIds || []).map(String) })));
+});
+const createRole = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || String(server.ownerId) !== String(req.user.id)) throw new ApiError(httpStatus.FORBIDDEN, 'Only the server owner can manage roles');
+  const name = String(req.body.name || '').trim();
+  const color = String(req.body.color || '#34d36a');
+  const allowed = ['manageChannels', 'manageRoles', 'manageMessages', 'kickMembers', 'banMembers', 'manageEvents', 'viewAuditLog'];
+  const permissions = Array.isArray(req.body.permissions) ? [...new Set(req.body.permissions.filter(p => allowed.includes(p)))] : [];
+  if (name.length < 2 || name.length > 40 || !/^#[0-9a-fA-F]{6}$/.test(color)) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid role name or color');
+  if (server.roles.some(r => r.name.toLowerCase() === name.toLowerCase())) throw new ApiError(httpStatus.CONFLICT, 'Role name already exists');
+  server.roles.push({ name, color, permissions });
+  server.auditLog.push({ actorId: req.user.id, action: 'role_created', target: name });
+  if (server.auditLog.length > 200) server.auditLog.splice(0, server.auditLog.length - 200);
+  await server.save();
+  const role = server.roles[server.roles.length - 1];
+  res.status(httpStatus.CREATED).send({ id: String(role._id), name: role.name, color: role.color, permissions: role.permissions, memberIds: [] });
+});
+const updateRole = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || String(server.ownerId) !== String(req.user.id)) throw new ApiError(httpStatus.FORBIDDEN, 'Only the server owner can manage roles');
+  const role = server.roles.id(req.params.roleId);
+  if (!role) throw new ApiError(httpStatus.NOT_FOUND, 'Role not found');
+  const allowed = ['manageChannels', 'manageRoles', 'manageMessages', 'kickMembers', 'banMembers', 'manageEvents', 'viewAuditLog'];
+  if (req.body.name !== undefined) {
+    const name = String(req.body.name).trim();
+    if (name.length < 2 || name.length > 40) throw new ApiError(httpStatus.BAD_REQUEST, 'Role name must be 2-40 characters');
+    if (server.roles.some(r => String(r._id) !== String(role._id) && r.name.toLowerCase() === name.toLowerCase())) throw new ApiError(httpStatus.CONFLICT, 'Role name already exists');
+    role.name = name;
+  }
+  if (req.body.color !== undefined) {
+    if (!/^#[0-9a-fA-F]{6}$/.test(String(req.body.color))) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid role color');
+    role.color = req.body.color;
+  }
+  if (req.body.permissions !== undefined) {
+    if (!Array.isArray(req.body.permissions)) throw new ApiError(httpStatus.BAD_REQUEST, 'Permissions must be an array');
+    role.permissions = [...new Set(req.body.permissions.filter(p => allowed.includes(p)))];
+  }
+  server.auditLog.push({ actorId: req.user.id, action: 'role_updated', target: role.name });
+  if (server.auditLog.length > 200) server.auditLog.splice(0, server.auditLog.length - 200);
+  await server.save();
+  res.send({ id: String(role._id), name: role.name, color: role.color, permissions: role.permissions, memberIds: role.memberIds.map(String) });
+});
+const deleteRole = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || String(server.ownerId) !== String(req.user.id)) throw new ApiError(httpStatus.FORBIDDEN, 'Only the server owner can manage roles');
+  const role = server.roles.id(req.params.roleId);
+  if (!role) throw new ApiError(httpStatus.NOT_FOUND, 'Role not found');
+  if (['مدیر', 'عضو'].includes(role.name)) throw new ApiError(httpStatus.BAD_REQUEST, 'Built-in roles cannot be deleted');
+  const name = role.name;
+  role.deleteOne();
+  server.auditLog.push({ actorId: req.user.id, action: 'role_deleted', target: name });
+  if (server.auditLog.length > 200) server.auditLog.splice(0, server.auditLog.length - 200);
+  await server.save();
+  res.status(httpStatus.NO_CONTENT).send();
+});
+const updateSettings = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || String(server.ownerId) !== String(req.user.id)) throw new ApiError(httpStatus.FORBIDDEN, 'Only the server owner can change settings');
+  if (req.body.welcomeMessage !== undefined) {
+    const welcomeMessage = String(req.body.welcomeMessage).trim();
+    if (welcomeMessage.length > 500) throw new ApiError(httpStatus.BAD_REQUEST, 'Welcome message is too long');
+    server.welcomeMessage = welcomeMessage;
+  }
+  if (req.body.antiSpamEnabled !== undefined) server.antiSpamEnabled = Boolean(req.body.antiSpamEnabled);
+  if (req.body.joinApproval !== undefined) server.joinApproval = Boolean(req.body.joinApproval);
+  server.auditLog.push({ actorId: req.user.id, action: 'server_settings_updated', target: server.name });
+  if (server.auditLog.length > 200) server.auditLog.splice(0, server.auditLog.length - 200);
+  await server.save();
+  res.send({ welcomeMessage: server.welcomeMessage, antiSpamEnabled: server.antiSpamEnabled, joinApproval: server.joinApproval });
+});
+const listEvents = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' }).select('memberIds events').lean();
+  if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
+  res.send((server.events || []).sort((a, b) => new Date(a.startsAt) - new Date(b.startsAt)).map(e => ({ id: String(e._id), title: e.title, description: e.description, startsAt: e.startsAt, attendeeCount: (e.attendeeIds || []).length, createdBy: String(e.createdBy) })));
+});
+const createEvent = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || String(server.ownerId) !== String(req.user.id)) throw new ApiError(httpStatus.FORBIDDEN, 'Only the server owner can create events');
+  const title = String(req.body.title || '').trim();
+  const description = String(req.body.description || '').trim();
+  const startsAt = new Date(req.body.startsAt);
+  if (title.length < 2 || title.length > 100 || description.length > 1000 || Number.isNaN(startsAt.getTime())) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid event details');
+  server.events.push({ title, description, startsAt, createdBy: req.user.id, attendeeIds: [] });
+  server.auditLog.push({ actorId: req.user.id, action: 'event_created', target: title });
+  if (server.auditLog.length > 200) server.auditLog.splice(0, server.auditLog.length - 200);
+  await server.save();
+  const event = server.events[server.events.length - 1];
+  res.status(httpStatus.CREATED).send({ id: String(event._id), title: event.title, description: event.description, startsAt: event.startsAt, attendeeCount: 0, createdBy: String(event.createdBy) });
+});
+const listAuditLog = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' }).select('ownerId roles auditLog').lean();
+  if (!server || (String(server.ownerId) !== String(req.user.id) && !(server.roles || []).some(r => (r.memberIds || []).some(id => String(id) === String(req.user.id)) && (r.permissions || []).includes('viewAuditLog')))) throw new ApiError(httpStatus.FORBIDDEN, 'Audit log access denied');
+  res.send((server.auditLog || []).slice(-100).reverse().map(item => ({ actorId: String(item.actorId), action: item.action, target: item.target, createdAt: item.createdAt })));
+});
+
+module.exports = { listPublic, mine, create, join, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, listAuditLog };
