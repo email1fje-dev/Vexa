@@ -235,16 +235,16 @@ html[data-theme=light] .chat-composer{background:linear-gradient(145deg,#fff,#f2
 .server-settings-dialog>.settings-category-grid{position:sticky;top:66px;z-index:7;padding:8px 0;margin:0 0 14px;background:var(--panel)}
 @media(max-width:640px){.server-settings-dialog{padding:16px!important;max-height:calc(100dvh - 28px)!important;border-radius:22px!important}.server-settings-dialog>.dialog-head{top:-16px;margin:-16px -16px 10px;padding:14px 16px 10px}.server-settings-dialog>.settings-category-grid{top:61px;gap:7px;padding:7px 0}.server-settings-dialog .settings-category{min-height:62px}.vexa-select-trigger{min-height:43px;padding:10px 12px}.vexa-select-menu{max-height:34dvh}}
 
-/* Mobile server header: reserve a real flexible column for the server name */
+/* Mobile server header: keep the title in the flexible grid column (RTL-aware) */
 @media(max-width:640px){
- .server-focus-top{grid-template-columns:32px 34px minmax(0,1fr) 34px 32px!important;gap:6px!important;padding:10px 9px!important;min-height:70px!important;overflow:hidden}
- .server-focus-top>.server-focus-mark{grid-column:1!important;width:34px!important;height:34px!important;min-width:34px!important;border-radius:11px!important}
- .server-focus-top>.server-focus-title{grid-column:2!important;min-width:0!important;width:auto!important;max-width:none!important;justify-self:stretch!important;overflow:hidden!important}
- .server-focus-top>.server-focus-title small,.server-focus-top>.server-focus-title p{display:block!important;max-width:100%!important;min-width:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
- .server-focus-top>.server-focus-title h1{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;word-break:normal!important;overflow-wrap:normal!important;font-size:15px!important;line-height:1.35!important}
- .server-focus-top>.server-invite-compact{grid-column:3!important;width:34px!important;height:34px!important;min-width:34px!important}
- .server-focus-top>.server-manage-trigger{grid-column:4!important;width:34px!important;height:34px!important;min-width:34px!important}
- .server-focus-top>[data-action="server-leave"],.server-focus-top>[data-action="server-close-channel"]{grid-column:5!important;width:32px!important;height:32px!important;min-width:32px!important;display:grid!important;place-items:center!important}
+ .server-focus-top:not(.server-channel-top){grid-template-columns:40px minmax(0,1fr) 34px 38px 32px!important;gap:5px!important;padding:10px 8px!important;min-height:72px!important;overflow:hidden}
+ .server-focus-top:not(.server-channel-top)>.server-focus-mark{grid-column:1!important;grid-row:1!important;width:40px!important;height:40px!important;min-width:40px!important;border-radius:12px!important}
+ .server-focus-top:not(.server-channel-top)>.server-focus-title{grid-column:2!important;grid-row:1!important;min-width:0!important;width:auto!important;max-width:100%!important;justify-self:stretch!important;overflow:hidden!important}
+ .server-focus-top:not(.server-channel-top)>.server-focus-title small,.server-focus-top:not(.server-channel-top)>.server-focus-title p{display:block!important;max-width:100%!important;min-width:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+ .server-focus-top:not(.server-channel-top)>.server-focus-title h1{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;word-break:normal!important;overflow-wrap:normal!important;font-size:16px!important;line-height:1.35!important}
+ .server-focus-top:not(.server-channel-top)>.server-invite-compact{grid-column:3!important;grid-row:1!important;width:34px!important;height:34px!important;min-width:34px!important;padding:0!important;font-size:0!important}
+ .server-focus-top:not(.server-channel-top)>.server-manage-trigger{grid-column:4!important;grid-row:1!important;width:38px!important;height:38px!important;min-width:38px!important;padding:0!important;font-size:0!important}
+ .server-focus-top:not(.server-channel-top)>[data-action="server-leave"]{grid-column:5!important;grid-row:1!important;width:32px!important;height:32px!important;min-width:32px!important;padding:0!important}
  .server-focus-top.server-channel-top{grid-template-columns:32px 34px minmax(0,1fr) 34px 32px!important}
  .server-focus-top.server-channel-top>.server-back{grid-column:1!important;width:32px!important;min-width:32px!important;height:32px!important;padding:0!important;font-size:0!important;overflow:hidden}
  .server-focus-top.server-channel-top>.server-back svg{width:17px!important;height:17px!important;flex:none}
