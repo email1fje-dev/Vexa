@@ -23,8 +23,8 @@ router.post('/:serverId/events/:eventId/rsvp', auth(), controller.toggleEventAtt
 router.get('/:serverId/audit-log', auth(), controller.listAuditLog);
 router.get('/:serverId', auth(), controller.getOne);
 router.post('/:serverId/channels', auth(), controller.createChannel);
-router.patch('/:serverId/channels/:channelId', auth(), controller.updateChannelSettings);
 router.patch('/:serverId/channels/reorder', auth(), controller.reorderChannels);
+router.patch('/:serverId/channels/:channelId', auth(), controller.updateChannelSettings);
 router.patch('/:serverId/channels/:channelId/messages/:messageId/pin', auth(), controller.togglePinnedMessage);
 router.post('/:serverId/channels/:channelId/messages/:messageId/reactions', auth(), controller.toggleMessageReaction);
 router.post('/:serverId/channels/:channelId/polls', auth(), controller.createPoll);
