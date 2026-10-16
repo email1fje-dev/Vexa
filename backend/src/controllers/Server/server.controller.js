@@ -149,7 +149,7 @@ const listMessages = catchAsync(async (req, res) => {
     const ids = [...new Set(selected.map(item => String(item.authorId)))];
     const authors = ids.length ? await User.find({ _id: { $in: ids } }).select('username shortId avatar').lean() : [];
     const authorMap = new Map(authors.map(user => [String(user._id), user]));
-    return res.send(selected.map(item => ({ id: String(item._id), text: item.text, createdAt: item.createdAt, replyTo: item.replyTo ? String(item.replyTo) : null, threadRootId: item.threadRootId ? String(item.threadRootId) : null, reactions: item.reactions || [], author: authorMap.get(String(item.authorId)) || { username: 'کاربر', shortId: '' } })));
+    return res.send(selected.map(item => ({ id: String(item._id), text: item.text, createdAt: item.createdAt, replyTo: item.replyTo ? String(item.replyTo) : null, threadRootId: item.threadRootId ? String(item.threadRootId) : null, attachments: (item.attachments || []).map(file => ({ name: file.name, url: file.url, mimeType: file.mimeType, size: file.size })), reactions: item.reactions || [], author: authorMap.get(String(item.authorId)) || { username: 'کاربر', shortId: '' } })));
   }
   const limit = Math.max(1, Math.min(100, Number.parseInt(req.query.limit, 10) || 100));
   const items = channel.messages.slice(-limit);
@@ -173,13 +173,26 @@ const sendMessage = catchAsync(async (req, res) => {
     if (lastMessage && Date.now() - new Date(lastMessage.createdAt).getTime() < slowMode * 1000) throw new ApiError(httpStatus.TOO_MANY_REQUESTS, 'برای ارسال پیام بعدی کمی صبر کن.');
   }
   const text = String(req.body.text || '').trim();
-  if (!text || text.length > 2000) throw new ApiError(httpStatus.BAD_REQUEST, 'Message must be 1-2000 characters');
+  const attachments = Array.isArray(req.body.attachments) ? req.body.attachments.slice(0, 4) : [];
+  const allowedMime = /^(image\/(png|jpeg|webp|gif)|video\/(mp4|webm)|audio\/(mpeg|ogg|wav|webm)|application\/pdf)$/i;
+  let attachmentBytes = 0;
+  const safeAttachments = attachments.map(file => {
+    const name = String(file?.name || 'file').trim().slice(0, 180);
+    const mimeType = String(file?.mimeType || '').trim().slice(0, 120);
+    const url = String(file?.url || '');
+    const size = Number(file?.size || 0);
+    if (!allowedMime.test(mimeType) || !/^data:[^;,]+;base64,[A-Za-z0-9+/=]+$/.test(url) || !Number.isFinite(size) || size < 1 || size > 300000 || url.length > 420000) throw new ApiError(httpStatus.BAD_REQUEST, 'نوع یا اندازهٔ فایل پشتیبانی نمی‌شود. هر فایل باید کمتر از ۳۰۰ کیلوبایت باشد.');
+    attachmentBytes += size;
+    return { name, mimeType, url, size };
+  });
+  if (attachmentBytes > 450000) throw new ApiError(httpStatus.BAD_REQUEST, 'مجموع حجم فایل‌ها باید کمتر از ۴۵۰ کیلوبایت باشد.');
+  if ((!text && !safeAttachments.length) || text.length > 2000) throw new ApiError(httpStatus.BAD_REQUEST, 'پیام باید متن یا فایل داشته باشد و متن حداکثر ۲۰۰۰ نویسه باشد.');
   if (server.antiSpamEnabled !== false) {
     const cutoff = Date.now() - 8000;
     const recentCount = channel.messages.filter(item => String(item.authorId) === String(req.user.id) && new Date(item.createdAt).getTime() > cutoff).length;
     if (recentCount >= 5) throw new ApiError(httpStatus.TOO_MANY_REQUESTS, 'برای جلوگیری از اسپم، چند ثانیه صبر کن.');
   }
-  channel.messages.push({ authorId: req.user.id, text, replyTo: mongoose.isValidObjectId(req.body.replyTo) ? req.body.replyTo : undefined, threadRootId: mongoose.isValidObjectId(req.body.threadRootId) ? req.body.threadRootId : undefined });
+  channel.messages.push({ authorId: req.user.id, text, attachments: safeAttachments, replyTo: mongoose.isValidObjectId(req.body.replyTo) ? req.body.replyTo : undefined, threadRootId: mongoose.isValidObjectId(req.body.threadRootId) ? req.body.threadRootId : undefined });
   if (channel.messages.length > 300) channel.messages.splice(0, channel.messages.length - 300);
   await server.save();
   const item = channel.messages[channel.messages.length - 1];
