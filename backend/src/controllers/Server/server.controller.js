@@ -11,7 +11,7 @@ const maintenanceOn = async () => {
 };
 const makeInvite = () => { const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; const bytes = crypto.randomBytes(10); return Array.from(bytes, byte => alphabet[byte % alphabet.length]).join(''); };
 const serialize = (server) => ({
-  id: String(server._id), name: server.name, description: server.description || '',
+  id: String(server._id), name: server.name, description: server.description || '', category: server.category || 'community', tags: server.tags || [],
   inviteCode: server.inviteCode, owner: server.ownerId,
   memberCount: (server.memberIds || []).length, status: server.status,
   visibility: server.visibility, isVerifiedBadge: Boolean(server.isVerifiedBadge), createdAt: server.createdAt,
@@ -28,7 +28,7 @@ const listPublic = catchAsync(async (req, res) => {
   const setting = await AdminSetting.findOne({ key: 'publicServerDiscovery' }).lean();
   if (setting && setting.value === false) return res.send([]);
   const items = await VexaServer.find({ status: 'active', visibility: 'public' })
-    .select('name description inviteCode ownerId memberIds status visibility isVerifiedBadge createdAt')
+    .select('name description category tags inviteCode ownerId memberIds status visibility isVerifiedBadge createdAt')
     .populate('ownerId', 'username shortId avatar').sort({ createdAt: -1 }).limit(50).lean();
   res.send(items.map(s => ({ ...serialize(s), owner: s.ownerId })));
 });
@@ -42,11 +42,14 @@ const create = catchAsync(async (req, res) => {
   if (await maintenanceOn()) throw new ApiError(httpStatus.SERVICE_UNAVAILABLE, 'Vexa is in maintenance mode');
   const name = String(req.body.name || '').trim();
   const description = String(req.body.description || '').trim();
+  const categories = ['gaming', 'community', 'education', 'technology', 'art', 'music', 'other'];
+  const category = categories.includes(req.body.category) ? req.body.category : 'community';
+  const tags = Array.isArray(req.body.tags) ? [...new Set(req.body.tags.map(tag => String(tag).trim().slice(0, 24)).filter(Boolean))].slice(0, 5) : [];
   if (name.length < 2 || name.length > 80 || description.length > 500) throw new ApiError(httpStatus.BAD_REQUEST, 'Server name must be 2-80 characters; description max is 500');
   let inviteCode = makeInvite();
   while (await VexaServer.exists({ inviteCode })) inviteCode = makeInvite();
   const server = await VexaServer.create({
-    name, description, inviteCode, ownerId: req.user.id, memberIds: [req.user.id],
+    name, description, category, tags, inviteCode, ownerId: req.user.id, memberIds: [req.user.id],
     channels: [{ name: 'general', type: 'text', createdBy: req.user.id, messages: [] }],
   });
   res.status(httpStatus.CREATED).send(serialize(server));
