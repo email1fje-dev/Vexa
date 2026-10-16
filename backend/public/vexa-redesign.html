@@ -166,6 +166,37 @@ html[data-theme=light] .chat-composer{background:linear-gradient(145deg,#fff,#f2
 .server-full-chat{display:flex;flex:1;min-height:0;flex-direction:column;width:100%;max-width:none;margin:0;overflow:hidden}.server-full-chat .server-message-list{flex:1;min-height:0;padding:24px clamp(12px,4vw,45px);gap:18px}.server-full-chat .server-message-body p{font-size:14px;line-height:1.9}.server-full-chat .server-message-form{margin:10px clamp(10px,3vw,28px) 18px;padding:10px 12px;border-radius:14px}
 @media(max-width:600px){.app-shell.server-focus{grid-template-columns:60px minmax(0,1fr)}.app-shell.server-focus .main-stage{width:100%}.server-focus-top{min-height:72px;padding:10px}.server-focus-mark{width:40px;height:40px}.server-focus-content{padding:15px 11px}.server-channel-card{padding:12px;gap:10px}.server-focus-heading h2{font-size:21px}.server-focus-heading .btn{font-size:11px;padding:8px}.server-channel-top{gap:7px}.server-back{font-size:0;padding:9px}.server-invite-compact{padding:7px;font-size:10px}.server-invite-compact .icon{width:13px;height:13px}.server-channel-top .server-focus-title h1{font-size:13px}.server-full-chat .server-message-list{padding:15px 11px}.server-full-chat .server-message-form{margin:8px 8px 10px}}
 @media(prefers-reduced-motion:reduce){.server-focus-page,.server-channel-card{animation:none!important;transition:none!important}}
+
+/* Vexa motion system — soft, consistent and mobile-friendly */
+:root{--vexa-ease:cubic-bezier(.22,1,.36,1);--vexa-ease-soft:cubic-bezier(.2,.7,.2,1);--vexa-motion-fast:150ms;--vexa-motion:240ms;--vexa-motion-slow:360ms}
+@media(prefers-reduced-motion:no-preference){
+ html{scroll-behavior:smooth}
+ body,button,input,textarea,select,a,[role=button]{transition:background-color var(--vexa-motion) var(--vexa-ease-soft),color var(--vexa-motion) var(--vexa-ease-soft),border-color var(--vexa-motion) var(--vexa-ease-soft),box-shadow var(--vexa-motion) var(--vexa-ease-soft)}
+ button,a,[role=button]{-webkit-tap-highlight-color:transparent}
+ button:not(:disabled),[role=button],[data-action],[data-nav],[data-server-settings-tab],[data-user-settings-tab]{transition:transform var(--vexa-motion-fast) var(--vexa-ease),background-color var(--vexa-motion) var(--vexa-ease-soft),border-color var(--vexa-motion) var(--vexa-ease-soft),box-shadow var(--vexa-motion) var(--vexa-ease-soft)}
+ button:not(:disabled):active,[role=button]:active,[data-action]:active,[data-nav]:active{transform:scale(.975)}
+ .panel,.card,.server-card,.friend-card,.channel-card,.settings-group,.settings-category,.message-bubble,.server-focus-top,.bottom-nav,.sidebar{transition:background-color var(--vexa-motion) var(--vexa-ease-soft),border-color var(--vexa-motion) var(--vexa-ease-soft),box-shadow var(--vexa-motion) var(--vexa-ease-soft)}
+ .server-card:hover,.friend-card:hover,.channel-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(15,23,42,.07)}
+ .settings-category{transition:transform var(--vexa-motion) var(--vexa-ease),background-color var(--vexa-motion) var(--vexa-ease-soft),border-color var(--vexa-motion) var(--vexa-ease-soft),box-shadow var(--vexa-motion) var(--vexa-ease-soft)}
+ .settings-category:active{transform:scale(.985)}
+ .dialog-overlay,.modal-overlay,[data-overlay]{animation:vexa-fade-in var(--vexa-motion) var(--vexa-ease-soft) both}
+ .dialog-card,.modal,.dialog{animation:vexa-dialog-in var(--vexa-motion-slow) var(--vexa-ease) both;transform-origin:center}
+ .toast,.toast-message{animation:vexa-toast-in 220ms var(--vexa-ease) both}
+ #app,#main-content,.main-content,.page-content{animation:vexa-page-in 220ms var(--vexa-ease-soft) both}
+ input,textarea,select{transition:border-color var(--vexa-motion-fast) ease,box-shadow var(--vexa-motion-fast) ease,background-color var(--vexa-motion) ease}
+ input:focus,textarea:focus,select:focus{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--green,#16894b) 17%,transparent)}
+ .settings-category-icon{transition:transform var(--vexa-motion) var(--vexa-ease),background-color var(--vexa-motion) ease}
+ .settings-category:hover .settings-category-icon{transform:scale(1.05)}
+ .server-settings-section,[data-user-settings-panel]{animation:vexa-section-in 200ms var(--vexa-ease-soft) both}
+ .bottom-nav button,.bottom-nav a{transition:color var(--vexa-motion) ease,background-color var(--vexa-motion) ease,transform var(--vexa-motion-fast) var(--vexa-ease)}
+ img,video{transition:opacity var(--vexa-motion) ease}
+}
+@keyframes vexa-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes vexa-dialog-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes vexa-toast-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes vexa-page-in{from{opacity:.65;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes vexa-section-in{from{opacity:.7;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style><body><section id="auth" class="auth"><div class="auth-card"><div class="brand"><span class="logo">V</span> وکسا</div><h1 id="auth-title">خوش برگشتی 💚</h1><p>دوستات، گفتگوها و کامیونیتی‌هات؛ همه توی یک جا.</p><div class="tabs"><button class="btn primary" id="login-tab">ورود</button><button class="btn" id="signup-tab">ساخت حساب</button></div><form id="auth-form"><div class="field hidden" id="username-wrap"><label>نام کاربری</label><input id="username" minlength="4" autocomplete="username"></div><div class="field"><label>ایمیل</label><input id="email" type="email" required autocomplete="email"></div><div class="field"><label>رمز عبور</label><input id="password" type="password" required minlength="6" autocomplete="current-password"></div><p id="auth-error" class="status"></p><button class="btn primary" style="width:100%" id="auth-submit">ورود به وکسا</button></form></div></section><section id="app" class="hidden"></section><div id="toast"></div><script>
 const $=id=>document.getElementById(id),store={get:(k,d='')=>{try{return localStorage.getItem(k)??d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}},del:k=>{try{localStorage.removeItem(k)}catch{}}};
 const st={mode:'login',user:null,token:null,refresh:null},v={friends:[],requests:[],users:[],rooms:[],view:'friends',tab:'all',friend:null,room:null,messages:[]};
