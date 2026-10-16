@@ -4,6 +4,8 @@ const controller = require('./server.controller');
 const router = express.Router();
 router.get('/discover', controller.listPublic);
 router.get('/mine', auth(), controller.mine);
+router.get('/favorites', auth(), controller.listFavorites);
+router.post('/:serverId/favorite', auth(), controller.toggleFavorite);
 router.post('/', auth(), controller.create);
 router.post('/join', auth(), controller.join);
 router.get('/:serverId/roles', auth(), controller.getRoles);
