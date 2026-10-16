@@ -202,12 +202,13 @@ const getServers = catchAsync(async (req, res) => {
 const updateServer = catchAsync(async (req, res) => {
   const server = await VexaServer.findById(req.params.serverId);
   if (!server) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
-  const { status, visibility } = req.body || {};
+  const { status, visibility, isVerifiedBadge } = req.body || {};
   if (status !== undefined) { if (!['active', 'suspended', 'archived'].includes(status)) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid server status'); server.status = status; }
   if (visibility !== undefined) { if (!['public', 'private'].includes(visibility)) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid visibility'); server.visibility = visibility; }
+  if (isVerifiedBadge !== undefined) { if (typeof isVerifiedBadge !== 'boolean') throw new ApiError(httpStatus.BAD_REQUEST, 'isVerifiedBadge must be a boolean'); server.isVerifiedBadge = isVerifiedBadge; }
   await server.save();
-  await audit(req, 'server.updated', server._id, { status: server.status, visibility: server.visibility });
-  res.send({ id: String(server._id), name: server.name, status: server.status, visibility: server.visibility, memberCount: server.memberIds.length });
+  await audit(req, isVerifiedBadge === undefined ? 'server.updated' : (isVerifiedBadge ? 'server.verified_badge.granted' : 'server.verified_badge.removed'), server._id, { status: server.status, visibility: server.visibility, isVerifiedBadge: Boolean(server.isVerifiedBadge) });
+  res.send({ id: String(server._id), name: server.name, status: server.status, visibility: server.visibility, isVerifiedBadge: Boolean(server.isVerifiedBadge), memberCount: server.memberIds.length });
 });
 
 const updateSupportTicket = catchAsync(async (req, res) => {
