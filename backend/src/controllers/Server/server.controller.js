@@ -272,4 +272,21 @@ const listJoinRequests = catchAsync(async (req, res) => {
   res.send(users.map(u => ({ id: String(u._id), username: u.username, shortId: u.shortId, avatar: u.avatar || '' })));
 });
 
-module.exports = { listPublic, mine, create, join, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, listAuditLog, reviewJoinRequest, listJoinRequests };
+
+const updateRoleMember = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || String(server.ownerId) !== String(req.user.id)) throw new ApiError(httpStatus.FORBIDDEN, 'Only the server owner can assign roles');
+  const role = server.roles.id(req.params.roleId);
+  if (!role) throw new ApiError(httpStatus.NOT_FOUND, 'Role not found');
+  const memberId = String(req.body.userId || '');
+  if (!mongoose.isValidObjectId(memberId) || !isMember(server, memberId)) throw new ApiError(httpStatus.BAD_REQUEST, 'User is not a member of this server');
+  const hasRole = role.memberIds.some(id => String(id) === memberId);
+  if (req.body.assign === true && !hasRole) role.memberIds.push(memberId);
+  if (req.body.assign === false && hasRole) role.memberIds = role.memberIds.filter(id => String(id) !== memberId);
+  server.auditLog.push({ actorId: req.user.id, action: req.body.assign === true ? 'role_assigned' : 'role_removed', target: role.name + ':' + memberId });
+  if (server.auditLog.length > 200) server.auditLog.splice(0, server.auditLog.length - 200);
+  await server.save();
+  res.send({ success: true, roleId: String(role._id), userId: memberId, assigned: req.body.assign === true });
+});
+
+module.exports = { listPublic, mine, create, join, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, listAuditLog, reviewJoinRequest, listJoinRequests, updateRoleMember };
