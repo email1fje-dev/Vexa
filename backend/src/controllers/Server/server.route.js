@@ -11,6 +11,7 @@ router.get('/:serverId/join-requests', auth(), controller.listJoinRequests);
 router.patch('/:serverId/join-requests/:userId', auth(), controller.reviewJoinRequest);
 router.post('/:serverId/roles', auth(), controller.createRole);
 router.patch('/:serverId/roles/:roleId', auth(), controller.updateRole);
+router.patch('/:serverId/roles/:roleId/members', auth(), controller.updateRoleMember);
 router.delete('/:serverId/roles/:roleId', auth(), controller.deleteRole);
 router.patch('/:serverId/settings', auth(), controller.updateSettings);
 router.get('/:serverId/events', auth(), controller.listEvents);
