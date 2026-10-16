@@ -11,7 +11,7 @@ const maintenanceOn = async () => {
 };
 const makeInvite = () => { const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; const bytes = crypto.randomBytes(10); return Array.from(bytes, byte => alphabet[byte % alphabet.length]).join(''); };
 const serialize = (server) => ({
-  id: String(server._id), name: server.name, description: server.description || '', category: server.category || 'community', tags: server.tags || [],
+  id: String(server._id), name: server.name, description: server.description || '', icon: server.icon || '', banner: server.banner || '', category: server.category || 'community', tags: server.tags || [],
   inviteCode: server.inviteCode, owner: server.ownerId,
   memberCount: (server.memberIds || []).length, status: server.status,
   visibility: server.visibility, isVerifiedBadge: Boolean(server.isVerifiedBadge), createdAt: server.createdAt,
