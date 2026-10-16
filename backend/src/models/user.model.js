@@ -54,6 +54,7 @@ const userSchema = mongoose.Schema(
     bio: { type: String, trim: true, maxlength: 160, default: '' },
     avatar: { type: String, default: '' },
     profileVideo: { type: String, default: '' },
+    favoriteServerIds: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'VexaServer' }],
     presenceStatus: { type: String, enum: ['online', 'idle', 'dnd'], default: 'online' },
   },
   {
