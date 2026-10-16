@@ -129,7 +129,7 @@ const createChannel = catchAsync(async (req, res) => {
   const name = String(req.body.name || '').trim().replace(/\s+/g, '-');
   if (name.length < 2 || name.length > 50) throw new ApiError(httpStatus.BAD_REQUEST, 'Channel name must be 2-50 characters');
   if (server.channels.some(channel => channel.name.toLowerCase() === name.toLowerCase())) throw new ApiError(httpStatus.CONFLICT, 'A channel with that name already exists');
-  server.channels.push({ name, type: 'text', createdBy: req.user.id, messages: [] });
+  server.channels.push({ name, type: ['text', 'announcement', 'voice'].includes(req.body.type) ? req.body.type : 'text', category: String(req.body.category || 'عمومی').trim().slice(0, 60) || 'عمومی', createdBy: req.user.id, messages: [] });
   await server.save();
   const channel = server.channels[server.channels.length - 1];
   res.status(httpStatus.CREATED).send({ id: String(channel._id), name: channel.name, type: channel.type, createdAt: channel.createdAt });
@@ -141,7 +141,7 @@ const listMessages = catchAsync(async (req, res) => {
   await ensureDefaultChannel(server);
   const channel = server.channels.id(req.params.channelId);
   if (!channel || channel.archived) throw new ApiError(httpStatus.NOT_FOUND, 'Channel not found');
-  if (channel.private && !(channel.allowedRoleIds || []).some(roleId => (server.roles || []).some(role => String(role._id) === String(roleId) && (role.memberIds || []).some(id => String(id) === String(req.user.id))))) throw new ApiError(httpStatus.FORBIDDEN, 'این کانال خصوصی است.');
+  if (channel.private && String(server.ownerId) !== String(req.user.id) && !(channel.allowedRoleIds || []).some(roleId => (server.roles || []).some(role => String(role._id) === String(roleId) && (role.memberIds || []).some(id => String(id) === String(req.user.id))))) throw new ApiError(httpStatus.FORBIDDEN, 'این کانال خصوصی است.');
   if (req.query.q) {
     const query = String(req.query.q).trim().slice(0, 120).toLocaleLowerCase();
     const matches = channel.messages.filter(item => String(item.text || '').toLocaleLowerCase().includes(query));
