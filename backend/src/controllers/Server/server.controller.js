@@ -34,7 +34,7 @@ const listPublic = catchAsync(async (req, res) => {
 });
 const mine = catchAsync(async (req, res) => {
   const items = await VexaServer.find({ memberIds: req.user.id, status: 'active' })
-    .select('name description inviteCode ownerId memberIds status visibility isVerifiedBadge createdAt')
+    .select('name description category tags inviteCode ownerId memberIds status visibility isVerifiedBadge createdAt')
     .populate('ownerId', 'username shortId avatar').sort({ createdAt: -1 }).limit(100).lean();
   res.send(items.map(s => ({ ...serialize(s), owner: s.ownerId })));
 });
@@ -303,7 +303,7 @@ const listFavorites = catchAsync(async (req, res) => {
   const user = await User.findById(req.user.id).select('favoriteServerIds').lean();
   const ids = user?.favoriteServerIds || [];
   const servers = ids.length ? await VexaServer.find({ _id: { $in: ids }, status: 'active', visibility: 'public' })
-    .select('name description inviteCode ownerId memberIds status visibility isVerifiedBadge createdAt')
+    .select('name description category tags inviteCode ownerId memberIds status visibility isVerifiedBadge createdAt')
     .populate('ownerId', 'username shortId avatar').lean() : [];
   res.send(servers.map(s => ({ ...serialize(s), owner: s.ownerId })));
 });
