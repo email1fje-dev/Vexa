@@ -295,4 +295,26 @@ const updateRoleMember = catchAsync(async (req, res) => {
   res.send({ success: true, roleId: String(role._id), userId: memberId, assigned: req.body.assign === true });
 });
 
-module.exports = { listPublic, mine, create, join, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, listAuditLog, reviewJoinRequest, listJoinRequests, updateRoleMember };
+
+const listFavorites = catchAsync(async (req, res) => {
+  const user = await User.findById(req.user.id).select('favoriteServerIds').lean();
+  const ids = user?.favoriteServerIds || [];
+  const servers = ids.length ? await VexaServer.find({ _id: { $in: ids }, status: 'active', visibility: 'public' })
+    .select('name description inviteCode ownerId memberIds status visibility isVerifiedBadge createdAt')
+    .populate('ownerId', 'username shortId avatar').lean() : [];
+  res.send(servers.map(s => ({ ...serialize(s), owner: s.ownerId })));
+});
+const toggleFavorite = catchAsync(async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.serverId)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active', visibility: 'public' }).select('_id').lean();
+  if (!server) throw new ApiError(httpStatus.NOT_FOUND, 'Public server not found');
+  const user = await User.findById(req.user.id).select('favoriteServerIds');
+  if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  const has = (user.favoriteServerIds || []).some(id => String(id) === String(server._id));
+  if (has) user.favoriteServerIds = user.favoriteServerIds.filter(id => String(id) !== String(server._id));
+  else user.favoriteServerIds.push(server._id);
+  await user.save();
+  res.send({ favorite: !has, serverId: String(server._id) });
+});
+
+module.exports = { listPublic, mine, create, join, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, listAuditLog, reviewJoinRequest, listJoinRequests, updateRoleMember, listFavorites, toggleFavorite };
