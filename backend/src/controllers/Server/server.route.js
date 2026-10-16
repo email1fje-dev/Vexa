@@ -18,6 +18,7 @@ router.delete('/:serverId/roles/:roleId', auth(), controller.deleteRole);
 router.patch('/:serverId/settings', auth(), controller.updateSettings);
 router.get('/:serverId/events', auth(), controller.listEvents);
 router.post('/:serverId/events', auth(), controller.createEvent);
+router.post('/:serverId/events/:eventId/rsvp', auth(), controller.toggleEventAttendance);
 router.get('/:serverId/audit-log', auth(), controller.listAuditLog);
 router.get('/:serverId', auth(), controller.getOne);
 router.post('/:serverId/channels', auth(), controller.createChannel);
