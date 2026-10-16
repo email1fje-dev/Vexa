@@ -140,7 +140,17 @@ const listMessages = catchAsync(async (req, res) => {
   if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
   await ensureDefaultChannel(server);
   const channel = server.channels.id(req.params.channelId);
-  if (!channel) throw new ApiError(httpStatus.NOT_FOUND, 'Channel not found');
+  if (!channel || channel.archived) throw new ApiError(httpStatus.NOT_FOUND, 'Channel not found');
+  if (channel.private && !(channel.allowedRoleIds || []).some(roleId => (server.roles || []).some(role => String(role._id) === String(roleId) && (role.memberIds || []).some(id => String(id) === String(req.user.id))))) throw new ApiError(httpStatus.FORBIDDEN, 'این کانال خصوصی است.');
+  if (req.query.q) {
+    const query = String(req.query.q).trim().slice(0, 120).toLocaleLowerCase();
+    const matches = channel.messages.filter(item => String(item.text || '').toLocaleLowerCase().includes(query));
+    const selected = matches.slice(-100);
+    const ids = [...new Set(selected.map(item => String(item.authorId)))];
+    const authors = ids.length ? await User.find({ _id: { $in: ids } }).select('username shortId avatar').lean() : [];
+    const authorMap = new Map(authors.map(user => [String(user._id), user]));
+    return res.send(selected.map(item => ({ id: String(item._id), text: item.text, createdAt: item.createdAt, replyTo: item.replyTo ? String(item.replyTo) : null, threadRootId: item.threadRootId ? String(item.threadRootId) : null, reactions: item.reactions || [], author: authorMap.get(String(item.authorId)) || { username: 'کاربر', shortId: '' } })));
+  }
   const limit = Math.max(1, Math.min(100, Number.parseInt(req.query.limit, 10) || 100));
   const items = channel.messages.slice(-limit);
   const authorIds = [...new Set(items.map(item => String(item.authorId)))];
@@ -154,7 +164,14 @@ const sendMessage = catchAsync(async (req, res) => {
   const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
   if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
   const channel = server.channels.id(req.params.channelId);
-  if (!channel) throw new ApiError(httpStatus.NOT_FOUND, 'Channel not found');
+  if (!channel || channel.archived) throw new ApiError(httpStatus.NOT_FOUND, 'Channel not found');
+  if (channel.private && !(channel.allowedRoleIds || []).some(roleId => (server.roles || []).some(role => String(role._id) === String(roleId) && (role.memberIds || []).some(id => String(id) === String(req.user.id))))) throw new ApiError(httpStatus.FORBIDDEN, 'این کانال خصوصی است.');
+  if ((channel.readOnly || channel.type === 'announcement') && !hasPermission(server, req.user.id, 'manageMessages')) throw new ApiError(httpStatus.FORBIDDEN, 'این کانال فقط برای انتشار پیام مدیران است.');
+  const slowMode = Number(channel.slowModeSeconds || 0);
+  if (slowMode > 0 && !hasPermission(server, req.user.id, 'manageMessages')) {
+    const lastMessage = [...channel.messages].reverse().find(item => String(item.authorId) === String(req.user.id));
+    if (lastMessage && Date.now() - new Date(lastMessage.createdAt).getTime() < slowMode * 1000) throw new ApiError(httpStatus.TOO_MANY_REQUESTS, 'برای ارسال پیام بعدی کمی صبر کن.');
+  }
   const text = String(req.body.text || '').trim();
   if (!text || text.length > 2000) throw new ApiError(httpStatus.BAD_REQUEST, 'Message must be 1-2000 characters');
   if (server.antiSpamEnabled !== false) {
@@ -162,7 +179,7 @@ const sendMessage = catchAsync(async (req, res) => {
     const recentCount = channel.messages.filter(item => String(item.authorId) === String(req.user.id) && new Date(item.createdAt).getTime() > cutoff).length;
     if (recentCount >= 5) throw new ApiError(httpStatus.TOO_MANY_REQUESTS, 'برای جلوگیری از اسپم، چند ثانیه صبر کن.');
   }
-  channel.messages.push({ authorId: req.user.id, text });
+  channel.messages.push({ authorId: req.user.id, text, replyTo: mongoose.isValidObjectId(req.body.replyTo) ? req.body.replyTo : undefined, threadRootId: mongoose.isValidObjectId(req.body.threadRootId) ? req.body.threadRootId : undefined });
   if (channel.messages.length > 300) channel.messages.splice(0, channel.messages.length - 300);
   await server.save();
   const item = channel.messages[channel.messages.length - 1];
@@ -386,4 +403,105 @@ const toggleFavorite = catchAsync(async (req, res) => {
   res.send({ favorite: !has, serverId: String(server._id) });
 });
 
-module.exports = { listPublic, mine, create, join, joinPublic, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, toggleEventAttendance, listAuditLog, reviewJoinRequest, listJoinRequests, updateRoleMember, listFavorites, toggleFavorite };
+
+const updateChannelSettings = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
+  if (!hasPermission(server, req.user.id, 'manageChannels')) throw new ApiError(httpStatus.FORBIDDEN, 'اجازهٔ مدیریت کانال را نداری.');
+  const channel = server.channels.id(req.params.channelId);
+  if (!channel) throw new ApiError(httpStatus.NOT_FOUND, 'Channel not found');
+  const body = req.body || {};
+  if (body.name !== undefined) {
+    const name = String(body.name).trim().replace(/\s+/g, '-');
+    if (name.length < 2 || name.length > 50) throw new ApiError(httpStatus.BAD_REQUEST, 'نام کانال باید ۲ تا ۵۰ نویسه باشد.');
+    if (server.channels.some(item => String(item._id) !== String(channel._id) && item.name.toLowerCase() === name.toLowerCase())) throw new ApiError(httpStatus.CONFLICT, 'این نام قبلاً استفاده شده است.');
+    channel.name = name;
+  }
+  if (body.topic !== undefined) channel.topic = String(body.topic).trim().slice(0, 240);
+  if (body.category !== undefined) channel.category = String(body.category).trim().slice(0, 60) || 'عمومی';
+  if (body.slowModeSeconds !== undefined) channel.slowModeSeconds = Math.max(0, Math.min(21600, Number(body.slowModeSeconds) || 0));
+  ['readOnly', 'archived', 'private'].forEach(key => { if (typeof body[key] === 'boolean') channel[key] = body[key]; });
+  if (body.type !== undefined && ['text', 'announcement', 'voice'].includes(body.type)) channel.type = body.type;
+  if (Array.isArray(body.allowedRoleIds)) channel.allowedRoleIds = body.allowedRoleIds.filter(mongoose.isValidObjectId);
+  server.auditLog.push({ actorId: req.user.id, action: 'channel_settings_updated', target: channel.name });
+  if (server.auditLog.length > 200) server.auditLog.splice(0, server.auditLog.length - 200);
+  await server.save();
+  res.send({ id: String(channel._id), name: channel.name, type: channel.type, topic: channel.topic, category: channel.category, slowModeSeconds: channel.slowModeSeconds, readOnly: channel.readOnly, archived: channel.archived, private: channel.private, allowedRoleIds: (channel.allowedRoleIds || []).map(String) });
+});
+
+const togglePinnedMessage = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
+  if (!hasPermission(server, req.user.id, 'manageMessages')) throw new ApiError(httpStatus.FORBIDDEN, 'اجازهٔ سنجاق‌کردن پیام را نداری.');
+  const channel = server.channels.id(req.params.channelId);
+  if (!channel || !channel.messages.id(req.params.messageId)) throw new ApiError(httpStatus.NOT_FOUND, 'پیام پیدا نشد.');
+  const exists = (channel.pinnedMessageIds || []).some(id => String(id) === String(req.params.messageId));
+  if (exists) channel.pinnedMessageIds = channel.pinnedMessageIds.filter(id => String(id) !== String(req.params.messageId));
+  else channel.pinnedMessageIds.push(req.params.messageId);
+  server.auditLog.push({ actorId: req.user.id, action: exists ? 'message_unpinned' : 'message_pinned', target: channel.name });
+  if (server.auditLog.length > 200) server.auditLog.splice(0, server.auditLog.length - 200);
+  await server.save();
+  res.send({ pinned: !exists, messageId: req.params.messageId });
+});
+
+const toggleMessageReaction = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
+  const channel = server.channels.id(req.params.channelId);
+  const message = channel && channel.messages.id(req.params.messageId);
+  if (!message) throw new ApiError(httpStatus.NOT_FOUND, 'پیام پیدا نشد.');
+  const emoji = String(req.body.emoji || '').trim();
+  if (!emoji || emoji.length > 16) throw new ApiError(httpStatus.BAD_REQUEST, 'واکنش معتبر نیست.');
+  let reaction = message.reactions.find(item => item.emoji === emoji);
+  if (!reaction) { message.reactions.push({ emoji, userIds: [req.user.id] }); }
+  else if (reaction.userIds.some(id => String(id) === String(req.user.id))) {
+    reaction.userIds = reaction.userIds.filter(id => String(id) !== String(req.user.id));
+    if (!reaction.userIds.length) message.reactions = message.reactions.filter(item => item.emoji !== emoji);
+  } else reaction.userIds.push(req.user.id);
+  await server.save();
+  res.send({ messageId: req.params.messageId, reactions: message.reactions.map(item => ({ emoji: item.emoji, count: item.userIds.length, reacted: item.userIds.some(id => String(id) === String(req.user.id)) })) });
+});
+
+const createPoll = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
+  const channel = server.channels.id(req.params.channelId);
+  if (!channel || channel.archived) throw new ApiError(httpStatus.NOT_FOUND, 'Channel not found');
+  const question = String(req.body.question || '').trim();
+  const labels = Array.isArray(req.body.options) ? [...new Set(req.body.options.map(value => String(value).trim()).filter(Boolean))].slice(0, 10) : [];
+  if (question.length < 3 || question.length > 240 || labels.length < 2) throw new ApiError(httpStatus.BAD_REQUEST, 'نظرسنجی به سؤال و حداقل دو گزینه نیاز دارد.');
+  channel.pollSchema.push({ question, options: labels.map(label => ({ label, voterIds: [] })), createdBy: req.user.id, endsAt: req.body.endsAt ? new Date(req.body.endsAt) : null });
+  await server.save();
+  const poll = channel.pollSchema[channel.pollSchema.length - 1];
+  res.status(httpStatus.CREATED).send({ id: String(poll._id), question: poll.question, options: poll.options.map((option, index) => ({ id: String(option._id), label: option.label, votes: 0 })), createdAt: poll.createdAt });
+});
+
+const votePoll = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
+  const channel = server.channels.id(req.params.channelId);
+  const poll = channel && channel.pollSchema.id(req.params.pollId);
+  if (!poll) throw new ApiError(httpStatus.NOT_FOUND, 'نظرسنجی پیدا نشد.');
+  if (poll.endsAt && new Date(poll.endsAt).getTime() < Date.now()) throw new ApiError(httpStatus.GONE, 'مهلت نظرسنجی تمام شده است.');
+  const option = poll.options.id(req.body.optionId);
+  if (!option) throw new ApiError(httpStatus.BAD_REQUEST, 'گزینه معتبر نیست.');
+  poll.options.forEach(item => { item.voterIds = item.voterIds.filter(id => String(id) !== String(req.user.id)); });
+  option.voterIds.push(req.user.id);
+  await server.save();
+  res.send({ pollId: String(poll._id), options: poll.options.map(item => ({ id: String(item._id), label: item.label, votes: item.voterIds.length, voted: item.voterIds.some(id => String(id) === String(req.user.id)) })) });
+});
+
+const reorderChannels = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
+  if (!hasPermission(server, req.user.id, 'manageChannels')) throw new ApiError(httpStatus.FORBIDDEN, 'اجازهٔ مرتب‌سازی کانال‌ها را نداری.');
+  if (!Array.isArray(req.body.channelIds) || req.body.channelIds.length !== server.channels.length) throw new ApiError(httpStatus.BAD_REQUEST, 'فهرست کانال‌ها کامل نیست.');
+  const byId = new Map(server.channels.map(channel => [String(channel._id), channel]));
+  const ordered = req.body.channelIds.map(id => byId.get(String(id)));
+  if (ordered.some(item => !item) || new Set(req.body.channelIds.map(String)).size !== server.channels.length) throw new ApiError(httpStatus.BAD_REQUEST, 'ترتیب کانال‌ها معتبر نیست.');
+  server.channels = ordered;
+  await server.save();
+  res.send({ success: true, channelIds: server.channels.map(channel => String(channel._id)) });
+});
+
+module.exports = { updateChannelSettings, togglePinnedMessage, toggleMessageReaction, createPoll, votePoll, reorderChannels, listPublic, mine, create, join, joinPublic, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, toggleEventAttendance, listAuditLog, reviewJoinRequest, listJoinRequests, updateRoleMember, listFavorites, toggleFavorite };
