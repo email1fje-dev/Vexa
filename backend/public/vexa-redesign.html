@@ -249,6 +249,25 @@ html[data-theme=light] .chat-composer{background:linear-gradient(145deg,#fff,#f2
  .server-focus-top.server-channel-top>.server-back{width:32px!important;min-width:32px!important;height:32px!important;padding:0!important;font-size:0!important;overflow:hidden}
  .server-focus-top.server-channel-top>.server-back svg{width:17px!important;height:17px!important;flex:none}
 }
+
+/* Keep setting descriptions readable beside the custom select control */
+.settings-option{min-width:0}
+.settings-option>.vexa-select-host{flex:0 1 48%;width:48%;max-width:260px;min-width:145px}
+.settings-option>.settings-option-copy{flex:1 1 52%;min-width:0;overflow-wrap:normal;word-break:normal}
+.settings-option-copy b,.settings-option-copy small{word-break:normal!important;overflow-wrap:break-word!important;white-space:normal!important}
+.settings-option>.vexa-select-host .vexa-select-trigger{width:100%;min-width:0}
+@media(max-width:640px){
+ .settings-group{padding:15px!important}
+ .settings-option{gap:12px!important}
+ .settings-option>.vexa-select-host{flex:0 1 46%;width:46%;min-width:125px;max-width:52%}
+ .settings-option>.settings-option-copy{flex:1 1 54%;width:auto;min-width:0}
+ .settings-option-copy b{font-size:12px;line-height:1.6}
+ .settings-option-copy small{font-size:11px;line-height:1.7}
+}
+@media(max-width:380px){
+ .settings-option{gap:8px!important}
+ .settings-option>.vexa-select-host{flex-basis:43%;width:43%;min-width:112px}
+}
 </style><body><section id="auth" class="auth"><div class="auth-card"><div class="brand"><span class="logo">V</span> وکسا</div><h1 id="auth-title">خوش برگشتی 💚</h1><p>دوستات، گفتگوها و کامیونیتی‌هات؛ همه توی یک جا.</p><div class="tabs"><button class="btn primary" id="login-tab">ورود</button><button class="btn" id="signup-tab">ساخت حساب</button></div><form id="auth-form"><div class="field hidden" id="username-wrap"><label>نام کاربری</label><input id="username" minlength="4" autocomplete="username"></div><div class="field"><label>ایمیل</label><input id="email" type="email" required autocomplete="email"></div><div class="field"><label>رمز عبور</label><input id="password" type="password" required minlength="6" autocomplete="current-password"></div><p id="auth-error" class="status"></p><button class="btn primary" style="width:100%" id="auth-submit">ورود به وکسا</button></form></div></section><section id="app" class="hidden"></section><div id="toast"></div><script>
 const $=id=>document.getElementById(id),store={get:(k,d='')=>{try{return localStorage.getItem(k)??d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}},del:k=>{try{localStorage.removeItem(k)}catch{}}};
 const st={mode:'login',user:null,token:null,refresh:null},v={friends:[],requests:[],users:[],rooms:[],view:'friends',tab:'all',friend:null,room:null,messages:[]};
