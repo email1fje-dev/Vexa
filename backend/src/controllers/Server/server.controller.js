@@ -27,13 +27,13 @@ const listPublic = catchAsync(async (req, res) => {
   const setting = await AdminSetting.findOne({ key: 'publicServerDiscovery' }).lean();
   if (setting && setting.value === false) return res.send([]);
   const items = await VexaServer.find({ status: 'active', visibility: 'public' })
-    .select('name description inviteCode ownerId memberIds status visibility createdAt')
+    .select('name description inviteCode ownerId memberIds status visibility isVerifiedBadge createdAt')
     .populate('ownerId', 'username shortId avatar').sort({ createdAt: -1 }).limit(50).lean();
   res.send(items.map(s => ({ ...serialize(s), owner: s.ownerId })));
 });
 const mine = catchAsync(async (req, res) => {
   const items = await VexaServer.find({ memberIds: req.user.id, status: 'active' })
-    .select('name description inviteCode ownerId memberIds status visibility createdAt')
+    .select('name description inviteCode ownerId memberIds status visibility isVerifiedBadge createdAt')
     .populate('ownerId', 'username shortId avatar').sort({ createdAt: -1 }).limit(100).lean();
   res.send(items.map(s => ({ ...serialize(s), owner: s.ownerId })));
 });
