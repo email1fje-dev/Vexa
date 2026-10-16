@@ -3,12 +3,25 @@ const mongoose = require('mongoose');
 const messageSchema = mongoose.Schema({
   authorId: { type: mongoose.SchemaTypes.ObjectId, ref: 'User', required: true },
   text: { type: String, required: true, trim: true, maxlength: 2000 },
+  replyTo: { type: mongoose.SchemaTypes.ObjectId },
+  threadRootId: { type: mongoose.SchemaTypes.ObjectId },
+  attachments: { type: [{ name: { type: String, maxlength: 180 }, url: { type: String, maxlength: 2000 }, mimeType: { type: String, maxlength: 120 }, size: { type: Number, min: 0 } }], default: [] },
+  reactions: { type: [{ emoji: { type: String, maxlength: 16 }, userIds: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'User' }] }], default: [] },
   createdAt: { type: Date, default: Date.now },
 }, { _id: true, id: false });
 
 const channelSchema = mongoose.Schema({
   name: { type: String, required: true, trim: true, maxlength: 50 },
-  type: { type: String, enum: ['text'], default: 'text' },
+  type: { type: String, enum: ['text', 'announcement', 'voice'], default: 'text' },
+  category: { type: String, trim: true, maxlength: 60, default: 'عمومی' },
+  topic: { type: String, trim: true, maxlength: 240, default: '' },
+  slowModeSeconds: { type: Number, min: 0, max: 21600, default: 0 },
+  readOnly: { type: Boolean, default: false },
+  archived: { type: Boolean, default: false },
+  private: { type: Boolean, default: false },
+  allowedRoleIds: [{ type: mongoose.SchemaTypes.ObjectId }],
+  pinnedMessageIds: [{ type: mongoose.SchemaTypes.ObjectId }],
+  pollSchema: { type: [{ question: { type: String, maxlength: 240 }, options: [{ label: { type: String, maxlength: 100 }, voterIds: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'User' }] }], createdBy: { type: mongoose.SchemaTypes.ObjectId, ref: 'User' }, createdAt: { type: Date, default: Date.now }, endsAt: { type: Date, default: null } }], default: [] },
   createdBy: { type: mongoose.SchemaTypes.ObjectId, ref: 'User' },
   messages: { type: [messageSchema], default: [] },
 }, { timestamps: true });
