@@ -56,7 +56,18 @@ const join = catchAsync(async (req, res) => {
   if (!/^[A-HJ-NP-Z2-9]{10}$/.test(code)) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid invite code');
   const server = await VexaServer.findOne({ inviteCode: code, status: 'active' });
   if (!server) throw new ApiError(httpStatus.NOT_FOUND, 'Invite not found or server unavailable');
-  if (!isMember(server, req.user.id)) { server.memberIds.push(req.user.id); await server.save(); }
+  if (!isMember(server, req.user.id)) {
+    if (server.joinApproval) {
+      if (!(server.pendingJoinIds || []).some(id => String(id) === String(req.user.id))) {
+        server.pendingJoinIds.push(req.user.id);
+        await server.save();
+      }
+      return res.send({ pending: true, serverId: String(server._id), name: server.name });
+    }
+    server.memberIds.push(req.user.id);
+    if (server.welcomeMessage) server.auditLog.push({ actorId: req.user.id, action: 'member_joined', target: server.name });
+    await server.save();
+  }
   res.send(serialize(server));
 });
 const getOne = catchAsync(async (req, res) => {
@@ -111,6 +122,11 @@ const sendMessage = catchAsync(async (req, res) => {
   if (!channel) throw new ApiError(httpStatus.NOT_FOUND, 'Channel not found');
   const text = String(req.body.text || '').trim();
   if (!text || text.length > 2000) throw new ApiError(httpStatus.BAD_REQUEST, 'Message must be 1-2000 characters');
+  if (server.antiSpamEnabled !== false) {
+    const cutoff = Date.now() - 8000;
+    const recentCount = channel.messages.filter(item => String(item.authorId) === String(req.user.id) && new Date(item.createdAt).getTime() > cutoff).length;
+    if (recentCount >= 5) throw new ApiError(httpStatus.TOO_MANY_REQUESTS, 'برای جلوگیری از اسپم، چند ثانیه صبر کن.');
+  }
   channel.messages.push({ authorId: req.user.id, text });
   if (channel.messages.length > 300) channel.messages.splice(0, channel.messages.length - 300);
   await server.save();
@@ -219,4 +235,25 @@ const listAuditLog = catchAsync(async (req, res) => {
   res.send((server.auditLog || []).slice(-100).reverse().map(item => ({ actorId: String(item.actorId), action: item.action, target: item.target, createdAt: item.createdAt })));
 });
 
-module.exports = { listPublic, mine, create, join, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, listAuditLog };
+
+const reviewJoinRequest = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || String(server.ownerId) !== String(req.user.id)) throw new ApiError(httpStatus.FORBIDDEN, 'Only the server owner can review join requests');
+  if (!mongoose.isValidObjectId(req.params.userId)) throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid user');
+  const userId = String(req.params.userId);
+  if (!(server.pendingJoinIds || []).some(id => String(id) === userId)) throw new ApiError(httpStatus.NOT_FOUND, 'Join request not found');
+  server.pendingJoinIds = server.pendingJoinIds.filter(id => String(id) !== userId);
+  if (req.body.approve === true && !isMember(server, userId)) server.memberIds.push(userId);
+  server.auditLog.push({ actorId: req.user.id, action: req.body.approve === true ? 'join_request_approved' : 'join_request_rejected', target: userId });
+  if (server.auditLog.length > 200) server.auditLog.splice(0, server.auditLog.length - 200);
+  await server.save();
+  res.send({ success: true, approved: req.body.approve === true });
+});
+const listJoinRequests = catchAsync(async (req, res) => {
+  const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
+  if (!server || String(server.ownerId) !== String(req.user.id)) throw new ApiError(httpStatus.FORBIDDEN, 'Only the server owner can view join requests');
+  const users = server.pendingJoinIds.length ? await User.find({ _id: { $in: server.pendingJoinIds } }).select('username shortId avatar').lean() : [];
+  res.send(users.map(u => ({ id: String(u._id), username: u.username, shortId: u.shortId, avatar: u.avatar || '' })));
+});
+
+module.exports = { listPublic, mine, create, join, getOne, createChannel, listMessages, sendMessage, getRoles, createRole, updateRole, deleteRole, updateSettings, listEvents, createEvent, listAuditLog, reviewJoinRequest, listJoinRequests };
