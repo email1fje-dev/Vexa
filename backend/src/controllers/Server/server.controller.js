@@ -17,6 +17,7 @@ const serialize = (server) => ({
   visibility: server.visibility, isVerifiedBadge: Boolean(server.isVerifiedBadge), createdAt: server.createdAt,
 });
 const isMember = (server, userId) => (server.memberIds || []).some(id => String(id._id || id) === String(userId));
+const hasPermission = (server, userId, permission) => String(server.ownerId) === String(userId) || (server.roles || []).some(role => (role.memberIds || []).some(id => String(id._id || id) === String(userId)) && (role.permissions || []).includes(permission));
 const ensureDefaultChannel = async (server) => {
   if (!server.channels || server.channels.length === 0) {
     server.channels = [{ name: 'general', type: 'text', messages: [] }];
@@ -98,7 +99,7 @@ const createChannel = catchAsync(async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.serverId)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
   const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
   if (!server || !isMember(server, req.user.id)) throw new ApiError(httpStatus.NOT_FOUND, 'Server not found');
-  if (String(server.ownerId) !== String(req.user.id)) throw new ApiError(httpStatus.FORBIDDEN, 'Only the server owner can create channels for now');
+  if (!hasPermission(server, req.user.id, 'manageChannels')) throw new ApiError(httpStatus.FORBIDDEN, 'You do not have permission to create channels');
   const name = String(req.body.name || '').trim().replace(/\s+/g, '-');
   if (name.length < 2 || name.length > 50) throw new ApiError(httpStatus.BAD_REQUEST, 'Channel name must be 2-50 characters');
   if (server.channels.some(channel => channel.name.toLowerCase() === name.toLowerCase())) throw new ApiError(httpStatus.CONFLICT, 'A channel with that name already exists');
@@ -238,7 +239,7 @@ const listEvents = catchAsync(async (req, res) => {
 });
 const createEvent = catchAsync(async (req, res) => {
   const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' });
-  if (!server || String(server.ownerId) !== String(req.user.id)) throw new ApiError(httpStatus.FORBIDDEN, 'Only the server owner can create events');
+  if (!server || !hasPermission(server, req.user.id, 'manageEvents')) throw new ApiError(httpStatus.FORBIDDEN, 'You do not have permission to create events');
   const title = String(req.body.title || '').trim();
   const description = String(req.body.description || '').trim();
   const startsAt = new Date(req.body.startsAt);
@@ -252,7 +253,7 @@ const createEvent = catchAsync(async (req, res) => {
 });
 const listAuditLog = catchAsync(async (req, res) => {
   const server = await VexaServer.findOne({ _id: req.params.serverId, status: 'active' }).select('ownerId roles auditLog').lean();
-  if (!server || (String(server.ownerId) !== String(req.user.id) && !(server.roles || []).some(r => (r.memberIds || []).some(id => String(id) === String(req.user.id)) && (r.permissions || []).includes('viewAuditLog')))) throw new ApiError(httpStatus.FORBIDDEN, 'Audit log access denied');
+  if (!server || !hasPermission(server, req.user.id, 'viewAuditLog')) throw new ApiError(httpStatus.FORBIDDEN, 'Audit log access denied');
   res.send((server.auditLog || []).slice(-100).reverse().map(item => ({ actorId: String(item.actorId), action: item.action, target: item.target, createdAt: item.createdAt })));
 });
 
